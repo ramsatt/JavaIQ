@@ -56,12 +56,24 @@
   color: #f1f5f9;
 }
 
-.tap-hint {
+.tap-hint, .reveal-cost {
   font-size: 0.8rem;
-  opacity: 0.8;
+  opacity: 0.9;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: #ffffff;
+}
+
+.reveal-cost {
+  background: rgba(255, 215, 0, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  font-weight: 700;
+  color: #ffd700;
 }
 
 .card-front .metadata-icons {
@@ -96,7 +108,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow-y: auto; /* Allow scrolling if content is very long */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .answer-text p {
@@ -163,6 +176,7 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
 }
 
 .code-block pre {
@@ -170,10 +184,12 @@
   padding: 15px !important;
   font-size: 0.85rem !important;
   border-radius: 12px !important;
-  max-height: 250px;
-  overflow-y: auto;
+  max-height: 300px; /* Increased slightly */
+  overflow: auto !important; /* Allow both X and Y scrolling */
+  -webkit-overflow-scrolling: touch;
   background: #1e293b !important; /* Force a dark background */
   color: #f8fafc !important;
+  white-space: pre !important; /* Ensure code doesn't wrap unnecessarily */
 }
 
 .code-block code {

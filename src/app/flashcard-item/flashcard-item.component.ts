@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Question } from '../data.service';
+import { DataService, Question } from '../data.service';
+import { AdMobService } from '../admob.service';
+import { AlertService } from '../alert.service';
+import { inject } from '@angular/core';
 import * as Prism from 'prismjs';
 import 'prismjs/components/prism-java';
 
@@ -14,6 +17,10 @@ import 'prismjs/components/prism-java';
 export class FlashcardItemComponent implements OnChanges {
   @Input({ required: true }) question!: Question;
   @Output() answerShown = new EventEmitter<void>();
+
+  private dataService = inject(DataService);
+  private adMobService = inject(AdMobService);
+  private alertService = inject(AlertService);
 
   showAnswer = false;
   cardGradient = 'linear-gradient(135deg, #1e293b 0%, #334155 100%)';
@@ -29,9 +36,13 @@ export class FlashcardItemComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['question']) {
-      this.showAnswer = false;
+      this.showAnswer = this.isAlreadyRevealed();
       this.setRandomGradient();
     }
+  }
+
+  isAlreadyRevealed(): boolean {
+    return this.dataService.revealedQuestionIds().has(this.question.id);
   }
 
   private setRandomGradient() {
@@ -39,19 +50,50 @@ export class FlashcardItemComponent implements OnChanges {
     this.cardGradient = this.gradients[index];
   }
 
-
-
-  toggleAnswer() {
-    this.showAnswer = !this.showAnswer;
+  async toggleAnswer() {
     if (this.showAnswer) {
-      this.answerShown.emit();
-      // Small delay to ensure @if has rendered the code block
-      setTimeout(() => {
-        if (typeof Prism !== 'undefined') {
-          Prism.highlightAll();
-        }
-      }, 50);
+      this.showAnswer = false;
+      return;
     }
+
+    // If not revealed yet, try to spend point
+    if (!this.isAlreadyRevealed()) {
+      if (this.dataService.points() > 0) {
+        // Optimistic UI: Update state immediately and flip card
+        this.dataService.spendPoint(); // Don't await
+        this.dataService.markAsRevealed(this.question.id); // Don't await
+        this.reveal();
+      } else {
+        // Prompt for reward ad
+        const watchAd = await this.alertService.confirm(
+          'You have 0 points. Watch a short video to earn 10 points?',
+          'Unlock Answer'
+        );
+        if (watchAd) {
+          const success = await this.adMobService.showRewardVideo();
+          if (success) {
+            await this.dataService.addPoints(10);
+            // Auto-reveal after earning points
+            this.dataService.spendPoint(); // Don't await
+            this.dataService.markAsRevealed(this.question.id); // Don't await
+            this.reveal();
+          }
+        }
+      }
+    } else {
+      this.reveal();
+    }
+  }
+
+  private reveal() {
+    this.showAnswer = true;
+    this.answerShown.emit();
+    // Small delay to ensure @if has rendered the code block
+    setTimeout(() => {
+      if (typeof Prism !== 'undefined') {
+        Prism.highlightAll();
+      }
+    }, 50);
   }
 
   get metadataChips(): string[] {

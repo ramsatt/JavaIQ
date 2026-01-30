@@ -15,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./flashcard-list.component.css']
 })
 export class FlashcardListComponent implements OnInit {
-  private dataService = inject(DataService);
+  public dataService = inject(DataService);
   private adMobService = inject(AdMobService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -65,6 +65,9 @@ export class FlashcardListComponent implements OnInit {
 
   onAnswerShown() {
     this.questionsViewedCount++;
+    if (this.questionsViewedCount % 7 === 0) {
+      this.adMobService.showInterstitial();
+    }
     if (this.questionsViewedCount >= 15) {
       this.quizModal.open();
     }
@@ -83,8 +86,8 @@ export class FlashcardListComponent implements OnInit {
   async unlockQuestions() {
     const success = await this.adMobService.showRewardVideo();
     if (success) {
-      this.ngZone.run(() => {
-        this.dataService.unlockNextBatch(this.selectedCategory);
+      this.ngZone.run(async () => {
+        await this.dataService.addPoints(10);
         this.cdr.detectChanges();
       });
     }

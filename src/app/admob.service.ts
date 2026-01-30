@@ -1,11 +1,13 @@
-import { Injectable } from '@angular/core';
-import { AdMob, BannerAdSize, BannerAdPosition, AdMobRewardItem, RewardAdOptions, BannerAdOptions, RewardAdPluginEvents } from '@capacitor-community/admob';
+import { Injectable, inject } from '@angular/core';
+import { AlertService } from './alert.service';
+import { AdMob, BannerAdSize, BannerAdPosition, AdMobRewardItem, RewardAdOptions, BannerAdOptions, RewardAdPluginEvents, AdOptions } from '@capacitor-community/admob';
 import { Capacitor } from '@capacitor/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdMobService {
+  private alertService = inject(AlertService);
 
   constructor() {
     this.initialize();
@@ -54,7 +56,7 @@ export class AdMobService {
 
   async showRewardVideo(): Promise<boolean> {
     if (Capacitor.getPlatform() === 'web') {
-      return confirm('Watch ad to unlock? (Simulated)');
+      return this.alertService.confirm('You have 0 points. Watch a short video to earn 10 points?', 'Earn Points');
     }
 
     return new Promise(async (resolve) => {
@@ -71,7 +73,6 @@ export class AdMobService {
         const rewardListener = await AdMob.addListener(RewardAdPluginEvents.Rewarded, (item) => {
           console.log('AdMob Reward Earned', item);
           rewarded = true;
-          // alert('Reward Earned!'); // Debugging
         });
 
         const dismissListener = await AdMob.addListener(RewardAdPluginEvents.Dismissed, () => {
@@ -83,7 +84,6 @@ export class AdMobService {
 
         const failedToLoadListener = await AdMob.addListener(RewardAdPluginEvents.FailedToLoad, (error) => {
              console.error('AdMob Failed to Load', error);
-             // alert('Ad Failed to Load: ' + JSON.stringify(error)); // Debugging
              rewardListener.remove();
              dismissListener.remove();
              failedToLoadListener.remove();
@@ -95,10 +95,25 @@ export class AdMobService {
         
       } catch (e) {
         console.error('Failed to show reward video', e);
-        // alert('Error showing ad: ' + JSON.stringify(e)); // Debugging
         resolve(false);
       }
     });
+  }
+
+  async showInterstitial() {
+    if (Capacitor.getPlatform() === 'web') return;
+
+    const options: AdOptions = {
+      adId: 'ca-app-pub-8970665297590705/1779267104', // Place holder or Real
+      isTesting: false
+    };
+
+    try {
+      await AdMob.prepareInterstitial(options);
+      await AdMob.showInterstitial();
+    } catch (e) {
+      console.error('Failed to show interstitial', e);
+    }
   }
 }
 

@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DataService } from '../data.service';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,27 +13,56 @@ import { DataService } from '../data.service';
 })
 export class DashboardComponent {
   private router = inject(Router);
-  private dataService = inject(DataService);
+  public dataService = inject(DataService);
+  public authService = inject(AuthService);
 
   categories = [
-    { name: 'Core Java', icon: 'bi-cup-hot', color: '#FF5252' },      /* Vibrant Red */
-    { name: 'Spring Boot', icon: 'bi-flower1', color: '#69F0AE' },    /* Vibrant Green */
-    { name: 'Microservices', icon: 'bi-diagram-3', color: '#40C4FF' }, /* Vibrant Blue */
-    { name: 'Hibernate', icon: 'bi-database', color: '#E040FB' },     /* Vibrant Purple */
-    { name: 'Spring Reactive', icon: 'bi-lightning', color: '#FFD740' }, /* Vibrant Yellow */
-    { name: 'Multithreading', icon: 'bi-cpu', color: '#FF4081' },      /* Vibrant Pink */
-    { name: 'Reactive Programming', icon: 'bi-broadcast', color: '#FF6E40' } /* Vibrant Orange */
+    { name: 'Core Java', icon: 'bi-cup-hot', color: '#FF5252' },
+    { name: 'Spring Boot', icon: 'bi-flower1', color: '#69F0AE' },
+    { name: 'Microservices', icon: 'bi-diagram-3', color: '#40C4FF' },
+    { name: 'Hibernate', icon: 'bi-database', color: '#E040FB' },
+    { name: 'Spring Reactive', icon: 'bi-lightning', color: '#FFD740' },
+    { name: 'Multithreading', icon: 'bi-cpu', color: '#FF4081' },
+    { name: 'Reactive Programming', icon: 'bi-broadcast', color: '#FF6E40' },
+    { name: 'Coding Questions', icon: 'bi-code-slash', color: '#00E676' }
+  ];
+
+  challenges = [
+    { name: 'Daily Challenge', qs: 3, icon: 'bi-clock-history', color: '#FF9100' },
+    { name: 'Weekly Challenge', qs: 5, icon: 'bi-calendar-event', color: '#2979FF' },
+    { name: 'Monthly Challenge', qs: 10, icon: 'bi-trophy', color: '#FFD600' }
   ];
 
   getQuestionCount(category: string): number {
-    return this.dataService.getQuestions().filter(q => q.category === category).length;
+    return this.dataService.getQuestions(category).length;
+  }
+
+  getCategoryProgress(category: string): number {
+    return this.dataService.getProgress(category);
   }
 
   navigateToCategory(category: string) {
     this.router.navigate(['/practice', category]);
   }
 
+  startChallenge(challenge: any) {
+    // Navigate to challenge component (to be implemented)
+    this.router.navigate(['/challenge', challenge.name]);
+  }
+
   startRandomQuiz() {
     this.router.navigate(['/practice', 'All']);
+  }
+
+  goToLeaderboard() {
+    this.router.navigate(['/leaderboard']);
+  }
+
+  login() {
+    this.authService.loginWithGoogle();
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }

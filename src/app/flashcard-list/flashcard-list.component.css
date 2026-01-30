@@ -20,21 +20,40 @@
 }
 
 .btn-icon-back {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  transition: background 0.2s;
+  padding: 0;
+  transition: all 0.2s ease;
 }
 
 .btn-icon-back:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(30, 41, 59, 0.9);
+  transform: scale(1.05);
+}
+
+.points-badge-pill {
+  background: rgba(30, 41, 59, 0.6);
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  color: #fbbf24;
+  font-weight: 700;
+  font-size: 0.9rem;
+  height: fit-content;
+}
+
+.points-badge-pill i {
+  font-size: 0.8rem;
 }
 
 /* Card Stack Effect */

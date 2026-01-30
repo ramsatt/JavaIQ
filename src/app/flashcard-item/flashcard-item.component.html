@@ -14,7 +14,13 @@
       </div>
 
       <div class="card-footer-row text-center">
-        <span class="tap-hint">Tap to flip</span>
+        @if (!isAlreadyRevealed()) {
+          <div class="reveal-cost">
+            <i class="bi bi-star-fill"></i> 1 Point to Reveal
+          </div>
+        } @else {
+          <span class="tap-hint">Tap to flip</span>
+        }
       </div>
     </div>
   </div>
@@ -32,7 +38,7 @@
       <div class="answer-text">
         <p>{{ question.answer }}</p>
         @if (question.code) {
-        <div class="code-block mt-3 text-start">
+        <div class="code-block mt-3 text-start" (click)="$event.stopPropagation()">
           <pre class="language-java"><code class="language-java">{{ question.code }}</code></pre>
         </div>
         }

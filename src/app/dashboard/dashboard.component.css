@@ -1,9 +1,9 @@
 .dashboard-container {
-  padding: 20px 20px 80px 20px; /* Added bottom padding for AdMob */
-  height: 100vh; /* Use vh to ensure full viewport height */
+  padding: 20px 20px 100px 20px;
+  height: 100vh;
   overflow-y: auto;
   color: #f8fafc;
-  background-color: #020617; /* Enforce dark background */
+  background-color: #020617;
   background-image: 
     radial-gradient(at 50% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%), 
     radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%);
@@ -24,148 +24,238 @@
   color: #ffffff;
 }
 
-.text-highlight {
-  color: #F2994A;
+.user-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.app-subtitle {
-  margin: 0;
-  font-size: 0.9rem;
-  opacity: 0.9;
-  color: #e2e8f0; /* Slate 200 - Lighter than before */
+.points-badge {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.points-badge i {
+  color: #ffd700;
 }
 
 .avatar {
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 2px solid rgba(255,255,255,0.2);
 }
 
-/* Welcome */
-.welcome-section {
-  margin-bottom: 25px;
+.btn-signin {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+  cursor: pointer;
 }
 
-.welcome-section h2 {
+.btn-signin:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-signin i {
+  color: #4285F4; /* Google Blue */
+}
+
+/* Welcome & Login CTA */
+.welcome-section {
+  margin-bottom: 30px;
+}
+
+.login-cta {
+  margin-top: 20px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.login-cta:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(168, 85, 247, 0.3) 100%);
+  transform: translateY(-2px);
+}
+
+.cta-icon {
+  width: 45px;
+  height: 45px;
+  background: rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 5px;
+  color: #a855f7;
+}
+
+.cta-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.cta-text strong {
+  font-size: 1rem;
   color: #ffffff;
 }
 
-.welcome-section p {
-  opacity: 1;
-  font-size: 0.95rem;
-  color: #e2e8f0; /* Slate 200 */
+.cta-text span {
+  font-size: 0.8rem;
+  color: #94a3b8;
 }
 
-/* Quick Action */
-.quick-action-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 20px;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Challenges Carousel */
+.challenges-section {
   margin-bottom: 30px;
-  box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
-  cursor: pointer;
-  transition: transform 0.2s;
-  color: white; /* Ensure text inside card is white */
 }
 
-.quick-action-card:active {
-  transform: scale(0.98);
+.challenges-grid {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 10px 4px 20px 4px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.action-content h3 {
-  margin: 0;
+.challenges-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.challenge-card {
+  flex: 0 0 150px;
+  scroll-snap-align: start;
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 90px;
+  border-left: 4px solid;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.challenge-card:active {
+  transform: scale(0.96);
+}
+
+.challenge-icon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
   font-size: 1.2rem;
-  font-weight: 600;
 }
 
-.action-content p {
+.challenge-card h4 {
   margin: 0;
-  opacity: 0.9;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: white;
 }
 
-.action-icon {
-  font-size: 2.5rem;
-  opacity: 1;
+.challenge-card p {
+  margin: 0;
+  font-size: 0.75rem;
+  opacity: 0.6;
 }
 
-/* Categories Grid */
-.section-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 15px;
-  opacity: 1;
-  color: #ffffff; /* Pure white */
-}
-
+/* Categories */
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  padding-bottom: 20px;
+  gap: 12px;
 }
 
 .category-card {
-  background: rgba(30, 41, 59, 0.7); /* Darker glass */
+  background: rgba(30, 41, 59, 0.7);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   padding: 20px;
-  height: 140px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  cursor: pointer;
+  align-items: flex-start;
+  gap: 15px;
   transition: all 0.2s ease;
-}
-
-.category-card:hover {
-  background: rgba(30, 41, 59, 0.9);
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .category-card:active {
-  transform: scale(0.98);
+  transform: scale(0.95);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: flex-start;
 }
 
 .card-icon {
-  font-size: 1.8rem;
-  width: 50px;
-  height: 50px;
+  font-size: 1.5rem;
+  width: 45px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
-  /* Color and background set inline */
-  transition: transform 0.2s ease;
-}
-
-.category-card:hover .card-icon {
-  transform: scale(1.1);
+  border-radius: 12px;
 }
 
 .card-info h4 {
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
+  line-height: 1.2;
 }
 
 .count-badge {
   font-size: 0.75rem;
-  color: #e2e8f0; /* Lighter slate for better contrast */
-  background: rgba(255, 255, 255, 0.1);
-  padding: 4px 10px;
-  border-radius: 20px;
-  display: inline-block;
+  opacity: 0.6;
+  color: #e2e8f0;
+}
+
+.progress-ring-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.progress-text {
+  position: absolute;
+  font-size: 0.65rem;
+  font-weight: 700;
 }

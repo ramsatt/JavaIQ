@@ -42,18 +42,13 @@ export class QuizModalComponent {
     this.score = 0;
     this.showResults = false;
     
-    // 1. Get unlocked count for the current category
-    const unlockedCount = this.dataService.getUnlockedCount(this.category);
-
     // 2. Filter questions for this category
     let categoryQuestions = this.allQuestions;
     if (this.category !== 'All') {
       categoryQuestions = this.allQuestions.filter(q => q.category === this.category);
     }
 
-    // 3. Get only the unlocked questions from this category
-    // The locking logic assumes the first N questions in the list are unlocked.
-    const availableQuestions = categoryQuestions.slice(0, Math.min(unlockedCount, categoryQuestions.length));
+    const availableQuestions = categoryQuestions;
     
     const shuffled = [...availableQuestions].sort(() => 0.5 - Math.random());
     this.quizQuestions = shuffled.slice(0, 5).map(q => {
@@ -88,6 +83,9 @@ export class QuizModalComponent {
       this.currentQuestionIndex++;
     } else {
       this.showResults = true;
+      if (this.score > 0) {
+        this.dataService.addPoints(this.score * 5);
+      }
     }
   }
 }
