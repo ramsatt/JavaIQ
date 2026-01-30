@@ -1,0 +1,67 @@
+@if (isVisible) {
+<div class="modal-backdrop" (click)="close()">
+  <div class="quiz-card" (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="quiz-header d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h5 class="m-0 text-uppercase text-muted small fw-bold">Java Test</h5>
+        <h2 class="m-0 fw-bold">Quiz Time</h2>
+      </div>
+      <div class="score-badge">
+        {{ score }} / {{ quizQuestions.length }}
+      </div>
+    </div>
+
+    @if (!showResults) {
+      <!-- Progress -->
+      <div class="progress-dots mb-4">
+        <span *ngFor="let q of quizQuestions; let i = index" 
+              class="dot" 
+              [class.active]="i === currentQuestionIndex"
+              [class.completed]="i < currentQuestionIndex"></span>
+      </div>
+
+      <!-- Question -->
+      <div class="question-section mb-4">
+        <h3 class="question-text">{{ quizQuestions[currentQuestionIndex].question }}</h3>
+      </div>
+
+      <!-- Options -->
+      <div class="options-list d-flex flex-column gap-3">
+        @for (option of quizQuestions[currentQuestionIndex].options; track option) {
+          <button class="option-btn"
+                  [class.selected]="option === quizQuestions[currentQuestionIndex].selectedAnswer"
+                  [class.correct]="quizQuestions[currentQuestionIndex].selectedAnswer && option === quizQuestions[currentQuestionIndex].answer"
+                  [class.wrong]="quizQuestions[currentQuestionIndex].selectedAnswer === option && option !== quizQuestions[currentQuestionIndex].answer"
+                  (click)="selectAnswer(option)"
+                  [disabled]="!!quizQuestions[currentQuestionIndex].selectedAnswer">
+            <span class="radio-circle"></span>
+            <span class="option-text">{{ option }}</span>
+          </button>
+        }
+      </div>
+
+      <!-- Next Button -->
+      <div class="mt-4 text-end">
+        <button class="btn btn-next" 
+                [disabled]="!quizQuestions[currentQuestionIndex].selectedAnswer"
+                (click)="nextQuestion()">
+          {{ currentQuestionIndex === quizQuestions.length - 1 ? 'Finish' : 'Next' }} <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+
+    } @else {
+      <!-- Results -->
+      <div class="results-section text-center py-4">
+        <div class="trophy-icon mb-3">🏆</div>
+        <h2 class="fw-bold mb-2">Quiz Complete!</h2>
+        <p class="mb-4">You scored {{ score }} out of {{ quizQuestions.length }}</p>
+        
+        <button class="btn btn-restart w-100" (click)="close()">Close & Practice More</button>
+      </div>
+    }
+
+  </div>
+</div>
+}

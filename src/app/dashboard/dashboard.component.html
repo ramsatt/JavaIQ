@@ -1,0 +1,49 @@
+<div class="dashboard-container">
+  
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h1 class="app-title">Java<span class="text-highlight">IQ</span></h1>
+      <p class="app-subtitle">Your Interview Prep Companion</p>
+    </div>
+    <div class="user-profile">
+      <img src="https://i.pravatar.cc/100?img=12" alt="User" class="avatar">
+    </div>
+  </header>
+
+  <!-- Welcome Section -->
+  <section class="welcome-section">
+    <h2>Hello, Developer! 👋</h2>
+    <p>Ready to master your next interview?</p>
+  </section>
+
+  <!-- Quick Action -->
+  <div class="quick-action-card" (click)="startRandomQuiz()">
+    <div class="action-content">
+      <h3>Quick Practice</h3>
+      <p>Shuffle all questions</p>
+    </div>
+    <div class="action-icon">
+      <i class="bi bi-play-circle-fill"></i>
+    </div>
+  </div>
+
+  <!-- Categories Grid -->
+  <section class="categories-section">
+    <h3 class="section-title">Categories</h3>
+    <div class="categories-grid">
+      <div *ngFor="let cat of categories" 
+           class="category-card" 
+           (click)="navigateToCategory(cat.name)">
+        <div class="card-icon" [style.color]="cat.color" [style.background]="cat.color + '20'">
+          <i class="bi" [class]="cat.icon"></i>
+        </div>
+        <div class="card-info">
+          <h4>{{ cat.name }}</h4>
+          <span class="count-badge">{{ getQuestionCount(cat.name) }} Qs</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

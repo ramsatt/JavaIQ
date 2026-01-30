@@ -1,0 +1,201 @@
+:host {
+  display: block;
+  perspective: 1000px; /* Enable 3D space */
+  width: 100%;
+  height: 60vh; /* Responsive height based on viewport */
+  max-height: 500px; /* Cap it for desktops */
+  min-height: 300px; /* Minimum for small screens */
+}
+
+.flashcard-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.flashcard-container.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; /* Hide back side when flipped */
+  border-radius: 30px;
+  padding: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+/* --- Front Face (Question) --- */
+.card-front {
+  /* background handled dynamically */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+.badge-category {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.question-text h2 {
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  color: #f1f5f9;
+}
+
+.tap-hint {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+}
+
+.card-front .metadata-icons {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* --- Back Face (Answer) --- */
+.card-back {
+  background: #ffffff;
+  color: #1e293b;
+  transform: rotateY(180deg);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.badge-category-dark {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.answer-text {
+  text-align: left;
+  padding: 0 10px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto; /* Allow scrolling if content is very long */
+}
+
+.answer-text p {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: #334155;
+  font-weight: 500;
+  margin: 0;
+  width: 100%;
+}
+
+.metadata-icons {
+  color: #94a3b8;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.metadata-icons:hover {
+  color: #64748b;
+}
+
+.metadata-chip {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid transparent; /* Prepare for colored borders */
+}
+
+.chip-blue {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #bae6fd;
+}
+.chip-green {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+.chip-purple {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border-color: #e9d5ff;
+}
+.chip-orange {
+  background: #ffedd5;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+.chip-pink {
+  background: #fce7f3;
+  color: #be185d;
+  border-color: #fbcfe8;
+}
+.chip-teal {
+  background: #ccfbf1;
+  color: #0f766e;
+  border-color: #99f6e4;
+}
+
+/* --- Code Block Styling --- */
+.code-block {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.code-block pre {
+  margin: 0 !important;
+  padding: 15px !important;
+  font-size: 0.85rem !important;
+  border-radius: 12px !important;
+  max-height: 250px;
+  overflow-y: auto;
+  background: #1e293b !important; /* Force a dark background */
+  color: #f8fafc !important;
+}
+
+.code-block code {
+  font-family: 'Fira Code', 'Consolas', monospace !important;
+  text-shadow: none !important;
+}
+
+/* Scrollbar styling for the code block */
+.code-block pre::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.code-block pre::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.code-block pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.code-block pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

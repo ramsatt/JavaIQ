@@ -1,0 +1,190 @@
+:host {
+  display: block;
+  height: 100vh;
+}
+
+/* .app-container handled by global styles */
+
+/* Header Typography */
+.category-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+  color: #ffffff; /* Explicitly white */
+}
+
+.app-subtitle {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  color: #cbd5e1; /* Slate 300 */
+}
+
+.btn-icon-back {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: background 0.2s;
+}
+
+.btn-icon-back:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Card Stack Effect */
+.card-stack-1,
+.card-stack-2 {
+  position: absolute;
+  width: 85%; /* Slightly smaller than main card */
+  max-width: 360px;
+  height: 60%; /* Approximate height */
+  border-radius: 30px;
+  opacity: 0.4;
+  z-index: 1;
+}
+
+.card-stack-1 {
+  background: linear-gradient(135deg, #56ccf2 0%, #2f80ed 100%);
+  transform: rotate(-5deg) translateY(-10px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-6deg);
+  width: 320px;
+  height: 450px;
+}
+
+.card-stack-2 {
+  background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(6deg);
+  width: 320px;
+  height: 450px;
+  z-index: 0;
+  opacity: 0.3;
+}
+
+/* Footer Controls */
+.btn-icon {
+  background: linear-gradient(
+    135deg,
+    #667eea 0%,
+    #764ba2 100%
+  ); /* Match Dashboard Quick Action Theme */
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 100; /* Ensure it's on top */
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: #2563eb; /* Darker Blue */
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-icon:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #94a3b8; /* Slate 400 */
+  box-shadow: none;
+}
+
+.progress-indicator {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.progress-indicator .current {
+  color: white;
+}
+
+.progress-indicator .divider {
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 5px;
+}
+
+.progress-indicator .total {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Animations */
+.preparing {
+  opacity: 0;
+}
+
+.slideOutLeft {
+  animation: slideOutLeft 0.3s forwards ease-in;
+}
+
+.slideOutRight {
+  animation: slideOutRight 0.3s forwards ease-in;
+}
+
+.slideInRight {
+  animation: slideInRight 0.3s forwards ease-out;
+}
+
+.slideInLeft {
+  animation: slideInLeft 0.3s forwards ease-out;
+}
+
+@keyframes slideOutLeft {
+  to {
+    transform: translateX(-120%) rotate(-10deg);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutRight {
+  to {
+    transform: translateX(120%) rotate(10deg);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(120%) rotate(10deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) rotate(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-120%) rotate(-10deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) rotate(0);
+    opacity: 1;
+  }
+}
+
+footer {
+  padding-bottom: calc(100px + env(safe-area-inset-bottom)) !important; /* Space for AdMob banner + Safe Area */
+  background: transparent; /* Ensure no background covers the gradient */
+}

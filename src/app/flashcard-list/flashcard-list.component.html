@@ -1,0 +1,84 @@
+<div class="app-container d-flex flex-column h-100">
+  <!-- Header -->
+  <header class="p-4">
+    <div class="d-flex align-items-center mb-3">
+      <button class="btn btn-icon-back me-3" (click)="goBack()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <div>
+        <h2 class="category-title m-0">{{ selectedCategory }}</h2>
+        <p class="app-subtitle m-0 text-white-50">Practice Mode</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Card Area -->
+  <main
+    class="flex-grow-1 d-flex align-items-center justify-content-center position-relative p-3"
+    (touchstart)="onTouchStart($event)"
+    (touchend)="onTouchEnd($event)"
+  >
+    <!-- Background Stacked Cards (Decorative) -->
+    <div class="card-stack-1"></div>
+    <div class="card-stack-2"></div>
+
+    <!-- Active Card -->
+    <div
+      class="active-card-container w-100"
+      style="max-width: 400px; z-index: 10; opacity: 1; transition: opacity 0.3s ease"
+      [ngClass]="animationState"
+    >
+      @if (!isLocked()) {
+      <app-flashcard-item
+        [question]="filteredQuestions[currentQuestionIndex]"
+        (answerShown)="onAnswerShown()"
+      >
+      </app-flashcard-item>
+      } @else {
+      <div
+        class="card p-4 text-center shadow-lg border-0"
+        style="
+          background: linear-gradient(135deg, #2c3e50, #4ca1af);
+          color: white;
+          border-radius: 20px;
+          min-height: 400px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        "
+      >
+        <i class="bi bi-lock-fill" style="font-size: 4rem; margin-bottom: 20px"></i>
+        <h3 class="mb-3">Content Locked</h3>
+        <p class="mb-4">Watch a short video to unlock the next 5 questions!</p>
+        <button class="btn btn-light btn-lg px-4 rounded-pill fw-bold" (click)="unlockQuestions()">
+          <i class="bi bi-play-circle-fill me-2"></i> Unlock Now
+        </button>
+      </div>
+      }
+    </div>
+  </main>
+
+  <!-- Footer / Controls -->
+  <footer class="p-4 d-flex justify-content-between align-items-center">
+    <button class="btn btn-icon" (click)="prevQuestion()" [disabled]="currentQuestionIndex === 0">
+      <i class="bi bi-arrow-left"></i> Prev
+    </button>
+
+    <div class="progress-indicator">
+      <span class="current">{{ currentQuestionIndex + 1 }}</span>
+      <span class="divider">/</span>
+      <span class="total">{{ filteredQuestions.length }}</span>
+    </div>
+
+    <button
+      class="btn btn-icon"
+      (click)="nextQuestion()"
+      [disabled]="currentQuestionIndex === filteredQuestions.length - 1"
+    >
+      Next <i class="bi bi-arrow-right"></i>
+    </button>
+  </footer>
+</div>
+
+<app-quiz-modal [allQuestions]="allQuestions" [category]="selectedCategory" (quizFinished)="onQuizFinished()"></app-quiz-modal>
