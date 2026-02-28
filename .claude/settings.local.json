@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 /dev/stdin:*)",
+      "Bash(printf '%s' 'import os:*)",
+      "Bash(python3 /tmp/write_spring.py)",
+      "Bash(/c/Users/ramsa/AppData/Local/Microsoft/WindowsApps/python3 --version)",
+      "Bash(python3 -:*)",
+      "Bash(node --version)",
+      "Bash(powershell -Command \"Write-Host ''PS OK''\")",
+      "Bash(perl --version)",
+      "Bash(node -e \":*)",
+      "Bash(python3 -c \":*)",
+      "Bash(python3:*)",
+      "Bash(where python)",
+      "Bash(where python3)",
+      "Bash(where py)",
+      "Bash(node /tmp/write_spring_framework.js)",
+      "Bash(py --version)",
+      "Bash(node -e \"require\\(''fs''\\).writeFileSync\\(''D:/A21/JavaIQ/.claude/worktrees/awesome-proskuriakova/src/app/data/tutorials/java-fundamentals.ts'', ''test'', ''utf8''\\); console.log\\(''node write works''\\);\")",
+      "Bash(powershell -NoProfile -Command \":*)",
+      "Bash(powershell -NoProfile -Command \"Set-Content -Path ''D:/A21/JavaIQ/.claude/worktrees/awesome-proskuriakova/src/app/data/tutorials/spring-framework.ts'' -Value ''PSTEST_OK'' -Encoding UTF8; Write-Host ''PS write OK''\")",
+      "Bash(printf '%s' 'const fs = require\\(\"\"fs\"\"\\);')",
+      "Bash(printf '%s\\\\n' 'console.log\\(\"\"script loaded\"\"\\);')",
+      "Bash(node /tmp/wjf.js)",
+      "Bash(printf '%s\\\\n' \"const fs = require\\(''fs''\\);\")",
+      "Bash(printf '%s\\\\n' \"const BT = String.fromCharCode\\(96\\);\")",
+      "Bash(printf '%s\\\\n' \"const Q = ''\"\"'';\")",
+      "Bash(printf '%s\\\\n' \"const path = ''D:/A21/JavaIQ/.claude/worktrees/awesome-proskuriakova/src/app/data/tutorials/java-fundamentals.ts'';\")",
+      "Bash(node -e \"const os=require\\(''os''\\); console.log\\(os.tmpdir\\(\\)\\);\")",
+      "Bash(node \"C:/Users/ramsa/AppData/Local/Temp/test42.js\")",
+      "Bash(node -e \"const fs=require\\(''fs''\\); fs.writeFileSync\\(''C:/Users/ramsa/AppData/Local/Temp/test42.js'',''console.log\\(42\\);'',''utf8''\\); console.log\\(''wrote ok''\\);\")",
+      "Bash(printf '%s' 'test single quote heredoc')",
+      "Bash(node -e:*)",
+      "Bash(echo \"heredoc to node stdin works: $?\")",
+      "Bash(printf '%s\\\\n' 'import os')",
+      "Bash(printf '%s\\\\n' 'BT = chr\\(96\\)')",
+      "Bash(printf '%s\\\\n' 'dest = \"\"D:/A21/JavaIQ/.claude/worktrees/awesome-proskuriakova/src/app/data/tutorials/java-fundamentals.ts\"\"')",
+      "Bash(printf '%s\\\\n' 'print\\(\"\"Script loaded, path:\"\", dest\\)')",
+      "Bash(py /tmp/wjf.py)"
+    ]
+  }
+}
