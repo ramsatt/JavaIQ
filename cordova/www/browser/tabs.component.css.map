@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;874b30220f5a106598232048f50fd028a5745f1c11c71a0607f81da4393a39f1;D:/A21/JavaIQ/src/app/tabs/tabs.component.ts"],
-  "sourcesContent": ["\n    ion-tab-bar {\n      --background: #ffffff;\n      border-top: 1px solid #e2e8f0;\n      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);\n      height: 64px;\n    }\n\n    ion-tab-button {\n      --color: #94a3b8;\n      --color-selected: #4f46e5;\n      font-size: 0.6rem;\n      font-weight: 600;\n      letter-spacing: 0.03em;\n    }\n\n    ion-tab-button::part(native) {\n      padding-top: 8px;\n      padding-bottom: 6px;\n    }\n\n    ion-icon {\n      font-size: 1.25rem;\n      margin-bottom: 3px;\n    }\n  "],
-  "mappings": ";AACI;AACE,gBAAc;AACd,cAAY,IAAI,MAAM;AACtB,cAAY,EAAE,KAAK,KAAK,KAAK,CAAC,EAAE,CAAC,EAAE,CAAC,EAAE;AACtC,UAAQ;AACV;AAEA;AACE,WAAS;AACT,oBAAkB;AAClB,aAAW;AACX,eAAa;AACb,kBAAgB;AAClB;AAEA,cAAc,OAAO;AACnB,eAAa;AACb,kBAAgB;AAClB;AAEA;AACE,aAAW;AACX,iBAAe;AACjB;",
-  "names": []
-}
