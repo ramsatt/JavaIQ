@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DataService } from '../data.service';
 import { AuthService } from '../auth.service';
+import { GamificationService } from '../gamification.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +16,7 @@ export class DashboardComponent {
   private router = inject(Router);
   public dataService = inject(DataService);
   public authService = inject(AuthService);
+  public gameService = inject(GamificationService);
 
   categories = [
     { name: 'Core Java', icon: 'bi-cup-hot', color: '#FF5252' },
@@ -27,12 +29,6 @@ export class DashboardComponent {
     { name: 'Coding Questions', icon: 'bi-code-slash', color: '#00E676' }
   ];
 
-  challenges = [
-    { name: 'Daily Challenge', qs: 3, icon: 'bi-clock-history', color: '#FF9100' },
-    { name: 'Weekly Challenge', qs: 5, icon: 'bi-calendar-event', color: '#2979FF' },
-    { name: 'Monthly Challenge', qs: 10, icon: 'bi-trophy', color: '#FFD600' }
-  ];
-
   getQuestionCount(category: string): number {
     return this.dataService.getQuestions(category).length;
   }
@@ -41,17 +37,18 @@ export class DashboardComponent {
     return this.dataService.getProgress(category);
   }
 
+  getCategoryStars(category: string): number {
+    return this.dataService.getCategoryStars(category);
+  }
+
+  isLocked(category: string): boolean {
+    return this.dataService.isCategoryLocked(category);
+  }
+
   navigateToCategory(category: string) {
-    this.router.navigate(['/practice', category]);
-  }
-
-  startChallenge(challenge: any) {
-    // Navigate to challenge component (to be implemented)
-    this.router.navigate(['/challenge', challenge.name]);
-  }
-
-  startRandomQuiz() {
-    this.router.navigate(['/practice', 'All']);
+    if (this.isLocked(category)) return;
+    // Route to Challenge Component for the "Game" experience
+    this.router.navigate(['/challenge', category]);
   }
 
   goToLeaderboard() {

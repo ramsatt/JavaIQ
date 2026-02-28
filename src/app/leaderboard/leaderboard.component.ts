@@ -39,8 +39,8 @@ import { Router } from '@angular/router';
                 <span class="name">{{ user.displayName || 'Anonymous' }}</span>
               </div>
               <div class="points">
-                <i class="bi bi-star-fill"></i>
-                {{ user.points }}
+                <i class="bi bi-lightning-charge-fill"></i>
+                {{ user.points }} XP
               </div>
             </div>
           } @empty {

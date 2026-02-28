@@ -1,261 +1,419 @@
-.dashboard-container {
-  padding: 20px 20px 100px 20px;
-  height: 100vh;
-  overflow-y: auto;
-  color: #f8fafc;
-  background-color: #020617;
-  background-image: 
-    radial-gradient(at 50% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%), 
-    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%);
+:host {
+  --bg-dark: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent-primary: #3b82f6; /* Professional Blue */
+  --accent-success: #10b981;
+  --accent-warning: #f59e0b;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  display: block; /* Ensure host element behaves like a block for layout */
 }
 
-/* Header */
-.dashboard-header {
+.dashboard-container {
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  background-image: linear-gradient(to bottom, #0f172a, #020617);
+  padding-bottom: 80px;
+}
+
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Top Bar --- */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  padding: 12px 20px;
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.app-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin: 0;
-  color: #ffffff;
-}
-
-.user-stats {
+.brand {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.points-badge {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 6px 12px;
-  border-radius: 20px;
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--accent-primary), #2563eb);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.brand-text h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+}
+
+.highlight {
+  color: var(--accent-primary);
+}
+
+.edition-badge {
+  font-size: 0.6rem;
+  background: rgba(255,255,255,0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Stat Group */
+.stat-group {
   display: flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
-.points-badge i {
-  color: #ffd700;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
+.stat-icon {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.2);
-}
-
-.btn-signin {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 12px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-.btn-signin:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-}
-
-.btn-signin i {
-  color: #4285F4; /* Google Blue */
-}
-
-/* Welcome & Login CTA */
-.welcome-section {
-  margin-bottom: 30px;
-}
-
-.login-cta {
-  margin-top: 20px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
-  border: 1px solid rgba(168, 85, 247, 0.3);
-  border-radius: 20px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.login-cta:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(168, 85, 247, 0.3) 100%);
-  transform: translateY(-2px);
-}
-
-.cta-icon {
-  width: 45px;
-  height: 45px;
-  background: rgba(168, 85, 247, 0.3);
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  color: #a855f7;
+  font-size: 0.9rem;
+  background: rgba(255,255,255,0.05);
+  color: var(--text-secondary);
 }
 
-.cta-text {
-  display: flex;
-  flex-direction: column;
+.stat-icon.level { color: var(--accent-warning); }
+.stat-icon.level span { position: absolute; font-size: 0.7rem; font-weight: 700; color: white; margin-top: 1px;}
+
+.stat-icon.streak.active { color: #f97316; background: rgba(249, 115, 22, 0.1); }
+
+.stat-value {
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
-.cta-text strong {
-  font-size: 1rem;
-  color: #ffffff;
+.avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
 }
 
-.cta-text span {
-  font-size: 0.8rem;
-  color: #94a3b8;
-}
-
-/* Challenges Carousel */
-.challenges-section {
-  margin-bottom: 30px;
-}
-
-.challenges-grid {
-  display: flex;
-  overflow-x: auto;
-  gap: 16px;
-  padding: 10px 4px 20px 4px;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.challenges-grid::-webkit-scrollbar {
-  display: none;
-}
-
-.challenge-card {
-  flex: 0 0 150px;
-  scroll-snap-align: start;
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 18px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 90px;
-  border-left: 4px solid;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
-.challenge-card:active {
-  transform: scale(0.96);
-}
-
-.challenge-icon {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  font-size: 1.2rem;
-}
-
-.challenge-card h4 {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 700;
+.btn-login-sm {
+  background: var(--accent-primary);
+  border: none;
   color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 
-.challenge-card p {
-  margin: 0;
-  font-size: 0.75rem;
-  opacity: 0.6;
+/* --- Hero Section --- */
+.hero-stats {
+  padding: 16px 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-/* Categories */
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+.hero-card {
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(30, 41, 59, 0.4));
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
-.category-card {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  padding: 20px;
+.hero-text h2 {
+  font-size: 1.2rem;
+  margin: 0 0 4px 0;
+  font-weight: 700;
+}
+
+.hero-text p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.progress-overall {
+  background: rgba(15, 23, 42, 0.5);
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.progress-track {
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent-success);
+  border-radius: 4px;
+}
+
+.next-goal {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* --- Section Header --- */
+.learning-path {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section-header {
+  margin-bottom: 24px;
+}
+
+.section-header h3 {
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.path-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* --- Timeline Module List --- */
+.module-list {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 15px;
-  transition: all 0.2s ease;
+  gap: 24px;
+  padding-left: 20px; /* Space for line */
+}
+
+/* The vertical line */
+.timeline-line {
+  position: absolute;
+  left: 31px; /* Align with marker center */
+  top: 20px;
+  bottom: 50px;
+  width: 2px;
+  background: var(--border-subtle);
+  z-index: 0;
+}
+
+.module-item {
+  display: flex;
+  gap: 20px;
   position: relative;
+  z-index: 1;
+}
+
+/* Markers */
+.timeline-marker {
+  padding-top: 16px; /* Align with card top */
+  width: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.marker-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  background: var(--bg-dark);
+  border: 2px solid var(--border-subtle);
+  z-index: 5;
+}
+
+.marker-dot.locked {
+  color: var(--text-secondary);
+  background: #1e293b;
+}
+
+.marker-dot.active {
+  border-color: var(--accent-primary);
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.pulse-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-primary);
+  animation: pulse 2s infinite;
+}
+
+.marker-dot.completed {
+  background: var(--accent-success);
+  border-color: var(--accent-success);
+  color: white;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* Module Card */
+.module-card {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: #1e293b; 
+}
+
+.module-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,0.1);
+}
+
+.module-item.locked .module-card {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(30, 41, 59, 0.4);
+}
+
+.module-item.active .module-card {
+  border-color: var(--accent-primary);
+  background: linear-gradient(to right, rgba(59, 130, 246, 0.05), rgba(30, 41, 59, 0.7));
+}
+
+.card-header {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.module-title h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.module-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.action-arrow {
+  margin-left: auto;
+  color: var(--text-secondary);
+}
+
+/* Card Body (Progress) */
+.card-body {
+  padding: 0 16px 16px 16px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 12px;
+}
+
+.skill-meter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.skill-meter .label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stars {
+  font-size: 0.8rem;
+}
+
+.progress-mini {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bar-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
   overflow: hidden;
 }
 
-.category-card:active {
-  transform: scale(0.95);
+.bar-fill {
+  height: 100%;
+  background: var(--accent-primary);
+  border-radius: 3px;
 }
 
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: flex-start;
-}
-
-.card-icon {
-  font-size: 1.5rem;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-}
-
-.card-info h4 {
-  margin: 0 0 4px 0;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1.2;
-}
-
-.count-badge {
+.mini .percent {
   font-size: 0.75rem;
-  opacity: 0.6;
-  color: #e2e8f0;
+  color: var(--text-secondary);
+  width: 32px;
+  text-align: right;
 }
 
-.progress-ring-container {
-  position: relative;
+.card-locked-msg {
+  padding: 0 16px 16px 80px; /* Align deeply */
+  font-size: 0.8rem;
+  color: var(--text-secondary);
   display: flex;
+  gap: 8px;
   align-items: center;
-  justify-content: center;
-}
-
-.progress-ring__circle {
-  transition: stroke-dashoffset 0.35s;
-  transform: rotate(-90deg);
-  transform-origin: 50% 50%;
-}
-
-.progress-text {
-  position: absolute;
-  font-size: 0.65rem;
-  font-weight: 700;
 }

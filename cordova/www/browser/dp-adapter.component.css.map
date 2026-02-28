@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;6ca1b4b71322260936bbef9306106bf4c7066aeed781e2e1a31044135b225cc2;D:/A21/JavaIQ/src/app/features/tutorials/topics/dp-adapter.component.ts"],
+  "sourcesContent": ["\n    .section { margin-bottom: 48px; } .section-heading { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 0 0 20px; padding-bottom: 14px; border-bottom: 1px solid #e2e8f0; } .icon-sky { color: #0284c7; } .icon-indigo { color: #4f46e5; }\n    .prose { font-size: 0.88rem; color: #334155; line-height: 1.75; } .prose p { margin: 0 0 14px; }\n    .op-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; } .op-card { background: #fff; padding: 22px 20px; border-radius: 14px; border: 1px solid #e2e8f0; } .op-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0 0 8px; }\n  "],
+  "mappings": ";AACI,CAAC;AAAU,iBAAe;AAAM;AAAE,CAAC;AAAkB,WAAS;AAAM,eAAa;AAAQ,OAAK;AAAM,aAAW;AAAQ,eAAa;AAAK,SAAO;AAAS,UAAQ,EAAE,EAAE;AAAM,kBAAgB;AAAM,iBAAe,IAAI,MAAM;AAAS;AAAE,CAAC;AAAW,SAAO;AAAS;AAAE,CAAC;AAAc,SAAO;AAAS;AAClS,CAAC;AAAQ,aAAW;AAAS,SAAO;AAAS,eAAa;AAAM;AAAE,CAAjE,MAAwE;AAAI,UAAQ,EAAE,EAAE;AAAM;AAC/F,CAAC;AAAU,WAAS;AAAM,yBAAuB,OAAO,QAAQ,EAAE,OAAO,KAAK,EAAE;AAAO,OAAK;AAAM;AAAE,CAAC;AAAU,cAAY;AAAM,WAAS,KAAK;AAAM,iBAAe;AAAM,UAAQ,IAAI,MAAM;AAAS;AAAE,CAAC;AAAW,aAAW;AAAS,eAAa;AAAK,SAAO;AAAS,UAAQ,EAAE,EAAE;AAAK;",
+  "names": []
+}

@@ -1,0 +1,141 @@
+<div class="game-container" [class.shake]="shakeScreen">
+  <!-- HUD -->
+  <header class="game-hud">
+    <div class="hud-left">
+      <button (click)="quitGame()" class="btn-icon">
+         <i class="bi bi-x-lg"></i>
+      </button>
+      <div class="progress-pill">
+        <span>{{ currentIndex + 1 }}</span>
+        <span class="divider">/</span>
+        <span>{{ questions.length }}</span>
+      </div>
+    </div>
+
+    <div class="hud-center">
+       @if (combo > 1) {
+         <div class="combo-badge">
+           <i class="bi bi-fire"></i> {{ combo }} Combo!
+         </div>
+       }
+    </div>
+
+    <div class="hud-right">
+      <div class="score-pill">
+         <i class="bi bi-lightning-fill"></i> {{ earnedXp }} XP
+      </div>
+    </div>
+  </header>
+
+  <!-- Timer Bar -->
+  <div class="timer-container">
+    <div class="timer-bar" [style.width.%]="timerProgress" [class.danger]="timerProgress < 30"></div>
+  </div>
+
+  <!-- Game Area -->
+  <main class="game-area">
+    @if (questions.length > 0 && !isGameFinished) {
+      
+      <!-- Question Card -->
+      <div class="card-stack">
+        <!-- XP Popup -->
+        @if (showXpPopup) {
+          <div class="xp-popup">
+            +{{ lastGainedXp }} XP
+            @if (lastGainedBonus.length > 0) {
+              <div class="bonus-text">{{ lastGainedBonus }}</div>
+            }
+          </div>
+        }
+
+        <div class="question-card glass-panel">
+          <div class="card-header-badge">{{ questions[currentIndex].category }}</div>
+          
+          <h2 class="question-text">{{ questions[currentIndex].question }}</h2>
+          
+          @if (questions[currentIndex].code) {
+            <pre class="code-block"><code>{{ questions[currentIndex].code }}</code></pre>
+          }
+
+          <!-- Answer Overlay (Hidden initially) -->
+          @if (isAnswerVisible) {
+            <div class="answer-reveal-area">
+              <h3>Correct Answer</h3>
+              <p>{{ questions[currentIndex].answer }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-area">
+        @if (!isAnswerVisible) {
+          <button class="btn-action reveal" (click)="revealAnswer()">
+            Show Answer
+          </button>
+        } @else {
+          <div class="rating-grid">
+            <button class="btn-action miss" (click)="submitResult(false)">
+              <i class="bi bi-x-circle"></i> Needs Review
+            </button>
+            <button class="btn-action hit" (click)="submitResult(true)">
+              <i class="bi bi-check-circle-fill"></i> Got It!
+            </button>
+          </div>
+        }
+      </div>
+
+    } @else if (isGameFinished) {
+      <!-- Result Screen -->
+      <div class="result-screen">
+        <div class="result-card glass-panel">
+          <div class="result-header">
+            <h2>Session Complete</h2>
+             <div class="star-rating">
+               @for (s of [1,2,3]; track s) {
+                 <i class="bi" 
+                    [class.bi-star-fill]="starsEarned >= s" 
+                    [class.bi-star]="starsEarned < s"
+                    [class.active]="starsEarned >= s"></i>
+               }
+             </div>
+          </div>
+
+          <div class="xp-summary-list">
+            <div class="summary-row">
+              <span>Base XP</span>
+              <span>{{ baseXp }}</span>
+            </div>
+            @if (comboXp > 0) {
+              <div class="summary-row highlight">
+                <span>Combo Bonus</span>
+                <span>+{{ comboXp }}</span>
+              </div>
+            }
+            @if (speedXp > 0) {
+              <div class="summary-row highlight">
+                <span>Speed Bonus</span>
+                <span>+{{ speedXp }}</span>
+              </div>
+            }
+            <div class="total-row">
+              <span>Total Earned</span>
+              <span>+{{ earnedXp }} XP</span>
+            </div>
+          </div>
+          
+          <div class="level-progress-preview">
+            <div class="level-label">Level {{ gameService.level() }} Progress</div>
+            <div class="xp-bar-bg">
+              <div class="xp-bar-fill" [style.width.%]="gameService.levelProgress()"></div>
+            </div>
+          </div>
+
+          <button class="btn-action primary" (click)="quitGame()">
+            Continue
+          </button>
+        </div>
+      </div>
+    }
+  </main>
+</div>

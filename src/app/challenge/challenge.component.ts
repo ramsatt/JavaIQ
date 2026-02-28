@@ -1,330 +1,206 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService, Question } from '../data.service';
+import { GamificationService } from '../gamification.service';
 
 @Component({
   selector: 'app-challenge',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="challenge-container">
-      <header class="challenge-header">
-        <button (click)="goBack()" class="back-btn">
-          <i class="bi bi-arrow-left"></i>
-        </button>
-        <h1>{{ challengeName }}</h1>
-        <div class="progress-info">
-          {{ currentIndex + 1 }} / {{ questions.length }}
-        </div>
-      </header>
-
-      <div class="quiz-viewer">
-        @if (questions.length > 0) {
-          <div class="quiz-card">
-            <!-- Question Side -->
-            <div class="card-content">
-              <span class="category-badge">{{ questions[currentIndex].category }}</span>
-              <h2 class="question-text">{{ questions[currentIndex].question }}</h2>
-              
-              @if (questions[currentIndex].code) {
-                <pre class="code-block"><code>{{ questions[currentIndex].code }}</code></pre>
-              }
-
-              @if (isAnswerVisible) {
-                <div class="answer-section">
-                  <div class="divider"></div>
-                  <h3 class="answer-label">Answer:</h3>
-                  <p class="answer-text">{{ questions[currentIndex].answer }}</p>
-                </div>
-              }
-            </div>
-
-            <!-- Actions -->
-            <div class="actions-area">
-              @if (!isAnswerVisible) {
-                <button class="btn-reveal" (click)="revealAnswer()">
-                  <i class="bi bi-eye"></i> Reveal Answer
-                </button>
-              } @else {
-                <div class="rating-buttons">
-                  <button class="btn-rate wrong" (click)="rateAnswer(false)">
-                    <i class="bi bi-x-lg"></i> Didn't Know
-                  </button>
-                  <button class="btn-rate correct" (click)="rateAnswer(true)">
-                    <i class="bi bi-check-lg"></i> Knew It
-                  </button>
-                </div>
-              }
-            </div>
-          </div>
-        } @else {
-          <div class="complete-state">
-            <div class="score-circle">
-              <svg width="120" height="120">
-                <circle cx="60" cy="60" r="54" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"/>
-                <circle cx="60" cy="60" r="54" 
-                  [attr.stroke]="getScoreColor()" 
-                  stroke-width="8" fill="none"
-                  [style.stroke-dasharray]="339.292"
-                  [style.stroke-dashoffset]="339.292 - (339.292 * (score / totalQuestions))"
-                  transform="rotate(-90 60 60)"/>
-              </svg>
-              <div class="score-text">
-                <span class="score-value">{{ score }}/{{ totalQuestions }}</span>
-              </div>
-            </div>
-            
-            <h2>Challenge Complete!</h2>
-            <p>You earned {{ earnedPoints }} points</p>
-            
-            <button (click)="goBack()" class="finish-btn">Done</button>
-          </div>
-        }
-      </div>
-    </div>
-  `,
-  styles: [`
-    .challenge-container {
-      height: 100vh;
-      background: #0f172a;
-      color: white;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .challenge-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .back-btn {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .progress-info {
-      font-family: monospace;
-      background: rgba(255,255,255,0.1);
-      padding: 5px 12px;
-      border-radius: 15px;
-    }
-    .quiz-viewer {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      max-width: 600px;
-      margin: 0 auto;
-      width: 100%;
-    }
-    .quiz-card {
-      background: #1e293b;
-      border-radius: 20px;
-      padding: 24px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid rgba(255,255,255,0.05);
-      overflow-y: auto;
-    }
-    .card-content {
-      flex: 1;
-      overflow-y: auto;
-    }
-    .category-badge {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #94a3b8;
-      background: rgba(255,255,255,0.05);
-      padding: 4px 8px;
-      border-radius: 4px;
-    }
-    .question-text {
-      margin: 16px 0;
-      font-size: 1.25rem;
-      line-height: 1.5;
-    }
-    .code-block {
-      background: #0f172a;
-      padding: 16px;
-      border-radius: 12px;
-      overflow-x: auto;
-      border: 1px solid rgba(255,255,255,0.1);
-      margin: 16px 0;
-      font-size: 0.9rem;
-      font-family: 'Fira Code', monospace;
-    }
-    .divider {
-      height: 1px;
-      background: rgba(255,255,255,0.1);
-      margin: 24px 0;
-    }
-    .answer-label {
-      color: #94a3b8;
-      font-size: 0.9rem;
-      margin-bottom: 8px;
-    }
-    .answer-text {
-      color: #e2e8f0;
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
-    .actions-area {
-      margin-top: 24px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255,255,255,0.05);
-    }
-    .btn-reveal {
-      width: 100%;
-      padding: 16px;
-      background: #3b82f6;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: background 0.2s;
-    }
-    .btn-reveal:active { background: #2563eb; }
-    
-    .rating-buttons {
-      display: flex;
-      gap: 12px;
-    }
-    .btn-rate {
-      flex: 1;
-      padding: 16px;
-      border: none;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      font-size: 1rem;
-    }
-    .wrong { background: #ef4444; color: white; }
-    .correct { background: #22c55e; color: white; }
-    
-    .complete-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      text-align: center;
-    }
-    .score-circle {
-      position: relative;
-      margin-bottom: 24px;
-    }
-    .score-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 2rem;
-      font-weight: bold;
-    }
-    .finish-btn {
-      background: white;
-      color: #0f172a;
-      border: none;
-      padding: 12px 40px;
-      border-radius: 25px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin-top: 30px;
-      cursor: pointer;
-    }
-  `]
+  templateUrl: './challenge.component.html',
+  styleUrls: ['./challenge.component.css']
 })
 export class ChallengeComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private dataService = inject(DataService);
+  public gameService = inject(GamificationService);
 
+  // Game State
   challengeName = '';
   questions: Question[] = [];
   currentIndex = 0;
   isAnswerVisible = false;
+  isGameFinished = false;
+
+  // Stats
+  score = 0; // Correct answers
+  combo = 0;
+  maxCombo = 0;
+  earnedXp = 0;
   
-  score = 0;
-  totalQuestions = 0;
-  earnedPoints = 0;
+  // Breakdown for results
+  baseXp = 0;
+  comboXp = 0;
+  speedXp = 0;
+  starsEarned = 0;
+
+  // Temp Visuals
+  timerProgress = 100;
+  timerInterval: any;
+  startTime = 0;
+  
+  showXpPopup = false;
+  lastGainedXp = 0;
+  lastGainedBonus = '';
+  shakeScreen = false;
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.challengeName = params.get('type') || '';
-      this.loadQuestions();
+      this.startGame();
     });
   }
 
-  loadQuestions() {
-    let count = 3;
-    if (this.challengeName.includes('Weekly')) count = 5;
-    if (this.challengeName.includes('Monthly')) count = 10;
-
-    const all = this.dataService.getQuestions();
-    // Shuffle and pick
-    this.questions = [...all]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, count);
-    
-    this.totalQuestions = this.questions.length;
+  startGame() {
+    // Reset State
     this.currentIndex = 0;
     this.score = 0;
+    this.combo = 0;
+    this.earnedXp = 0;
+    this.baseXp = 0;
+    this.comboXp = 0;
+    this.speedXp = 0;
+    this.isGameFinished = false;
+
+    // Load Questions
+    const count = 10; 
+    let all = this.dataService.getQuestions(this.challengeName);
+    if (all.length === 0) all = this.dataService.getQuestions(); 
+
+    // Filter unrevealed first
+    const unrevealed = all.filter(q => !this.dataService.revealedQuestionIds().has(q.id));
+    const revealed = all.filter(q => this.dataService.revealedQuestionIds().has(q.id));
+    
+    let selection: Question[] = [];
+
+    if (unrevealed.length >= count) {
+      // Pick 10 random new questions
+      selection = unrevealed.sort(() => Math.random() - 0.5).slice(0, count);
+    } else {
+      // Take all new questions + fill with review questions
+      const needed = count - unrevealed.length;
+      const reviewSet = revealed.sort(() => Math.random() - 0.5).slice(0, needed);
+      selection = [...unrevealed, ...reviewSet];
+      // Shuffle the final mix so new ones aren't just at the front
+      selection.sort(() => Math.random() - 0.5);
+    }
+    
+    this.questions = selection;
+    this.startQuestion();
+  }
+
+  startQuestion() {
     this.isAnswerVisible = false;
+    this.timerProgress = 100;
+    this.startTime = Date.now();
+    
+    clearInterval(this.timerInterval);
+    this.timerInterval = setInterval(() => {
+      const elapsed = Date.now() - this.startTime;
+      // 15 seconds per question? Or just for bonus?
+      // Let's make the bar represent 10 seconds for "Speed" context, but answer time is unlimited
+      // Logic: Bar depletes in 10s. Speed bonus if answered in < 5s (half bar).
+      
+      const MAX_TIME = 10000; 
+      const remaining = Math.max(0, MAX_TIME - elapsed);
+      this.timerProgress = (remaining / MAX_TIME) * 100;
+      
+      if (remaining === 0) clearInterval(this.timerInterval);
+    }, 100);
   }
 
   revealAnswer() {
     this.isAnswerVisible = true;
+    clearInterval(this.timerInterval); // Stop timer visual
   }
 
-  rateAnswer(isCorrect: boolean) {
+  submitResult(isCorrect: boolean) {
     if (isCorrect) {
       this.score++;
-    }
+      this.combo++;
+      if (this.combo > this.maxCombo) this.maxCombo = this.combo;
+      
+      // Calculate XP
+      const timeTaken = Date.now() - this.startTime;
+      const isSpeedy = timeTaken < 5000;
+      
+      let xp = 10; // Base
+      this.baseXp += 10;
+      
+      let bonusText = '';
+      
+      if (this.combo > 1) {
+        const bonus = 5; // Flat bonus for maintaining streak > 1
+        xp += bonus;
+        this.comboXp += bonus;
+        bonusText = `${this.combo}x Combo!`;
+      }
+      
+      if (isSpeedy) {
+        const bonus = 5;
+        xp += bonus;
+        this.speedXp += bonus;
+        bonusText = isSpeedy ? (bonusText ? 'Combo + Speed!' : 'Speed Bonus!') : bonusText;
+      }
 
-    if (this.currentIndex < this.questions.length - 1) {
-      this.currentIndex++;
-      this.isAnswerVisible = false;
+      this.earnedXp += xp;
+      
+      // Trigger Visuals
+      this.triggerXpPopup(xp, bonusText);
+      this.gameService.addXp(xp); // Award immediately or at end? Immediately feels better "ding"
+      
+      // Mark as revealed/learned in DataService
+      this.dataService.markAsRevealed(this.questions[this.currentIndex].id);
+
     } else {
-      this.finishChallenge();
+      this.combo = 0;
+      this.baseXp += 2; // Pity XP for trying
+      this.earnedXp += 2;
+      this.gameService.addXp(2);
+      this.triggerShake();
     }
+
+    // Next
+    setTimeout(() => {
+      if (this.currentIndex < this.questions.length - 1) {
+        this.currentIndex++;
+        this.startQuestion();
+      } else {
+        this.finishGame();
+      }
+    }, 1000); // Delay to see popup
   }
 
-  async finishChallenge() {
-    // 10 pts per correct answer + 20 bonus for completion
-    this.earnedPoints = (this.score * 10) + 20;
-    await this.dataService.addPoints(this.earnedPoints);
-    this.questions = []; // Trigger complete view
+  finishGame() {
+    this.isGameFinished = true;
+    
+    // Calculate Stars
+    const percentage = this.score / this.questions.length;
+    if (percentage >= 1) this.starsEarned = 3;
+    else if (percentage >= 0.7) this.starsEarned = 2;
+    else if (percentage >= 0.4) this.starsEarned = 1;
+    else this.starsEarned = 0;
+    
+    // Save to DataService maybe? 
+    // DataService calculates stars based on *Total Progress*, not quiz performance.
+    // So this star rating is just for the specific session result screen.
   }
 
-  getScoreColor() {
-    const percentage = this.score / this.totalQuestions;
-    if (percentage >= 0.8) return '#22c55e'; // Green
-    if (percentage >= 0.5) return '#eab308'; // Yellow
-    return '#ef4444'; // Red
-  }
-
-  goBack() {
+  quitGame() {
     this.router.navigate(['/']);
+  }
+
+  triggerXpPopup(xp: number, text: string) {
+    this.lastGainedXp = xp;
+    this.lastGainedBonus = text;
+    this.showXpPopup = true;
+    setTimeout(() => this.showXpPopup = false, 1000);
+  }
+
+  triggerShake() {
+    this.shakeScreen = true;
+    setTimeout(() => this.shakeScreen = false, 500);
   }
 }

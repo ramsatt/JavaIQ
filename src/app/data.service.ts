@@ -157,9 +157,39 @@ export class DataService {
     return Math.round((revealedInCategory / categoryQuestions.length) * 100);
   }
 
+  getCategoryStars(category: string): number {
+    const progress = this.getProgress(category);
+    if (progress >= 100) return 3;
+    if (progress >= 60) return 2;
+    if (progress >= 30) return 1;
+    return 0;
+  }
+
+  // Defined order for the "Path"
+  private readonly CATEGORY_PATH = [
+    'Core Java',
+    'Spring Boot',
+    'Microservices', 
+    'Hibernate',
+    'Spring Reactive',
+    'Multithreading',
+    'Reactive Programming',
+    'Coding Questions'
+  ];
+
+  isCategoryLocked(category: string): boolean {
+    const index = this.CATEGORY_PATH.indexOf(category);
+    if (index <= 0) return false; // First one is always unlocked
+
+    // Check previous category
+    const prevCategory = this.CATEGORY_PATH[index - 1];
+    // Unlock if previous category has at least 1 star (30% complete)
+    return this.getCategoryStars(prevCategory) < 1;
+  }
+
   async getLeaderboard(limitCount: number = 10) {
-    const usersRef = collection(this.firestore, 'users');
-    const q = query(usersRef, orderBy('points', 'desc'), limit(limitCount));
+    const leaderRef = collection(this.firestore, 'leaderboard');
+    const q = query(leaderRef, orderBy('points', 'desc'), limit(limitCount));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   }
