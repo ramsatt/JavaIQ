@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, ViewContainerRef, ViewChild, Type, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle } from '@ionic/angular/standalone';
 
 // Lazy import map for all topic components
 const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = {
@@ -111,22 +112,33 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
 @Component({
   selector: 'app-topic-router',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle],
   template: `
-    @if (loading()) {
-      <div class="loading">
-        <div class="spinner"></div>
-        <span>Loading tutorial...</span>
-      </div>
-    }
-    @if (notFound()) {
-      <div class="not-found">
-        <h2>🚧 Coming Soon</h2>
-        <p>This tutorial topic is being prepared.</p>
-        <a [routerLink]="['/tutorials', courseSlug()]">← Back to Course</a>
-      </div>
-    }
-    <div #outlet></div>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button [defaultHref]="'/tutorials/' + courseSlug()" />
+        </ion-buttons>
+        <ion-title>Tutorial</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content [fullscreen]="true">
+      @if (loading()) {
+        <div class="loading">
+          <div class="spinner"></div>
+          <span>Loading tutorial...</span>
+        </div>
+      }
+      @if (notFound()) {
+        <div class="not-found">
+          <h2>🚧 Coming Soon</h2>
+          <p>This tutorial topic is being prepared.</p>
+          <a [routerLink]="['/tutorials', courseSlug()]">← Back to Course</a>
+        </div>
+      }
+      <div #outlet></div>
+    </ion-content>
   `,
   styles: `
     .loading {
