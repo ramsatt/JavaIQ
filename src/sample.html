@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Interview Guide: Polymorphism</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .code-block {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 antialiased">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="bg-blue-600 p-1.5 rounded-lg">
+                    <i class="fa-solid fa-code text-white"></i>
+                </div>
+                <span class="font-bold text-xl tracking-tight">Java<span class="text-blue-600">Master</span></span>
+            </div>
+            <div class="text-sm font-medium text-slate-500 uppercase tracking-wider">
+                Interview Series #01
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <!-- Header Section -->
+        <header class="mb-12">
+            <span
+                class="px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full uppercase tracking-wide">Object-Oriented
+                Programming</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold mt-4 mb-6 leading-tight">
+                What is <span class="gradient-text">Polymorphism</span> in Java?
+            </h1>
+            <p class="text-lg text-slate-600 leading-relaxed max-w-2xl">
+                One of the core pillars of OOP, polymorphism allows us to perform a single action in different ways. It
+                provides the ability of an object to take on many forms.
+            </p>
+        </header>
+
+        <!-- Core Concept -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-8 mb-8 shadow-sm">
+            <div class="flex items-start gap-4">
+                <div
+                    class="mt-1 flex-shrink-0 w-10 h-10 bg-indigo-50 flex items-center justify-center rounded-xl text-indigo-600">
+                    <i class="fa-solid fa-lightbulb text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold mb-4">The Definition</h2>
+                    <p class="text-slate-600 mb-4 leading-relaxed">
+                        In Java, polymorphism occurs when there is a hierarchy of classes which are related by
+                        inheritance. It allows us to use a parent class reference to point to a child class object.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-slate-900 mb-2">Compile-time (Static)</h3>
+                            <p class="text-sm text-slate-500">Achieved via <b>Method Overloading</b>. Same method name
+                                but different signatures within the same class.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-slate-900 mb-2">Runtime (Dynamic)</h3>
+                            <p class="text-sm text-slate-500">Achieved via <b>Method Overriding</b>. A child class
+                                provides a specific implementation of a method defined in its parent.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Implementation -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-laptop-code text-blue-600"></i> Code Implementation
+            </h2>
+            <div class="bg-slate-900 rounded-2xl overflow-hidden shadow-xl">
+                <div class="flex items-center justify-between px-6 py-3 bg-slate-800/50 border-b border-slate-700">
+                    <span class="text-xs font-mono text-slate-400">PolymorphismExample.java</span>
+                    <button id="copyBtn"
+                        class="text-xs text-slate-400 hover:text-white transition-colors flex items-center gap-1">
+                        <i class="fa-regular fa-copy"></i> Copy code
+                    </button>
+                </div>
+                <div class="p-6 overflow-x-auto">
+                    <pre class="code-block text-sm text-blue-100 leading-relaxed">
+<span class="text-purple-400">class</span> <span class="text-yellow-300">Animal</span> {
+    <span class="text-purple-400">void</span> <span class="text-blue-300">makeSound</span>() {
+        System.out.println(<span class="text-emerald-400">"The animal makes a sound"</span>);
+    }
+}
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">Dog</span> <span class="text-purple-400">extends</span> Animal {
+    <span class="text-gray-500">// Runtime Polymorphism (Overriding)</span>
+    <span class="text-blue-400">@Override</span>
+    <span class="text-purple-400">void</span> <span class="text-blue-300">makeSound</span>() {
+        System.out.println(<span class="text-emerald-400">"The dog barks: Woof Woof"</span>);
+    }
+}
+
+<span class="text-purple-400">public class</span> <span class="text-yellow-300">Main</span> {
+    <span class="text-purple-400">public static void</span> <span class="text-blue-300">main</span>(String[] args) {
+        <span class="text-gray-500">// Parent reference, Child object</span>
+        Animal myAnimal = <span class="text-purple-400">new</span> Dog(); 
+        
+        <span class="text-gray-500">// Which method is called is determined at RUNTIME</span>
+        myAnimal.makeSound(); 
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Usage Section -->
+        <section>
+            <h2 class="text-2xl font-bold mb-6">When & Where to Use It?</h2>
+            <div class="space-y-4">
+                <div class="flex gap-4 p-6 bg-emerald-50 rounded-2xl border border-emerald-100">
+                    <div
+                        class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 flex-shrink-0">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-emerald-900">Extensibility</h4>
+                        <p class="text-emerald-800/70 text-sm">You can add new subclasses (like <code>Cat</code> or
+                            <code>Bird</code>) without changing the existing logic that handles <code>Animal</code>
+                            types.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 p-6 bg-blue-50 rounded-2xl border border-blue-100">
+                    <div
+                        class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 flex-shrink-0">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-blue-900">Clean Code (Interface Driven)</h4>
+                        <p class="text-blue-800/70 text-sm">Allows writing code that works on interfaces rather than
+                            specific concrete classes, making systems much easier to maintain.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 p-6 bg-amber-50 rounded-2xl border border-amber-100">
+                    <div
+                        class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 flex-shrink-0">
+                        <i class="fa-solid fa-puzzle-piece"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-amber-900">Framework Design</h4>
+                        <p class="text-amber-800/70 text-sm">Almost all modern Java frameworks (like Spring) rely on
+                            polymorphism to inject dependencies and swap implementations at runtime.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-500 text-sm">
+            <p>© 2024 Java Interview Series. Built with Tailwind CSS.</p>
+        </footer>
+    </main>
+
+    <script>
+        document.getElementById('copyBtn').addEventListener('click', function () {
+            const code = `class Animal {\n    void makeSound() {\n        System.out.println("The animal makes a sound");\n    }\n}\n\nclass Dog extends Animal {\n    @Override\n    void makeSound() {\n        System.out.println("The dog barks: Woof Woof");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal myAnimal = new Dog(); \n        myAnimal.makeSound(); \n    }\n}`;
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = code;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+            btn.classList.add('text-emerald-400');
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('text-emerald-400');
+            }, 2000);
+        });
+    </script>
+</body>
+
+</html>

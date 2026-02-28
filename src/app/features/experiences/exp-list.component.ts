@@ -1,16 +1,19 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-exp-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TitleCasePipe, IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar],
+  imports: [RouterLink, TitleCasePipe, IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar, IonButtons, IonMenuButton],
   template: `
-    <ion-header class="ion-no-border">
+    <ion-header class="ion-no-border" translucent="true">
       <ion-toolbar>
-        <ion-title>Interview Experiences</ion-title>
+        <ion-buttons slot="start">
+          <ion-menu-button color="light"></ion-menu-button>
+        </ion-buttons>
+        <ion-title class="brand-title">JavaIQ</ion-title>
       </ion-toolbar>
       <ion-toolbar>
         <ion-searchbar placeholder="Search by company..." animated="true" />
@@ -66,17 +69,17 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
       border-radius: 10px;
       font-size: 0.72rem;
       font-weight: 600;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #D6DDD2;
       background: #fff;
-      color: #64748b;
+      color: #52665A;
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.2s;
     }
-    .pill:hover { border-color: #4f46e5; color: #4f46e5; }
-    .pill.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+    .pill:hover { border-color: #1B4332; color: #1B4332; }
+    .pill.active { background: #1B4332; color: #fff; border-color: #1B4332; }
 
-    .section-label { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; color: #94a3b8; margin-bottom: 14px; }
+    .section-label { display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.15em; color: #1B4332; margin-bottom: 14px; }
 
     .list { display: flex; flex-direction: column; gap: 10px; }
 
@@ -84,8 +87,8 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
       display: block;
       padding: 16px 18px;
       background: #fff;
-      border-radius: 14px;
-      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      border: 1px solid #D6DDD2;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
       text-decoration: none;
       color: inherit;
@@ -95,8 +98,8 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
 
     .top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
     .info { display: flex; flex-direction: column; gap: 2px; }
-    .company { font-size: 0.88rem; font-weight: 700; color: #0f172a; }
-    .role { font-size: 0.68rem; color: #64748b; }
+    .company { font-size: 0.88rem; font-weight: 700; color: #1B1B1B; }
+    .role { font-size: 0.68rem; color: #52665A; }
 
     .outcome {
       font-size: 0.58rem;
@@ -110,8 +113,8 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
     .outcome[data-o="pending"] { background: #fffbeb; color: #d97706; }
 
     .bottom { display: flex; align-items: center; gap: 10px; }
-    .meta-item { font-size: 0.6rem; color: #94a3b8; font-weight: 500; }
-    .date { font-size: 0.6rem; color: #94a3b8; font-weight: 500; margin-left: auto; }
+    .meta-item { font-size: 0.6rem; color: #8A9B8F; font-weight: 500; }
+    .date { font-size: 0.6rem; color: #8A9B8F; font-weight: 500; margin-left: auto; }
 
     .tag {
       font-size: 0.55rem;

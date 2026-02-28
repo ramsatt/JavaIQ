@@ -12,12 +12,12 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
       title="Mastering Java Arrays"
       subtitle="Everything you need to know about Java's most fundamental data structure. Learn the concepts, see the code, and interact with live animations."
       badge="CORE JAVA"
-      gradient="linear-gradient(135deg, #1e40af, #6366f1)">
+      gradient="linear-gradient(145deg, #081C15 0%, #1B4332 50%, #2D6A4F 100%)">
 
       <!-- Section 1: Concept -->
       <section class="section">
         <h2 class="section-heading">
-          <app-icon name="book-open" [size]="28" css="icon-blue" /> What is a Java Array?
+          <app-icon name="book-open" [size]="28" css="icon-green" /> What is a Java Array?
         </h2>
         <div class="prose">
           <p>
@@ -38,7 +38,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
       <section class="section">
         <div class="viz-card">
           <h3 class="viz-title">
-            <app-icon name="play" [size]="22" css="icon-blue" /> Interactive Array Visualizer
+            <app-icon name="play" [size]="22" css="icon-gold" /> Interactive Array Visualizer
           </h3>
 
           <!-- Array Display -->
@@ -56,13 +56,13 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
 
           <!-- Controls -->
           <div class="viz-controls">
-            <button (click)="handleLinearSearch()" [disabled]="isAnimating()" class="btn btn-blue">
+            <button (click)="handleLinearSearch()" [disabled]="isAnimating()" class="btn btn-green">
               <app-icon name="search" [size]="16" /> Search for 45
             </button>
-            <button (click)="handleUpdate()" [disabled]="isAnimating()" class="btn btn-purple">
+            <button (click)="handleUpdate()" [disabled]="isAnimating()" class="btn btn-gold">
               <app-icon name="edit-3" [size]="16" /> Update [2] → 99
             </button>
-            <button (click)="handleResetArray()" [disabled]="isAnimating()" class="btn btn-gray">
+            <button (click)="handleResetArray()" [disabled]="isAnimating()" class="btn btn-outline">
               <app-icon name="refresh-cw" [size]="16" /> Reset
             </button>
           </div>
@@ -72,26 +72,26 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
       <!-- Section 3: Operations -->
       <section class="section">
         <h2 class="section-heading">
-          <app-icon name="code" [size]="28" css="icon-indigo" /> Array Operations
+          <app-icon name="code" [size]="28" css="icon-green" /> Array Operations
         </h2>
         <div class="op-grid">
           <div class="op-card">
-            <h3 class="op-title"><app-icon name="arrow-right" [size]="18" css="icon-indigo" /> Traversal</h3>
+            <h3 class="op-title"><app-icon name="arrow-right" [size]="18" css="icon-gold" /> Traversal</h3>
             <p class="op-desc">Visiting every element in the array exactly once, usually to print or modify them.</p>
             <app-code-block [code]="codeTraversal" />
           </div>
           <div class="op-card">
-            <h3 class="op-title"><app-icon name="arrow-right" [size]="18" css="icon-indigo" /> Insertion / Updating</h3>
+            <h3 class="op-title"><app-icon name="arrow-right" [size]="18" css="icon-gold" /> Insertion / Updating</h3>
             <p class="op-desc">Arrays have fixed sizes, so "inserting" usually means updating an existing index or creating a larger array.</p>
             <app-code-block [code]="codeUpdating" />
           </div>
           <div class="op-card">
-            <h3 class="op-title"><app-icon name="arrow-right" [size]="18" css="icon-indigo" /> Searching</h3>
+            <h3 class="op-title"><app-icon name="arrow-right" [size]="18" css="icon-gold" /> Searching</h3>
             <p class="op-desc">Finding the location of a specific element. Linear search checks one by one.</p>
             <app-code-block [code]="codeSearching" />
           </div>
           <div class="op-card">
-            <h3 class="op-title"><app-icon name="arrow-right" [size]="18" css="icon-indigo" /> Sorting</h3>
+            <h3 class="op-title"><app-icon name="arrow-right" [size]="18" css="icon-gold" /> Sorting</h3>
             <p class="op-desc">Rearranging elements in ascending or descending order using built-in utilities.</p>
             <app-code-block [code]="codeSorting" />
           </div>
@@ -101,25 +101,25 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
       <!-- Section 4: Use Cases -->
       <section class="section">
         <h2 class="section-heading">
-          <app-icon name="briefcase" [size]="28" css="icon-teal" /> Real-Time Use Cases
+          <app-icon name="briefcase" [size]="28" css="icon-green" /> Real-Time Use Cases
         </h2>
         <div class="use-cases">
-          <div class="use-case teal">
-            <div class="use-num teal-bg">1</div>
+          <div class="use-case">
+            <div class="use-num">1</div>
             <div>
               <h4 class="use-title">Leaderboards & High Scores</h4>
               <p class="use-desc">A fixed-size array is perfect for maintaining a "Top 10" leaderboard. Sorting and updating are extremely fast.</p>
             </div>
           </div>
-          <div class="use-case blue">
-            <div class="use-num blue-bg">2</div>
+          <div class="use-case">
+            <div class="use-num gold-bg">2</div>
             <div>
               <h4 class="use-title">Pixel Data in Images (2D Arrays)</h4>
               <p class="use-desc">Screens are represented as 2D arrays (<code>int[][] pixels = new int[1920][1080];</code>). Each index corresponds to an X/Y coordinate.</p>
             </div>
           </div>
-          <div class="use-case purple">
-            <div class="use-num purple-bg">3</div>
+          <div class="use-case">
+            <div class="use-num light-green-bg">3</div>
             <div>
               <h4 class="use-title">Data Buffers for Audio/Video</h4>
               <p class="use-desc">Data is read in fixed chunks into a <code>byte[] buffer</code> to process it efficiently without overwhelming system memory.</p>
@@ -139,39 +139,38 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
       gap: 12px;
       font-size: 1.4rem;
       font-weight: 800;
-      color: #0f172a;
+      color: #1B1B1B;
       margin: 0 0 20px;
       padding-bottom: 14px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid #D6DDD2;
     }
 
     /* Icon colors */
-    .icon-blue { color: #2563eb; }
-    .icon-indigo { color: #4f46e5; }
-    .icon-teal { color: #0d9488; }
+    .icon-green { color: #1B4332; }
+    .icon-gold { color: #DAA520; }
 
     /* Prose */
-    .prose { font-size: 0.88rem; color: #334155; line-height: 1.75; }
+    .prose { font-size: 0.9rem; color: #52665A; line-height: 1.75; }
     .prose p { margin: 0 0 14px; }
     .prose ul { margin: 14px 0; padding-left: 22px; list-style: disc; }
     .prose li { margin-bottom: 8px; }
-    .prose strong { color: #0f172a; font-weight: 700; }
+    .prose strong { color: #1B1B1B; font-weight: 700; }
     .prose code {
-      background: #f1f5f9;
+      background: #D8F3DC;
       padding: 2px 7px;
       border-radius: 5px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
-      color: #4f46e5;
+      color: #1B4332;
     }
-    .sub-heading { font-size: 1rem; font-weight: 700; color: #0f172a; margin: 24px 0 8px; }
+    .sub-heading { font-size: 1.1rem; font-weight: 700; color: #1B1B1B; margin: 24px 0 8px; }
 
     /* Visualizer */
     .viz-card {
       background: #fff;
-      border-radius: 18px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      border-radius: 20px;
+      border: 1px solid #D6DDD2;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
       padding: 28px 24px;
     }
     .viz-title {
@@ -180,7 +179,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
       gap: 10px;
       font-size: 1.15rem;
       font-weight: 700;
-      color: #0f172a;
+      color: #1B1B1B;
       margin: 0 0 24px;
     }
     .viz-array {
@@ -193,7 +192,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
       margin-bottom: 20px;
     }
     .viz-cell { display: flex; flex-direction: column; align-items: center; }
-    .viz-idx { font-size: 0.58rem; color: #94a3b8; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
+    .viz-idx { font-size: 0.6rem; color: #8A9B8F; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 
     .viz-box {
       width: 52px;
@@ -201,47 +200,48 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 12px;
-      font-size: 1.05rem;
+      border-radius: 14px;
+      font-size: 1.1rem;
       font-weight: 800;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .viz-box.default { background: #eff6ff; color: #1e40af; border: 2px solid #bfdbfe; }
-    .viz-box.active { background: #fef08a; color: #854d0e; border: 2px solid #fbbf24; transform: scale(1.1); box-shadow: 0 4px 12px rgba(251,191,36,0.3); }
-    .viz-box.found { background: #22c55e; color: #fff; border: 2px solid #16a34a; transform: scale(1.1); box-shadow: 0 4px 12px rgba(34,197,94,0.3); }
+    .viz-box.default { background: #F5F7F2; color: #52665A; border: 2px solid #D6DDD2; }
+    .viz-box.active { background: #DAA520; color: #081C15; border: 2px solid #DAA520; transform: scale(1.1); box-shadow: 0 4px 12px rgba(218,165,32,0.3); }
+    .viz-box.found { background: #1B4332; color: #fff; border: 2px solid #1B4332; transform: scale(1.1); box-shadow: 0 4px 12px rgba(27,67,50,0.3); }
 
     .viz-status {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 12px 16px;
+      background: #F5F7F2;
+      border: 1px solid #D6DDD2;
+      border-radius: 12px;
+      padding: 14px 16px;
       text-align: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      color: #334155;
-      margin-bottom: 20px;
+      font-size: 0.8rem;
+      color: #1B4332;
+      font-weight: 600;
+      margin-bottom: 24px;
     }
     .viz-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-size: 0.78rem;
-      font-weight: 600;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
       border: none;
       cursor: pointer;
       transition: all 0.2s;
     }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-blue { background: #2563eb; color: #fff; }
-    .btn-blue:hover:not(:disabled) { background: #1d4ed8; }
-    .btn-purple { background: #7c3aed; color: #fff; }
-    .btn-purple:hover:not(:disabled) { background: #6d28d9; }
-    .btn-gray { background: #e2e8f0; color: #334155; }
-    .btn-gray:hover:not(:disabled) { background: #cbd5e1; }
+    .btn-green { background: #1B4332; color: #fff; }
+    .btn-green:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(27,67,50,0.2); }
+    .btn-gold { background: #DAA520; color: #081C15; }
+    .btn-gold:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(218,165,32,0.2); }
+    .btn-outline { background: #fff; color: #52665A; border: 1px solid #D6DDD2; }
+    .btn-outline:hover:not(:disabled) { background: #F5F7F2; border-color: #B5C4B1; }
 
     /* Operations Grid */
     .op-grid {
@@ -251,54 +251,55 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     }
     .op-card {
       background: #fff;
-      padding: 22px 20px;
-      border-radius: 14px;
-      border: 1px solid #e2e8f0;
+      padding: 24px 20px;
+      border-radius: 20px;
+      border: 1px solid #D6DDD2;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      transition: box-shadow 0.2s;
+      transition: all 0.2s;
     }
-    .op-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-    .op-title { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0 0 8px; }
-    .op-desc { font-size: 0.78rem; color: #64748b; line-height: 1.55; margin: 0; }
+    .op-card:hover { border-color: #B5C4B1; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+    .op-title { display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 700; color: #1B1B1B; margin: 0 0 10px; }
+    .op-desc { font-size: 0.82rem; color: #52665A; line-height: 1.55; margin: 0; }
 
     /* Use Cases */
     .use-cases { display: flex; flex-direction: column; gap: 12px; }
     .use-case {
       display: flex;
       gap: 16px;
-      padding: 20px;
-      border-radius: 14px;
-      border: 1px solid;
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid #D6DDD2;
+      background: #fff;
+      transition: all 0.2s;
     }
-    .use-case.teal { background: #f0fdfa; border-color: #99f6e4; }
-    .use-case.blue { background: #eff6ff; border-color: #bfdbfe; }
-    .use-case.purple { background: #faf5ff; border-color: #d8b4fe; }
+    .use-case:hover { border-color: #1B4332; box-shadow: 0 4px 12px rgba(27,67,50,0.04); }
+    
     .use-num {
-      width: 34px;
-      height: 34px;
-      min-width: 34px;
-      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 0.78rem;
+      font-size: 0.85rem;
       font-weight: 800;
+      background: #1B4332;
     }
-    .teal-bg { background: #14b8a6; }
-    .blue-bg { background: #3b82f6; }
-    .purple-bg { background: #8b5cf6; }
-    .use-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0 0 4px; }
-    .use-desc { font-size: 0.78rem; line-height: 1.55; margin: 0; }
-    .use-case.teal .use-desc { color: #134e4a; }
-    .use-case.blue .use-desc { color: #1e3a5f; }
-    .use-case.purple .use-desc { color: #3b0764; }
+    .gold-bg { background: #DAA520; color: #081C15; }
+    .light-green-bg { background: #D8F3DC; color: #1B4332; }
+
+    .use-title { font-size: 1rem; font-weight: 700; color: #1B1B1B; margin: 0 0 4px; }
+    .use-desc { font-size: 0.82rem; color: #52665A; line-height: 1.55; margin: 0; }
     .use-desc code {
-      background: rgba(0,0,0,0.06);
-      padding: 1px 5px;
+      background: #F5F7F2;
+      padding: 2px 5px;
       border-radius: 4px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.75rem;
+      color: #1B4332;
+      font-weight: 600;
     }
   `
 })

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, ViewContainerRef, ViewChild, Type, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonIcon } from '@ionic/angular/standalone';
 
 // Lazy import map for all topic components
 const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = {
@@ -112,64 +112,102 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
 @Component({
   selector: 'app-topic-router',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle],
+  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonIcon],
+  host: { 'class': 'ion-page' },
   template: `
-    <ion-header>
+    <ion-header translucent="true" class="ion-no-border">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button [defaultHref]="'/tutorials/' + courseSlug()" />
+          <ion-back-button [defaultHref]="'/tutorials/' + courseSlug()" text="" color="light" />
         </ion-buttons>
-        <ion-title>Tutorial</ion-title>
+        <ion-title class="brand-title">JavaIQ</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [fullscreen]="true">
+    <ion-content [scrollY]="true" [scrollEvents]="true" style="height: 100%;">
       @if (loading()) {
         <div class="loading">
           <div class="spinner"></div>
-          <span>Loading tutorial...</span>
+          <span>Preparing your tutorial...</span>
         </div>
       }
+      
+      <div class="tutorial-scroll-container">
+        <div #outlet></div>
+      </div>
+
       @if (notFound()) {
         <div class="not-found">
-          <h2>🚧 Coming Soon</h2>
-          <p>This tutorial topic is being prepared.</p>
-          <a [routerLink]="['/tutorials', courseSlug()]">← Back to Course</a>
+          <div class="not-found-icon">🚧</div>
+          <h2>Coming Soon</h2>
+          <p>We're currently crafting this tutorial chapter for you. Stay tuned!</p>
+          <a [routerLink]="['/tutorials', courseSlug()]" class="back-link">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+            Back to Course
+          </a>
         </div>
       }
-      <div #outlet></div>
+      
+      <div style="height: 120px; display: block;"></div>
     </ion-content>
   `,
   styles: `
+    .tutorial-scroll-container {
+      display: block;
+      width: 100%;
+      height: auto;
+      padding-bottom: 40px;
+    }
+
+    /* Loading State */
     .loading {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 60vh;
-      gap: 16px;
-      color: #64748b;
-      font-size: 0.84rem;
-      font-weight: 500;
+      min-height: 70vh;
+      gap: 20px;
+      color: #52665A;
+      font-size: 0.9rem;
+      font-weight: 600;
     }
     .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid #e2e8f0;
-      border-top-color: #4f46e5;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #D6DDD2;
+      border-top-color: #1B4332;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Not Found / Coming Soon */
     .not-found {
       text-align: center;
-      padding: 80px 20px;
-      color: #64748b;
+      padding: 100px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .not-found h2 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0 0 8px; }
-    .not-found p { font-size: 0.84rem; margin: 0 0 20px; }
-    .not-found a { font-size: 0.78rem; color: #4f46e5; text-decoration: none; font-weight: 600; }
+    .not-found-icon { font-size: 3rem; margin-bottom: 24px; }
+    .not-found h2 { font-size: 1.6rem; font-weight: 800; color: #1B1B1B; margin: 0 0 12px; }
+    .not-found p { font-size: 0.9rem; color: #52665A; line-height: 1.6; margin: 0 0 32px; max-width: 280px; }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #1B4332;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 12px 24px;
+      background: #D8F3DC;
+      border-radius: 14px;
+      transition: transform 0.2s;
+    }
+    .back-link:active { transform: scale(0.96); }
+    .back-link ion-icon { font-size: 1.1rem; }
   `
 })
 export class TopicRouterComponent implements OnInit {

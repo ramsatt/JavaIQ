@@ -2,6 +2,69 @@ import { Question } from './question.model';
 
 export const CORE_JAVA_QUESTIONS: Question[] = [
   {
+    id: 1001,
+    category: 'Core Java',
+    question: 'What is Polymorphism in Java?',
+    answer: 'One of the core pillars of OOP, polymorphism allows us to perform a single action in different ways. It provides the ability of an object to take on many forms.',
+    asked_metadata: 'Object-Oriented Programming',
+    code: `class Animal {
+    void makeSound() {
+        System.out.println("The animal makes a sound");
+    }
+}
+
+class Dog extends Animal {
+    // Runtime Polymorphism (Overriding)
+    @Override
+    void makeSound() {
+        System.out.println("The dog barks: Woof Woof");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Parent reference, Child object
+        Animal myAnimal = new Dog(); 
+        
+        // Which method is called is determined at RUNTIME
+        myAnimal.makeSound(); 
+    }
+}`,
+    subConcepts: [
+      {
+        title: 'Compile-time (Static)',
+        description: 'Achieved via <b>Method Overloading</b>. Same method name but different signatures within the same class.'
+      },
+      {
+        title: 'Runtime (Dynamic)',
+        description: 'Achieved via <b>Method Overriding</b>. A child class provides a specific implementation of a method defined in its parent.'
+      }
+    ],
+    useCases: [
+      {
+        icon: 'fa-check',
+        title: 'Extensibility',
+        description: 'You can add new subclasses (like Cat or Bird) without changing the existing logic that handles Animal types.',
+        color: 'text-emerald-600',
+        bg: 'bg-emerald-100'
+      },
+      {
+        icon: 'fa-layer-group',
+        title: 'Clean Code (Interface Driven)',
+        description: 'Allows writing code that works on interfaces rather than specific concrete classes, making systems much easier to maintain.',
+        color: 'text-blue-600',
+        bg: 'bg-blue-100'
+      },
+      {
+        icon: 'fa-puzzle-piece',
+        title: 'Framework Design',
+        description: 'Almost all modern Java frameworks (like Spring) rely on polymorphism to inject dependencies and swap implementations at runtime.',
+        color: 'text-amber-600',
+        bg: 'bg-amber-100'
+      }
+    ]
+  },
+  {
     id: 1,
     category: 'Core Java',
     question: 'What is the difference between equals() and == in Java?',

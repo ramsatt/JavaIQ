@@ -16,63 +16,63 @@
 /* PrismJS Theme */
 @import 'prismjs/themes/prism-tomorrow.css';
 
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Google Fonts — General Sans via Bunny CDN (GDPR-friendly) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ==========================================
-   Tailwind v4 Theme — Premium Light
+   Tailwind v4 Theme — Sideskills Forest Green
    ========================================== */
 @theme {
-  --color-bg-primary: #f8fafc;
+  --color-bg-primary: #F5F7F2;
   --color-bg-surface: #ffffff;
-  --color-bg-elevated: #f1f5f9;
-  --color-bg-page: #f0f4f8;
+  --color-bg-elevated: #EDF2E7;
+  --color-bg-page: #F5F7F2;
 
-  --color-accent: #4f46e5;
-  --color-accent-light: #e0e7ff;
-  --color-accent-dark: #3730a3;
-  --color-accent-secondary: #0891b2;
+  --color-accent: #1B4332;
+  --color-accent-light: #D8F3DC;
+  --color-accent-dark: #081C15;
+  --color-accent-secondary: #DAA520;
 
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #94a3b8;
+  --color-text-primary: #1B1B1B;
+  --color-text-secondary: #52665A;
+  --color-text-muted: #8A9B8F;
   --color-text-inverse: #ffffff;
 
   --color-success: #059669;
   --color-warning: #d97706;
   --color-danger: #dc2626;
 
-  --color-border: #e2e8f0;
-  --color-border-hover: #cbd5e1;
+  --color-border: #D6DDD2;
+  --color-border-hover: #B5C4B1;
 
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-  --shadow-card-hover: 0 10px 25px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
-  --shadow-elevated: 0 20px 40px rgba(0,0,0,0.08);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 10px 25px rgba(0, 0, 0, 0.06), 0 4px 10px rgba(0, 0, 0, 0.04);
+  --shadow-elevated: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
 
 /* ==========================================
-   Ionic Light Theme Variables
+   Ionic Theme Variables — Forest Green
    ========================================== */
 :root {
-  --ion-background-color: #f0f4f8;
-  --ion-background-color-rgb: 240, 244, 248;
-  --ion-text-color: #0f172a;
-  --ion-text-color-rgb: 15, 23, 42;
+  --ion-background-color: #F5F7F2;
+  --ion-background-color-rgb: 245, 247, 242;
+  --ion-text-color: #1B1B1B;
+  --ion-text-color-rgb: 27, 27, 27;
 
-  --ion-color-primary: #4f46e5;
-  --ion-color-primary-rgb: 79, 70, 229;
+  --ion-color-primary: #1B4332;
+  --ion-color-primary-rgb: 27, 67, 50;
   --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-shade: #4338ca;
-  --ion-color-primary-tint: #6366f1;
+  --ion-color-primary-shade: #143A2B;
+  --ion-color-primary-tint: #2D6A4F;
 
-  --ion-color-secondary: #0891b2;
-  --ion-color-secondary-rgb: 8, 145, 178;
+  --ion-color-secondary: #DAA520;
+  --ion-color-secondary-rgb: 218, 165, 32;
   --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-shade: #0e7490;
-  --ion-color-secondary-tint: #06b6d4;
+  --ion-color-secondary-shade: #C4941D;
+  --ion-color-secondary-tint: #E0B83A;
 
   --ion-color-success: #059669;
   --ion-color-success-rgb: 5, 150, 105;
@@ -92,27 +92,28 @@
   --ion-color-danger-shade: #b91c1c;
   --ion-color-danger-tint: #ef4444;
 
-  --ion-color-dark: #1e293b;
-  --ion-color-dark-rgb: 30, 41, 59;
+  --ion-color-dark: #081C15;
+  --ion-color-dark-rgb: 8, 28, 21;
   --ion-color-dark-contrast: #ffffff;
-  --ion-color-dark-shade: #0f172a;
-  --ion-color-dark-tint: #334155;
+  --ion-color-dark-shade: #061510;
+  --ion-color-dark-tint: #1B4332;
 
-  --ion-color-medium: #64748b;
-  --ion-color-medium-rgb: 100, 116, 139;
+  --ion-color-medium: #52665A;
+  --ion-color-medium-rgb: 82, 102, 90;
   --ion-color-medium-contrast: #ffffff;
-  --ion-color-medium-shade: #475569;
-  --ion-color-medium-tint: #94a3b8;
+  --ion-color-medium-shade: #3E4F45;
+  --ion-color-medium-tint: #6B8075;
 
-  --ion-color-light: #f1f5f9;
-  --ion-color-light-rgb: 241, 245, 249;
-  --ion-color-light-contrast: #1e293b;
-  --ion-color-light-shade: #e2e8f0;
-  --ion-color-light-tint: #f8fafc;
+  --ion-color-light: #EDF2E7;
+  --ion-color-light-rgb: 237, 242, 231;
+  --ion-color-light-contrast: #1B1B1B;
+  --ion-color-light-shade: #D6DDD2;
+  --ion-color-light-tint: #F5F7F2;
 
-  --ion-toolbar-background: #ffffff;
+  --ion-toolbar-background: #1B4332;
+  --ion-toolbar-color: #ffffff;
   --ion-tab-bar-background: #ffffff;
-  --ion-tab-bar-border-color: #e2e8f0;
+  --ion-tab-bar-border-color: #D6DDD2;
   --ion-item-background: transparent;
   --ion-card-background: #ffffff;
 }
@@ -120,45 +121,60 @@
 /* ==========================================
    Global Base Styles
    ========================================== */
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   font-family: var(--font-sans);
-  background-color: #f0f4f8;
-  color: #0f172a;
+  background-color: #F5F7F2;
+  color: #1B1B1B;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B5C4B1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8A9B8F;
+}
 
 /* ==========================================
-   Ionic Component Overrides — Light
+   Ionic Component Overrides — Forest Green
    ========================================== */
 ion-tab-bar {
   --background: #ffffff;
-  border-top: 1px solid #e2e8f0;
-  box-shadow: 0 -1px 10px rgba(0,0,0,0.03);
+  border-top: 1px solid #D6DDD2;
+  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.03);
   padding-bottom: env(safe-area-inset-bottom);
   height: 64px;
 }
 
 ion-tab-button {
-  --color: #94a3b8;
-  --color-selected: #4f46e5;
+  --color: #8A9B8F;
+  --color-selected: #1B4332;
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
 ion-toolbar {
-  --background: #ffffff;
-  --border-color: #e2e8f0;
+  --background: #1B4332;
+  --color: #ffffff;
+  --border-color: transparent;
   --min-height: 56px;
+  padding-top: env(safe-area-inset-top);
 }
 
 ion-title {
@@ -166,24 +182,30 @@ ion-title {
   font-weight: 800;
   font-size: 1.25rem;
   letter-spacing: -0.03em;
-  color: #0f172a;
+  color: #ffffff;
+}
+
+.brand-title {
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #DAA520;
 }
 
 ion-content {
-  --background: #f0f4f8;
+  --background: #F5F7F2;
 }
 
 ion-back-button {
-  --color: #4f46e5;
+  --color: #D8F3DC;
 }
 
 ion-searchbar {
-  --background: #f1f5f9;
+  --background: rgba(255, 255, 255, 0.12);
   --border-radius: 14px;
   --box-shadow: none;
-  --color: #0f172a;
-  --placeholder-color: #94a3b8;
-  --icon-color: #94a3b8;
+  --color: #ffffff;
+  --placeholder-color: rgba(255, 255, 255, 0.5);
+  --icon-color: rgba(255, 255, 255, 0.5);
   font-size: 0.875rem;
   padding: 0 12px 8px !important;
 }
@@ -194,19 +216,20 @@ ion-searchbar {
 .card {
   background: #ffffff;
   border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  border: 1px solid #D6DDD2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card:hover, .card:active {
-  box-shadow: 0 10px 25px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
-  border-color: #cbd5e1;
+.card:hover,
+.card:active {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06), 0 4px 10px rgba(0, 0, 0, 0.04);
+  border-color: #B5C4B1;
   transform: translateY(-1px);
 }
 
 .card-accent {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, #1B4332, #2D6A4F);
   border: none;
   color: white;
 }
@@ -215,7 +238,7 @@ ion-searchbar {
    Gradient & Accent Utilities
    ========================================== */
 .gradient-text {
-  background: linear-gradient(135deg, #4f46e5, #0891b2);
+  background: linear-gradient(135deg, #1B4332, #2D6A4F);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -225,7 +248,7 @@ ion-searchbar {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #4f46e5;
+  background: #1B4332;
   display: inline-block;
 }
 
@@ -246,17 +269,31 @@ ion-searchbar {
   background: #ecfdf5;
   color: #059669;
 }
+
 .badge-medium {
   background: #fffbeb;
   color: #d97706;
 }
+
 .badge-hard {
   background: #fef2f2;
   color: #dc2626;
 }
-.badge-beginner { background: #ecfdf5; color: #059669; }
-.badge-intermediate { background: #eff6ff; color: #2563eb; }
-.badge-advanced { background: #fef2f2; color: #dc2626; }
+
+.badge-beginner {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.badge-intermediate {
+  background: #D8F3DC;
+  color: #1B4332;
+}
+
+.badge-advanced {
+  background: #fef2f2;
+  color: #dc2626;
+}
 
 /* ==========================================
    Icon Container Styles
@@ -294,10 +331,10 @@ ion-searchbar {
 }
 
 /* ==========================================
-   Code Block Styling — Light
+   Code Block Styling
    ========================================== */
 pre[class*="language-"] {
-  background: #1e293b !important;
+  background: #081C15 !important;
   border: none;
   border-radius: 12px;
   padding: 1.25rem;
@@ -312,9 +349,9 @@ code[class*="language-"] {
   font-size: 0.8rem;
 }
 
-:not(pre) > code {
-  background: #e0e7ff;
-  color: #4338ca;
+:not(pre)>code {
+  background: #D8F3DC;
+  color: #1B4332;
   padding: 2px 7px;
   border-radius: 5px;
   font-family: var(--font-mono);
@@ -330,7 +367,7 @@ code[class*="language-"] {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #94a3b8;
+  color: #8A9B8F;
   margin-bottom: 12px;
 }
 
@@ -345,6 +382,7 @@ code[class*="language-"] {
   padding: 3px 10px;
   border-radius: 6px;
 }
+
 .outcome-rejected {
   background: #fef2f2;
   color: #dc2626;
@@ -353,6 +391,7 @@ code[class*="language-"] {
   padding: 3px 10px;
   border-radius: 6px;
 }
+
 .outcome-pending {
   background: #fffbeb;
   color: #d97706;
@@ -370,53 +409,95 @@ code[class*="language-"] {
   border-radius: 10px;
   font-size: 0.75rem;
   font-weight: 600;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #D6DDD2;
   background: #ffffff;
-  color: #64748b;
+  color: #52665A;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
+
 .pill:hover {
-  border-color: #4f46e5;
-  color: #4f46e5;
-  background: #eef2ff;
+  border-color: #1B4332;
+  color: #1B4332;
+  background: #D8F3DC;
 }
+
 .pill-active {
-  background: #4f46e5;
+  background: #1B4332;
   color: #ffffff;
-  border-color: #4f46e5;
+  border-color: #1B4332;
 }
 
 /* ==========================================
    Animations
    ========================================== */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-in {
   animation: fadeInUp 0.4s ease-out forwards;
 }
 
-.stagger > * {
+.stagger>* {
   opacity: 0;
   animation: fadeInUp 0.35s ease-out forwards;
 }
-.stagger > *:nth-child(1) { animation-delay: 0.04s; }
-.stagger > *:nth-child(2) { animation-delay: 0.08s; }
-.stagger > *:nth-child(3) { animation-delay: 0.12s; }
-.stagger > *:nth-child(4) { animation-delay: 0.16s; }
-.stagger > *:nth-child(5) { animation-delay: 0.2s; }
-.stagger > *:nth-child(6) { animation-delay: 0.24s; }
-.stagger > *:nth-child(7) { animation-delay: 0.28s; }
-.stagger > *:nth-child(8) { animation-delay: 0.32s; }
+
+.stagger>*:nth-child(1) {
+  animation-delay: 0.04s;
+}
+
+.stagger>*:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.stagger>*:nth-child(3) {
+  animation-delay: 0.12s;
+}
+
+.stagger>*:nth-child(4) {
+  animation-delay: 0.16s;
+}
+
+.stagger>*:nth-child(5) {
+  animation-delay: 0.2s;
+}
+
+.stagger>*:nth-child(6) {
+  animation-delay: 0.24s;
+}
+
+.stagger>*:nth-child(7) {
+  animation-delay: 0.28s;
+}
+
+.stagger>*:nth-child(8) {
+  animation-delay: 0.32s;
+}
 
 /* ==========================================
    Utility
    ========================================== */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 
-a.no-underline { text-decoration: none; color: inherit; }
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+a.no-underline {
+  text-decoration: none;
+  color: inherit;
+}

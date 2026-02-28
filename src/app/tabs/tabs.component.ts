@@ -51,14 +51,14 @@ import {
   styles: `
     ion-tab-bar {
       --background: #ffffff;
-      border-top: 1px solid #e2e8f0;
+      border-top: 1px solid #D6DDD2;
       box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
       height: 64px;
     }
 
     ion-tab-button {
-      --color: #94a3b8;
-      --color-selected: #4f46e5;
+      --color: #8A9B8F;
+      --color-selected: #1B4332;
       font-size: 0.6rem;
       font-weight: 600;
       letter-spacing: 0.03em;

@@ -5,4 +5,6 @@ export interface Question {
   answer: string;
   asked_metadata: string;
   code?: string;
+  subConcepts?: { title: string; description: string; }[];
+  useCases?: { icon: string; title: string; description: string; color: string; bg: string; }[];
 }

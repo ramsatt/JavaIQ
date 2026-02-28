@@ -1,15 +1,18 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-lc-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar],
+  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar, IonButtons, IonMenuButton],
   template: `
-    <ion-header class="ion-no-border">
+    <ion-header class="ion-no-border" translucent="true">
       <ion-toolbar>
-        <ion-title>LeetCode Questions</ion-title>
+        <ion-buttons slot="start">
+          <ion-menu-button color="light"></ion-menu-button>
+        </ion-buttons>
+        <ion-title class="brand-title">JavaIQ</ion-title>
       </ion-toolbar>
       <ion-toolbar>
         <ion-searchbar placeholder="Search by number or title..." animated="true" />
@@ -54,12 +57,12 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
     .progress {
       background: #fff;
       border-radius: 16px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #D6DDD2;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
       padding: 18px 20px;
       margin-bottom: 24px;
     }
-    .progress-label { display: block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; color: #94a3b8; margin-bottom: 14px; }
+    .progress-label { display: block; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.15em; color: #1B4332; margin-bottom: 14px; }
     .progress-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -88,7 +91,7 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
     .hard-c { color: #dc2626; }
 
     /* Section */
-    .section-label { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; color: #94a3b8; margin-bottom: 14px; }
+    .section-label { display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.15em; color: #1B4332; margin-bottom: 14px; }
 
     /* List */
     .list { display: flex; flex-direction: column; gap: 8px; }
@@ -99,8 +102,8 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
       gap: 12px;
       padding: 12px 14px 12px 14px;
       background: #fff;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      border: 1px solid #D6DDD2;
       box-shadow: 0 1px 2px rgba(0,0,0,0.03);
       text-decoration: none;
       color: inherit;
@@ -120,7 +123,7 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.68rem;
       font-weight: 700;
-      color: #64748b;
+      color: #52665A;
     }
 
     .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
@@ -132,7 +135,7 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .cat { font-size: 0.6rem; color: #94a3b8; }
+    .cat { font-size: 0.6rem; color: #8A9B8F; }
 
     .tag {
       font-size: 0.55rem;

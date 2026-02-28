@@ -1,15 +1,18 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-iq-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar],
+  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar, IonButtons, IonMenuButton],
   template: `
-    <ion-header class="ion-no-border">
+    <ion-header class="ion-no-border" translucent="true">
       <ion-toolbar>
-        <ion-title>Interview Questions</ion-title>
+        <ion-buttons slot="start">
+          <ion-menu-button color="light"></ion-menu-button>
+        </ion-buttons>
+        <ion-title class="brand-title">JavaIQ</ion-title>
       </ion-toolbar>
       <ion-toolbar>
         <ion-searchbar placeholder="Search questions..." animated="true" />
@@ -60,21 +63,21 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
       justify-content: space-evenly;
       background: #fff;
       border-radius: 16px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #D6DDD2;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
       padding: 18px 12px;
       margin-bottom: 24px;
     }
     .stat { text-align: center; }
     .stat-num { display: block; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
-    .stat-num.indigo { color: #4f46e5; }
-    .stat-num.cyan { color: #0891b2; }
+    .stat-num.indigo { color: #1B4332; }
+    .stat-num.cyan { color: #2D6A4F; }
     .stat-num.green { color: #059669; }
-    .stat-lbl { display: block; font-size: 0.6rem; color: #94a3b8; font-weight: 600; margin-top: 5px; }
-    .stat-div { width: 1px; height: 32px; background: #e2e8f0; }
+    .stat-lbl { display: block; font-size: 0.6rem; color: #8A9B8F; font-weight: 600; margin-top: 5px; }
+    .stat-div { width: 1px; height: 32px; background: #D6DDD2; }
 
     /* Section label */
-    .section-label { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; color: #94a3b8; margin-bottom: 14px; }
+    .section-label { display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.15em; color: #1B4332; margin-bottom: 14px; }
 
     /* Grid */
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -86,8 +89,8 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
       align-items: center;
       padding: 18px 10px 16px;
       background: #fff;
-      border-radius: 14px;
-      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      border: 1px solid #D6DDD2;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
       text-decoration: none;
       color: inherit;
@@ -105,8 +108,8 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar } from '@ioni
       font-size: 1.3rem;
       margin-bottom: 10px;
     }
-    .topic-name { font-size: 0.8rem; font-weight: 700; color: #0f172a; text-align: center; line-height: 1.2; }
-    .topic-count { font-size: 0.6rem; color: #94a3b8; font-weight: 500; margin-top: 3px; }
+    .topic-name { font-size: 0.8rem; font-weight: 700; color: #1B1B1B; text-align: center; line-height: 1.2; }
+    .topic-count { font-size: 0.6rem; color: #8A9B8F; font-weight: 500; margin-top: 3px; }
   `
 })
 export class IqListComponent {

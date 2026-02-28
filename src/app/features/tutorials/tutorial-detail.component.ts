@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle } from '@ionic/angular/standalone';
 import { IconComponent } from '../../shared/icon.component';
 
 interface Topic {
@@ -13,125 +14,228 @@ interface Topic {
 @Component({
   selector: 'app-tutorial-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IconComponent],
+  imports: [RouterLink, IconComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle],
+  host: { 'class': 'ion-page' },
   template: `
-    <div class="page">
-      <!-- Back nav -->
-      <a routerLink="/tutorials" class="back">
-        <app-icon name="chevron-right" [size]="16" css="rotate" /> Back to Tutorials
-      </a>
+    <ion-header translucent="true" class="ion-no-border">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/tutorials" text="" color="light" />
+        </ion-buttons>
+        <ion-title class="brand-title">JavaIQ</ion-title>
+      </ion-toolbar>
+    </ion-header>
 
-      <!-- Hero -->
+    <ion-content>
+      <!-- Premium Centered Hero -->
       <div class="hero">
-        <span class="badge">{{ courseData().badge }}</span>
-        <h1 class="title">{{ courseData().title }}</h1>
-        <p class="subtitle">{{ courseData().subtitle }}</p>
-        <div class="stat-row">
-          <span class="stat">📖 {{ courseData().topics.length }} chapters</span>
-          <span class="stat">⏱ {{ courseData().estimatedTime }}</span>
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+          <div class="badge-wrapper">
+            <span class="badge">{{ courseData().badge }}</span>
+          </div>
+          <h1 class="title">{{ courseData().title }}</h1>
+          <p class="subtitle">{{ courseData().subtitle }}</p>
+          
+          <div class="stat-pill-row">
+            <div class="stat-pill">
+              <app-icon name="book-open" [size]="14" />
+              <span>{{ courseData().topics.length }} Chapters</span>
+            </div>
+            <div class="stat-pill accent">
+              <app-icon name="clock" [size]="14" />
+              <span>{{ courseData().estimatedTime }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Topics List -->
-      <span class="section-label">CHAPTERS</span>
-      <div class="list">
-        @for (topic of courseData().topics; track topic.slug; let i = $index) {
-          <a [routerLink]="['/tutorials', slug(), topic.slug]" class="topic-card">
-            <div class="topic-num">{{ i + 1 }}</div>
-            <div class="topic-body">
-              <span class="topic-title">{{ topic.title }}</span>
-              <span class="topic-desc">{{ topic.description }}</span>
-            </div>
-            <div class="topic-dur">{{ topic.duration }}</div>
-          </a>
-        }
+      <div class="page-container">
+        <!-- Curriculum List -->
+        <div class="section-header">
+          <span class="section-label">CURRICULUM</span>
+          <span class="topic-count">{{ courseData().topics.length }} Topics</span>
+        </div>
+
+        <div class="list">
+          @for (topic of courseData().topics; track topic.slug; let i = $index) {
+            <a [routerLink]="['/tutorials', slug(), topic.slug]" class="topic-card">
+              <div class="topic-num-outer">
+                <div class="topic-num">{{ i + 1 }}</div>
+              </div>
+              <div class="topic-body">
+                <span class="topic-title">{{ topic.title }}</span>
+                <span class="topic-desc">{{ topic.description }}</span>
+              </div>
+              <div class="topic-meta">
+                <span class="topic-dur">{{ topic.duration }}</span>
+                <app-icon name="chevron-right" [size]="14" css="green-arrow" />
+              </div>
+            </a>
+          }
+        </div>
       </div>
-    </div>
+      
+      <div style="height: 100px;"></div>
+    </ion-content>
   `,
   styles: `
-    .page { padding: 16px 16px 100px; background: #f8fafc; min-height: 100vh; }
+    .page-container { padding: 0 20px 20px; }
 
-    .back {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: #4f46e5;
-      text-decoration: none;
-      margin-bottom: 16px;
-    }
-    .back :host ::ng-deep .rotate { transform: rotate(180deg); }
-
+    /* Centered Hero — Forest Green */
     .hero {
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      border-radius: 18px;
-      padding: 28px 22px;
-      margin-bottom: 28px;
+      position: relative;
+      background: linear-gradient(145deg, #081C15 0%, #1B4332 50%, #2D6A4F 100%);
+      padding: 64px 24px 48px;
+      margin-bottom: 32px;
       color: #fff;
+      overflow: hidden;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
+    .hero-glow {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(218,165,32,0.15) 0%, transparent 70%);
+      filter: blur(60px);
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 600px; }
+    
+    .badge-wrapper { margin-bottom: 20px; }
     .badge {
       display: inline-block;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
-      padding: 3px 12px;
-      border-radius: 16px;
-      font-size: 0.55rem;
-      font-weight: 700;
+      background: #DAA520;
+      color: #081C15;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.62rem;
+      font-weight: 800;
       letter-spacing: 0.12em;
-      margin-bottom: 12px;
     }
-    .title { margin: 0 0 6px; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
-    .subtitle { margin: 0 0 16px; font-size: 0.82rem; opacity: 0.75; line-height: 1.5; }
-    .stat-row { display: flex; gap: 16px; }
-    .stat { font-size: 0.68rem; font-weight: 600; opacity: 0.8; }
 
-    .section-label { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; color: #94a3b8; margin-bottom: 14px; }
+    .title { 
+      margin: 0 0 14px; 
+      font-size: 2.2rem; 
+      font-weight: 800; 
+      letter-spacing: -0.04em; 
+      line-height: 1; 
+      color: #fff;
+    }
+    .subtitle { 
+      margin: 0 0 28px; 
+      font-size: 0.95rem; 
+      color: #B7E4C7; 
+      line-height: 1.5; 
+      opacity: 0.9;
+    }
 
-    .list { display: flex; flex-direction: column; gap: 8px; }
+    .stat-pill-row { 
+      display: flex; 
+      gap: 12px; 
+      justify-content: center;
+    }
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .stat-pill.accent { border-color: rgba(218,165,32,0.3); color: #DAA520; }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 0 4px;
+    }
+    .section-label { 
+      font-size: 0.65rem; 
+      font-weight: 800; 
+      letter-spacing: 0.15em; 
+      color: #1B4332; 
+    }
+    .topic-count {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #8A9B8F;
+    }
+
+    .list { display: flex; flex-direction: column; gap: 10px; }
 
     .topic-card {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
+      gap: 16px;
+      padding: 18px;
       background: #fff;
-      border-radius: 14px;
-      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      border: 1px solid #D6DDD2;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
       text-decoration: none;
       color: inherit;
-      transition: box-shadow 0.2s, transform 0.2s;
+      transition: all 0.2s;
     }
-    .topic-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.06); transform: translateY(-1px); }
+    .topic-card:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 24px rgba(27,67,50,0.08);
+      border-color: #B5C4B1;
+    }
 
+    .topic-num-outer {
+      padding: 2px;
+      border-radius: 12px;
+      background: #D8F3DC;
+    }
     .topic-num {
       width: 36px;
       height: 36px;
-      min-width: 36px;
       border-radius: 10px;
-      background: #eef2ff;
-      color: #4f46e5;
+      background: #fff;
+      color: #1B4332;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.78rem;
+      font-size: 0.85rem;
       font-weight: 800;
     }
 
-    .topic-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-    .topic-title { font-size: 0.84rem; font-weight: 700; color: #0f172a; }
+    .topic-body { flex: 1; min-width: 0; }
+    .topic-title { display: block; font-size: 0.92rem; font-weight: 700; color: #1B1B1B; margin-bottom: 4px; }
     .topic-desc {
-      font-size: 0.66rem;
-      color: #64748b;
-      line-height: 1.4;
+      font-size: 0.75rem;
+      color: #52665A;
+      line-height: 1.5;
       display: -webkit-box;
-      -webkit-line-clamp: 1;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
-    .topic-dur { font-size: 0.6rem; color: #94a3b8; font-weight: 500; white-space: nowrap; }
+    .topic-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .topic-dur { font-size: 0.65rem; color: #8A9B8F; font-weight: 600; }
+    :host ::ng-deep .green-arrow { color: #B5C4B1; }
+    .topic-card:hover :host ::ng-deep .green-arrow { color: #DAA520; }
   `
 })
 export class TutorialDetailComponent {
