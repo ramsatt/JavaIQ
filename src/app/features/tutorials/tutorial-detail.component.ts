@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle } from '@ionic/angular/standalone';
 import { DataService } from '../../data.service';
 import { AdGateService } from '../../ad-gate.service';
+import { AuthService } from '../../auth.service';
+import { CertificateComponent } from '../../shared/certificate.component';
 
 interface Topic {
   slug: string;
@@ -24,7 +26,7 @@ interface CourseData {
 @Component({
   selector: 'app-tutorial-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle],
+  imports: [IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, CertificateComponent],
   host: { 'class': 'ion-page' },
   template: `
     <ion-header translucent="true" class="ion-no-border">
@@ -71,8 +73,30 @@ interface CourseData {
               </span>
             </div>
           }
+
+          <!-- Certificate CTA — shown when 100% complete -->
+          @if (isCourseComplete()) {
+            <div class="cert-cta-wrap">
+              <button class="btn-get-cert" (click)="showCert.set(true)">
+                <i class="fa-solid fa-certificate"></i>
+                Get Certificate
+              </button>
+              <p class="cert-cta-sub">🎉 Course complete!</p>
+            </div>
+          }
         </div>
       </div>
+
+      <!-- Certificate modal -->
+      @if (showCert()) {
+        <app-certificate
+          type="course"
+          [title]="courseData().title"
+          [category]="courseData().badge"
+          [visible]="showCert()"
+          [recipientName]="userName()"
+          (closed)="showCert.set(false)" />
+      }
 
       <div class="page-container">
         <!-- Curriculum List -->
@@ -437,6 +461,41 @@ interface CourseData {
       opacity: 0.9;
     }
 
+    /* ── Certificate CTA ── */
+    .cert-cta-wrap {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-get-cert {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #d4a853, #b8892a);
+      color: #0a1f13;
+      font-size: 0.85rem;
+      font-weight: 800;
+      padding: 12px 28px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 16px rgba(212, 168, 83, 0.45);
+      transition: all 0.2s ease;
+    }
+    .btn-get-cert:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(212, 168, 83, 0.55);
+    }
+    .cert-cta-sub {
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.65);
+      font-weight: 600;
+      margin: 0;
+    }
+
     /* ── Footer ── */
     .tut-footer {
       text-align: center;
@@ -516,6 +575,11 @@ export class TutorialDetailComponent {
     const total = this.courseData().topics.length;
     return total === 0 ? 0 : Math.round((this.completedCount() / total) * 100);
   });
+
+  private auth       = inject(AuthService);
+  showCert           = signal(false);
+  readonly userName  = computed(() => this.auth.user()?.displayName ?? 'Java Developer');
+  readonly isCourseComplete = computed(() => this.progressPct() >= 100);
 
   isComplete(courseSlug: string, topicSlug: string): boolean {
     return this.dataService.isTopicComplete(`${courseSlug}::${topicSlug}`);
