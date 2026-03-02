@@ -6,8 +6,9 @@ interface TutorialCourse {
   slug: string;
   title: string;
   description: string;
-  icon: string;
-  bg: string;
+  faIcon: string;
+  accentColor: string;
+  iconBg: string;
   chapterCount: number;
   difficulty: string;
   estimatedTime: string;
@@ -19,419 +20,540 @@ interface TutorialCourse {
   imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton],
   template: `
     <ion-header class="ion-no-border" translucent="true">
-      <ion-toolbar class="transparent-toolbar">
+      <ion-toolbar class="tut-toolbar">
         <ion-buttons slot="start">
           <ion-menu-button color="light"></ion-menu-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
-      <!-- Green Hero with Title, Search, Greeting -->
+    <ion-content class="tut-content">
+      <!-- Hero Section -->
       <div class="hero-section">
-        <div class="hero-bg"></div>
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
         <div class="hero-inner">
-          <h1 class="hero-brand">JavaIQ</h1>
-          
-          <div class="search-wrapper">
-            <span class="search-icon">🔍</span>
-            <input class="search-input" placeholder="Search courses, topics..." />
-          </div>
-          
-          <div class="greeting-block">
-            <span class="greeting-label">Good Morning ☀️</span>
-            <h2 class="greeting-name">Java Learner</h2>
-            <p class="greeting-sub">Popular topics: Core Java, Spring, Microservices</p>
+          <span class="hero-badge">
+            <i class="fa-solid fa-graduation-cap hero-badge-icon"></i>
+            Learning Platform
+          </span>
+          <h1 class="hero-title">Level Up Your<br><span class="hero-accent">Java Skills</span></h1>
+          <p class="hero-subtitle">Structured courses from fundamentals to advanced</p>
+
+          <!-- Stats Row -->
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="hero-stat-val">{{ totalChapters }}</span>
+              <span class="hero-stat-lbl">Chapters</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-val">{{ courses.length }}</span>
+              <span class="hero-stat-lbl">Courses</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-val">{{ totalHours }}h</span>
+              <span class="hero-stat-lbl">Content</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="page">
-        <!-- Category Pills -->
-        <span class="section-label">CATEGORIES</span>
-        <div class="category-grid">
-          @for (cat of categoryPills; track cat.label) {
-            <div class="category-pill">
-              <span class="pill-icon">{{ cat.icon }}</span>
-              <span class="pill-label">{{ cat.label }}</span>
-            </div>
+      <div class="page-body">
+        <!-- Quick Category Filters -->
+        <div class="filter-row">
+          @for (cat of categoryPills; track cat.label; let i = $index) {
+            <button class="filter-chip" [class.filter-active]="i === 0">
+              <i [class]="cat.faIcon" class="filter-chip-icon" [style.color]="cat.color"></i>
+              <span>{{ cat.label }}</span>
+            </button>
           }
         </div>
 
-        <!-- Courses -->
-        <div class="section-header">
-          <span class="section-label" style="margin-bottom:0">POPULAR COURSES</span>
-          <span class="see-all">See all</span>
+        <!-- Section Header -->
+        <div class="section-head">
+          <div class="section-head-left">
+            <i class="fa-solid fa-book-open section-icon"></i>
+            <span class="section-title">All Courses</span>
+          </div>
+          <span class="section-count">{{ courses.length }} courses</span>
         </div>
-        <div class="list">
+
+        <!-- Course Cards -->
+        <div class="course-list">
           @for (c of courses; track c.slug) {
-            <a [routerLink]="['/tutorials', c.slug]" class="card-link">
-              <div class="icon" [style.background]="c.bg">{{ c.icon }}</div>
-              <div class="body">
-                <span class="title">{{ c.title }}</span>
-                <span class="desc">{{ c.description }}</span>
-                <div class="meta">
-                  <span class="meta-item">📖 {{ c.chapterCount }} chapters</span>
-                  <span class="meta-item">⏱ {{ c.estimatedTime }}</span>
-                  <span class="tag" [attr.data-level]="c.difficulty">{{ c.difficulty }}</span>
+            <a [routerLink]="['/tutorials', c.slug]" class="course-card" [style.--accent]="c.accentColor">
+              <!-- Accent top border -->
+              <div class="course-accent-top"></div>
+
+              <div class="course-card-inner">
+                <!-- Icon -->
+                <div class="course-icon" [style.background]="c.iconBg">
+                  <i [class]="c.faIcon" class="course-fa-icon" [style.color]="c.accentColor"></i>
+                </div>
+
+                <!-- Info -->
+                <div class="course-info">
+                  <h3 class="course-title">{{ c.title }}</h3>
+                  <p class="course-desc">{{ c.description }}</p>
+                  <div class="course-meta">
+                    <span class="meta-chip">
+                      <i class="fa-solid fa-book meta-chip-icon"></i>
+                      {{ c.chapterCount }} chapters
+                    </span>
+                    <span class="meta-chip">
+                      <i class="fa-regular fa-clock meta-chip-icon"></i>
+                      {{ c.estimatedTime }}
+                    </span>
+                    <span class="diff-tag" [attr.data-level]="c.difficulty">
+                      {{ c.difficulty }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Arrow -->
+                <div class="course-arrow">
+                  <i class="fa-solid fa-chevron-right"></i>
                 </div>
               </div>
-              <span class="arrow">›</span>
             </a>
           }
         </div>
-      </div>
 
-      <div style="height: 80px;"></div>
+        <!-- Footer -->
+        <div class="tut-footer">
+          <p class="footer-text">Built with ❤️ for Java developers</p>
+        </div>
+      </div>
     </ion-content>
   `,
   styles: `
-    /* Transparent toolbar for safe area only */
-    .transparent-toolbar {
-      --background: #1B4332;
-      --color: #ffffff;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    /* ── Page Setup ── */
+    .tut-toolbar {
+      --background: #0b1120;
+      --color: white;
+      --border-style: none;
+    }
+    .tut-content {
+      --background: #0b1120;
     }
 
-    /* Hero Section */
+    /* ── Hero Section ── */
     .hero-section {
       position: relative;
-      padding: 0 24px 36px; /* Increased side padding */
+      padding: 0 20px 32px;
       overflow: hidden;
     }
-    .hero-bg {
+    .hero-glow {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(170deg, #081C15 0%, #1B4332 40%, #2D6A4F 100%);
-      border-bottom-left-radius: 36px;
-      border-bottom-right-radius: 36px;
+      border-radius: 50%;
+      pointer-events: none;
     }
-    .hero-inner { 
-      position: relative; 
+    .hero-glow-1 {
+      top: -60px;
+      right: -40px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+    }
+    .hero-glow-2 {
+      bottom: -30px;
+      left: -30px;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%);
+    }
+    .hero-inner {
+      position: relative;
       z-index: 1;
-      padding-top: 10px;
     }
-
-    /* Hero Brand Title — Big & Centered */
-    .hero-brand {
-      text-align: center;
-      font-size: 2.4rem;
-      font-weight: 800;
-      letter-spacing: -0.05em;
-      color: #DAA520;
-      margin: 0 0 28px;
-      text-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    /* Premium Search Bar */
-    .search-wrapper {
-      display: flex;
+    .hero-badge {
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 50px;
-      padding: 14px 22px;
-      margin-bottom: 32px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .search-wrapper:focus-within {
-      background: rgba(255,255,255,0.22);
-      border-color: rgba(255,255,255,0.4);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.15);
-      transform: translateY(-1px);
-    }
-    .search-icon {
-      font-size: 1rem;
-      opacity: 0.7;
-    }
-    .search-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: #ffffff;
-      font-family: inherit;
-    }
-    .search-input::placeholder {
-      color: rgba(255,255,255,0.5);
-      font-weight: 400;
-    }
-
-    /* Greeting */
-    .greeting-block {
-      padding-left: 4px; /* Slight nudge for breathing room */
-    }
-    .greeting-label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 6px;
-    }
-    .greeting-name {
-      margin: 0 0 6px;
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -0.03em;
-    }
-    .greeting-sub {
-      margin: 0;
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.5);
-      line-height: 1.4;
-    }
-
-    /* Page Content */
-    .page { 
-      padding: 32px 20px 0; /* Consistent side padding */
-    }
-
-    /* Section Headers */
-    .section-label {
-      display: block;
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 0.15em;
-      color: #1B4332;
-      margin-bottom: 16px;
-      opacity: 0.8;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      margin-top: 36px;
-    }
-    .see-all {
-      font-size: 0.72rem;
+      gap: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
       font-weight: 700;
-      color: #2D6A4F;
-      letter-spacing: 0.02em;
-    }
-
-    /* Category Pills */
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .category-pill {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
-      background: #fff;
-      border: 1px solid #E9EDE7;
-      border-radius: 18px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    }
-    .category-pill:hover {
-      border-color: #1B4332;
-      background: #F1F8F1;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(27, 67, 50, 0.06);
-    }
-    .pill-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #EDF2E7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-    }
-    .pill-label {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #1B1B1B;
-    }
-
-    /* Course Cards Styling Refinement */
-    .list { display: flex; flex-direction: column; gap: 14px; }
-
-    .card-link {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px;
-      background: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #8b5cf6;
+      background: rgba(139,92,246,0.1);
+      border: 1px solid rgba(139,92,246,0.2);
       border-radius: 20px;
-      border: 1px solid #E9EDE7;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 5px 14px;
+      margin-bottom: 16px;
     }
-    .card-link:hover {
-      box-shadow: 0 12px 32px rgba(0,0,0,0.07);
-      transform: translateY(-2px);
-      border-color: #D6DDD2;
+    .hero-badge-icon {
+      font-size: 0.7rem;
+    }
+    .hero-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: #e2e8f0;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin: 0 0 8px;
+    }
+    .hero-accent {
+      background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 50%, #c4b5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      color: #64748b;
+      font-weight: 500;
+      margin: 0 0 24px;
     }
 
-    /* Page */
-    .page { padding: 24px 16px 0; }
-
-    /* Section */
-    .section-label {
+    /* Hero Stats */
+    .hero-stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 16px 8px;
+    }
+    .hero-stat {
+      text-align: center;
+      flex: 1;
+    }
+    .hero-stat-val {
       display: block;
-      font-size: 0.62rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.4rem;
       font-weight: 800;
-      letter-spacing: 0.15em;
-      color: #1B4332;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-stat-lbl {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-top: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .hero-stat-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ── Page Body ── */
+    .page-body {
+      padding: 24px 16px 100px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ── Filter Chips ── */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 28px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      color: #94a3b8;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .filter-chip:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.15);
+      color: #e2e8f0;
+    }
+    .filter-active {
+      background: rgba(139,92,246,0.15) !important;
+      border-color: rgba(139,92,246,0.3) !important;
+      color: #a78bfa !important;
+    }
+    .filter-chip-icon {
+      font-size: 0.72rem;
+    }
+
+    /* ── Section Head ── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 14px;
     }
-
-    .section-header {
+    .section-head-left {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      margin-top: 28px;
+      gap: 8px;
     }
-    .see-all {
+    .section-icon {
+      font-size: 0.7rem;
+      color: #8b5cf6;
+    }
+    .section-title {
+      font-family: 'Inter', sans-serif;
       font-size: 0.72rem;
       font-weight: 700;
-      color: #2D6A4F;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #94a3b8;
     }
-
-    /* Category Pills */
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-    .category-pill {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      background: #fff;
-      border: 1px solid #D6DDD2;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .category-pill:hover {
-      border-color: #1B4332;
-      background: #D8F3DC;
-    }
-    .pill-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: #EDF2E7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-    }
-    .pill-label {
-      font-size: 0.78rem;
+    .section-count {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
       font-weight: 600;
-      color: #1B1B1B;
+      color: #475569;
     }
 
-    /* Course List */
-    .list { display: flex; flex-direction: column; gap: 10px; }
-
-    .card-link {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 14px 14px 16px;
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid #D6DDD2;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      text-decoration: none;
-      color: inherit;
-      transition: box-shadow 0.2s, transform 0.2s;
-    }
-    .card-link:hover {
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-      transform: translateY(-1px);
-    }
-
-    .icon {
-      width: 46px;
-      height: 46px;
-      min-width: 46px;
-      border-radius: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-    }
-
-    .body {
-      flex: 1;
-      min-width: 0;
+    /* ── Course List ── */
+    .course-list {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 12px;
     }
-    .title { font-size: 0.88rem; font-weight: 700; color: #1B1B1B; line-height: 1.3; }
-    .desc {
-      font-size: 0.7rem;
-      color: #52665A;
-      line-height: 1.45;
+
+    /* ── Course Card ── */
+    .course-card {
+      position: relative;
+      display: block;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    .course-card:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      transform: translateY(-2px);
+    }
+    .course-card:active {
+      transform: scale(0.98);
+    }
+
+    .course-accent-top {
+      height: 3px;
+      background: var(--accent, #8b5cf6);
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+    .course-card:hover .course-accent-top {
+      opacity: 0.9;
+    }
+
+    .course-card-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 16px 18px;
+    }
+
+    /* Icon */
+    .course-icon {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .course-fa-icon {
+      font-size: 1.2rem;
+    }
+
+    /* Info */
+    .course-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .course-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin: 0 0 4px;
+      letter-spacing: -0.01em;
+    }
+    .course-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      color: #64748b;
+      line-height: 1.5;
+      margin: 0 0 10px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
-    .meta {
+    /* Meta */
+    .course-meta {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-top: 4px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
-    .meta-item { font-size: 0.6rem; color: #8A9B8F; font-weight: 500; white-space: nowrap; }
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #64748b;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
+      padding: 3px 8px;
+    }
+    .meta-chip-icon {
+      font-size: 0.55rem;
+      opacity: 0.7;
+    }
 
-    .tag {
+    /* Difficulty Tag */
+    .diff-tag {
+      font-family: 'Inter', sans-serif;
       font-size: 0.55rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      padding: 2px 8px;
-      border-radius: 5px;
-      line-height: 1.4;
+      padding: 3px 8px;
+      border-radius: 6px;
     }
-    .tag[data-level="beginner"] { background: #ecfdf5; color: #059669; }
-    .tag[data-level="intermediate"] { background: #D8F3DC; color: #1B4332; }
-    .tag[data-level="advanced"] { background: #fef2f2; color: #dc2626; }
+    .diff-tag[data-level="beginner"] {
+      background: rgba(16,185,129,0.15);
+      color: #34d399;
+    }
+    .diff-tag[data-level="intermediate"] {
+      background: rgba(139,92,246,0.15);
+      color: #a78bfa;
+    }
+    .diff-tag[data-level="advanced"] {
+      background: rgba(239,68,68,0.15);
+      color: #f87171;
+    }
 
-    .arrow { font-size: 1.3rem; color: #B5C4B1; font-weight: 300; line-height: 1; }
+    /* Arrow */
+    .course-arrow {
+      flex-shrink: 0;
+      font-size: 11px;
+      color: #475569;
+      margin-top: 18px;
+      transition: all 0.2s ease;
+    }
+    .course-card:hover .course-arrow {
+      color: var(--accent, #8b5cf6);
+      transform: translateX(2px);
+    }
+
+    /* ── Footer ── */
+    .tut-footer {
+      text-align: center;
+      margin-top: 40px;
+    }
+    .footer-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      color: #334155;
+      font-weight: 500;
+      margin: 0;
+    }
   `
 })
 export class TutorialListComponent {
   categoryPills = [
-    { icon: '☕', label: 'Core Java' },
-    { icon: '🚀', label: 'Spring Boot' },
-    { icon: '🏗️', label: 'Design Patterns' },
-    { icon: '📚', label: 'All Courses' }
+    { faIcon: 'fa-solid fa-layer-group', label: 'All', color: '#8b5cf6' },
+    { faIcon: 'fa-solid fa-mug-hot', label: 'Core Java', color: '#f59e0b' },
+    { faIcon: 'fa-solid fa-leaf', label: 'Spring', color: '#10b981' },
+    { faIcon: 'fa-solid fa-cubes', label: 'Architecture', color: '#3b82f6' },
+    { faIcon: 'fa-solid fa-arrows-spin', label: 'Advanced', color: '#ef4444' }
   ];
 
   courses: TutorialCourse[] = [
-    { slug: 'core-java', title: 'Core Java', description: 'OOP, Collections, Streams, Generics, and modern Java features like Records and Sealed Classes.', icon: '☕', bg: '#D8F3DC', chapterCount: 15, difficulty: 'beginner', estimatedTime: '8 hours' },
-    { slug: 'spring-framework', title: 'Spring Framework', description: 'IoC, DI, AOP, MVC, Security, Data Access, REST APIs, Events, Caching, and Testing.', icon: '🌱', bg: '#D8F3DC', chapterCount: 12, difficulty: 'intermediate', estimatedTime: '10 hours' },
-    { slug: 'spring-boot', title: 'Spring Boot', description: 'Auto-configuration, starters, REST APIs, security, actuator, and production deployment.', icon: '🚀', bg: '#E8F5E9', chapterCount: 18, difficulty: 'intermediate', estimatedTime: '10 hours' },
-    { slug: 'hibernate', title: 'Hibernate & JPA', description: 'ORM fundamentals, entity mapping, relationships, caching, and performance tuning.', icon: '🗄️', bg: '#EDF2E7', chapterCount: 10, difficulty: 'intermediate', estimatedTime: '5 hours' },
-    { slug: 'microservices', title: 'Microservices', description: 'Service discovery, API gateway, circuit breakers, event-driven design, and Docker.', icon: '🔗', bg: '#D8F3DC', chapterCount: 14, difficulty: 'advanced', estimatedTime: '8 hours' },
-    { slug: 'multithreading', title: 'Multithreading', description: 'Threads, concurrency, ExecutorService, CompletableFuture, and Virtual Threads.', icon: '⚡', bg: '#FFF8E1', chapterCount: 8, difficulty: 'advanced', estimatedTime: '4 hours' },
-    { slug: 'design-patterns', title: 'Design Patterns', description: 'Creational, Structural, and Behavioral patterns with real-world Java implementations.', icon: '🏗️', bg: '#EDF2E7', chapterCount: 12, difficulty: 'intermediate', estimatedTime: '6 hours' }
+    {
+      slug: 'core-java', title: 'Core Java',
+      description: 'OOP, Collections, Streams, Generics, and modern Java features like Records and Sealed Classes.',
+      faIcon: 'fa-solid fa-mug-hot', accentColor: '#f59e0b', iconBg: 'rgba(245,158,11,0.12)',
+      chapterCount: 15, difficulty: 'beginner', estimatedTime: '8 hours'
+    },
+    {
+      slug: 'spring-framework', title: 'Spring Framework',
+      description: 'IoC, DI, AOP, MVC, Security, Data Access, REST APIs, Events, Caching, and Testing.',
+      faIcon: 'fa-solid fa-leaf', accentColor: '#10b981', iconBg: 'rgba(16,185,129,0.12)',
+      chapterCount: 12, difficulty: 'intermediate', estimatedTime: '10 hours'
+    },
+    {
+      slug: 'spring-boot', title: 'Spring Boot',
+      description: 'Auto-configuration, starters, REST APIs, security, actuator, and production deployment.',
+      faIcon: 'fa-solid fa-rocket', accentColor: '#3b82f6', iconBg: 'rgba(59,130,246,0.12)',
+      chapterCount: 18, difficulty: 'intermediate', estimatedTime: '10 hours'
+    },
+    {
+      slug: 'hibernate', title: 'Hibernate & JPA',
+      description: 'ORM fundamentals, entity mapping, relationships, caching, and performance tuning.',
+      faIcon: 'fa-solid fa-database', accentColor: '#f97316', iconBg: 'rgba(249,115,22,0.12)',
+      chapterCount: 10, difficulty: 'intermediate', estimatedTime: '5 hours'
+    },
+    {
+      slug: 'microservices', title: 'Microservices',
+      description: 'Service discovery, API gateway, circuit breakers, event-driven design, and Docker.',
+      faIcon: 'fa-solid fa-cubes', accentColor: '#8b5cf6', iconBg: 'rgba(139,92,246,0.12)',
+      chapterCount: 14, difficulty: 'advanced', estimatedTime: '8 hours'
+    },
+    {
+      slug: 'multithreading', title: 'Multithreading',
+      description: 'Threads, concurrency, ExecutorService, CompletableFuture, and Virtual Threads.',
+      faIcon: 'fa-solid fa-bolt', accentColor: '#eab308', iconBg: 'rgba(234,179,8,0.12)',
+      chapterCount: 8, difficulty: 'advanced', estimatedTime: '4 hours'
+    },
+    {
+      slug: 'design-patterns', title: 'Design Patterns',
+      description: 'Creational, Structural, and Behavioral patterns with real-world Java implementations.',
+      faIcon: 'fa-solid fa-puzzle-piece', accentColor: '#ec4899', iconBg: 'rgba(236,72,153,0.12)',
+      chapterCount: 12, difficulty: 'intermediate', estimatedTime: '6 hours'
+    }
   ];
+
+  get totalChapters() {
+    return this.courses.reduce((s, c) => s + c.chapterCount, 0);
+  }
+
+  get totalHours() {
+    return this.courses.reduce((s, c) => s + parseInt(c.estimatedTime), 0);
+  }
 }

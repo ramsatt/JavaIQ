@@ -21,20 +21,20 @@ export class FlashcardListComponent implements OnInit {
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
-  
+
   allQuestions: Question[] = this.dataService.getQuestions();
   filteredQuestions: Question[] = [...this.allQuestions];
-  
+
   categories = ['All', 'Core Java', 'Spring Boot', 'Hibernate', 'Spring Reactive', 'Microservices', 'Multithreading', 'Reactive Programming'];
   selectedCategory = 'All';
-  
+
   questionsViewedCount = 0;
   currentQuestionIndex = 0;
-  
+
   // Swipe logic
   touchStartX = 0;
   touchEndX = 0;
-  
+
   animationState: 'idle' | 'slideOutLeft' | 'slideOutRight' | 'slideInRight' | 'slideInLeft' | 'preparing' = 'idle';
 
   @ViewChild(QuizModalComponent) quizModal!: QuizModalComponent;
@@ -84,7 +84,7 @@ export class FlashcardListComponent implements OnInit {
   }
 
   async unlockQuestions() {
-    const success = await this.adMobService.showRewardVideo();
+    const success = await this.adMobService.showRewardAd();
     if (success) {
       this.ngZone.run(async () => {
         await this.dataService.addPoints(10);
@@ -96,19 +96,19 @@ export class FlashcardListComponent implements OnInit {
   // Navigation
   nextQuestion() {
     if (this.animationState !== 'idle') return;
-    
+
     // Allow moving to the next question even if it is locked, 
     // so the user can see the lock screen.
     if (this.currentQuestionIndex < this.filteredQuestions.length - 1) {
       this.animationState = 'slideOutLeft';
-      
+
       setTimeout(() => {
         this.currentQuestionIndex++;
         this.cdr.detectChanges(); // Update data while invisible
-        
+
         this.animationState = 'slideInRight';
         this.cdr.detectChanges(); // Trigger slide in
-        
+
         setTimeout(() => {
           this.animationState = 'idle';
           this.cdr.detectChanges();
@@ -122,14 +122,14 @@ export class FlashcardListComponent implements OnInit {
 
     if (this.currentQuestionIndex > 0) {
       this.animationState = 'slideOutRight';
-      
+
       setTimeout(() => {
         this.currentQuestionIndex--;
         this.cdr.detectChanges(); // Update data while invisible
-        
+
         this.animationState = 'slideInLeft';
         this.cdr.detectChanges(); // Trigger slide in
-        
+
         setTimeout(() => {
           this.animationState = 'idle';
           this.cdr.detectChanges();

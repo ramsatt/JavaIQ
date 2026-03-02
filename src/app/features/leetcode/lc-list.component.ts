@@ -1,169 +1,459 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { AdGateService } from '../../ad-gate.service';
+
+import { LeetCodeProblem, LEETCODE_PROBLEMS } from '../../data/leetcode-problems';
+import { DataService } from '../../data.service';
 
 @Component({
   selector: 'app-lc-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar, IonButtons, IonMenuButton],
+  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton],
   template: `
     <ion-header class="ion-no-border" translucent="true">
-      <ion-toolbar>
+      <ion-toolbar class="tut-toolbar">
         <ion-buttons slot="start">
           <ion-menu-button color="light"></ion-menu-button>
         </ion-buttons>
         <ion-title class="brand-title">JavaIQ</ion-title>
       </ion-toolbar>
-      <ion-toolbar>
-        <ion-searchbar placeholder="Search by number or title..." animated="true" />
-      </ion-toolbar>
     </ion-header>
 
-    <ion-content>
-      <div class="page">
-        <!-- Progress -->
-        <div class="progress">
-          <span class="progress-label">YOUR PROGRESS</span>
-          <div class="progress-row">
-            <div class="pbox easy"><span class="pnum">0</span></div>
-            <span class="ptxt easy-c">Easy</span>
-            <div class="pbox medium"><span class="pnum">0</span></div>
-            <span class="ptxt medium-c">Medium</span>
-            <div class="pbox hard"><span class="pnum">0</span></div>
-            <span class="ptxt hard-c">Hard</span>
+    <ion-content class="tut-content">
+      <!-- Premium Hero Section -->
+      <div class="hero-section">
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+        <div class="hero-inner">
+          <span class="hero-badge">
+            <i class="fa-solid fa-code hero-badge-icon"></i>
+            LeetCode Top 150
+          </span>
+          <h1 class="hero-title">Ace Your Coding<br><span class="hero-accent">Interviews</span></h1>
+          
+          <!-- Premium Search Bar -->
+          <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input class="search-input" placeholder="Search by number or title..." />
+          </div>
+        </div>
+      </div>
+
+      <div class="page-body">
+        
+        <!-- Progress Tracking -->
+        <div class="progress-card">
+          <div class="progress-header">
+            <i class="fa-solid fa-chart-pie section-icon"></i>
+            <span class="section-title">Your Progress</span>
+          </div>
+          <div class="progress-stats">
+            <div class="stat-box">
+              <div class="stat-num easy-text">{{ easyCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ easyTotalCount() }}</span></div>
+              <div class="stat-label">Easy</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num medium-text">{{ mediumCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ mediumTotalCount() }}</span></div>
+              <div class="stat-label">Medium</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num hard-text">{{ hardCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ hardTotalCount() }}</span></div>
+              <div class="stat-label">Hard</div>
+            </div>
           </div>
         </div>
 
-        <span class="section-label">POPULAR PROBLEMS</span>
-        <div class="list">
-          @for (p of problems; track p.number) {
-            <a [routerLink]="['/leetcode', p.number]" class="card-link">
-              <div class="num">{{ p.number }}</div>
-              <div class="body">
-                <span class="title">{{ p.title }}</span>
-                <span class="cat">{{ p.category }}</span>
+        <!-- Section Header -->
+        <div class="section-head mt-6">
+          <div class="section-head-left">
+            <i class="fa-solid fa-list-ul section-icon"></i>
+            <span class="section-title">Problem List</span>
+          </div>
+          <span class="section-count">{{ problems().length }} problems</span>
+        </div>
+
+        <!-- Problems List -->
+        <div class="problem-list">
+          @for (p of problems(); track p.number) {
+            <button (click)="openLc(p)" class="problem-card" [class.completed]="dataService.leetcodeCompletedIds().has(p.number)">
+              <div class="problem-num">
+                @if (dataService.leetcodeCompletedIds().has(p.number)) {
+                  <i class="fa-solid fa-check text-emerald-500"></i>
+                } @else {
+                  {{ p.number }}
+                }
               </div>
-              <span class="tag" [attr.data-d]="p.difficulty">{{ p.difficulty }}</span>
-            </a>
+              
+              <div class="problem-content">
+                <h3 class="problem-title">{{ p.title }}</h3>
+                <div class="problem-meta">
+                  <span class="meta-chip">
+                    <i class="fa-solid fa-folder meta-chip-icon"></i>
+                    {{ p.category }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="problem-actions">
+                <span class="difficulty-badge" [class]="p.difficulty.toLowerCase()">
+                  {{ p.difficulty }}
+                </span>
+                @if (!dataService.leetcodeCompletedIds().has(p.number) && !isUnlocked(p.number)) {
+                  <i class="fa-solid fa-lock" style="color: #f59e0b; font-size: 11px; margin-left: 8px;"></i>
+                } @else {
+                  <i class="fa-solid fa-chevron-right" style="color: #64748b; font-size: 11px; margin-left: 8px;"></i>
+                }
+              </div>
+            </button>
           }
         </div>
+
       </div>
     </ion-content>
   `,
   styles: `
-    .page { padding: 4px 16px 100px; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap');
 
-    /* Progress card */
-    .progress {
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid #D6DDD2;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      padding: 18px 20px;
-      margin-bottom: 24px;
+    /* ── Page Setup ── */
+    .tut-toolbar {
+      --background: #0b1120;
+      --color: white;
+      --border-style: none;
     }
-    .progress-label { display: block; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.15em; color: #1B4332; margin-bottom: 14px; }
-    .progress-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
-      text-align: center;
+    .brand-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: white;
     }
-    .pbox {
-      width: 50px;
-      height: 50px;
-      border-radius: 14px;
-      display: flex;
+    .tut-content {
+      --background: #0b1120;
+    }
+
+    /* ── Hero Section ── */
+    .hero-section {
+      position: relative;
+      padding: 0 20px 32px;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-glow-1 {
+      top: -40px;
+      left: -40px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(239,68,68,0.12) 0%, transparent 70%); /* Red glow for leetcode */
+    }
+    .hero-glow-2 {
+      bottom: -30px;
+      right: -30px;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%); /* Orange glow */
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      text-align: left;
+      margin-top: 10px;
+    }
+    .hero-badge {
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      margin: 0 auto;
+      gap: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #fca5a5;
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 20px;
+      padding: 5px 14px;
+      margin-bottom: 16px;
     }
-    .pbox.easy { background: #ecfdf5; }
-    .pbox.medium { background: #fffbeb; }
-    .pbox.hard { background: #fef2f2; }
-    .pnum { font-size: 1.1rem; font-weight: 800; }
-    .pbox.easy .pnum { color: #059669; }
-    .pbox.medium .pnum { color: #d97706; }
-    .pbox.hard .pnum { color: #dc2626; }
-    .ptxt { display: block; font-size: 0.62rem; font-weight: 600; margin-top: 6px; }
-    .easy-c { color: #059669; }
-    .medium-c { color: #d97706; }
-    .hard-c { color: #dc2626; }
+    .hero-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: #e2e8f0;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin: 0 0 24px;
+    }
+    .hero-accent {
+      background: linear-gradient(135deg, #f87171 0%, #fb923c 50%, #fbbf24 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-    /* Section */
-    .section-label { display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.15em; color: #1B4332; margin-bottom: 14px; }
-
-    /* List */
-    .list { display: flex; flex-direction: column; gap: 8px; }
-
-    .card-link {
+    /* Premium Search Bar */
+    .search-wrapper {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 14px 12px 14px;
-      background: #fff;
-      border-radius: 14px;
-      border: 1px solid #D6DDD2;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-      text-decoration: none;
-      color: inherit;
-      transition: box-shadow 0.2s, transform 0.2s;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 50px;
+      padding: 14px 22px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .card-link:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); transform: translateY(-1px); }
+    .search-wrapper:focus-within {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.2);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+    }
+    .search-icon {
+      font-size: 1rem;
+      color: #94a3b8;
+    }
+    .search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #ffffff;
+      font-family: inherit;
+    }
+    .search-input::placeholder {
+      color: #64748b;
+      font-weight: 400;
+    }
 
-    .num {
-      width: 34px;
-      height: 34px;
-      min-width: 34px;
-      border-radius: 9px;
-      background: #f1f5f9;
+    /* ── Page Body ── */
+    .page-body {
+      padding: 12px 16px 100px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ── Progress Card ── */
+    .progress-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .progress-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .progress-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 12px 0;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .easy-text { color: #10b981; }
+    .medium-text { color: #f59e0b; }
+    .hard-text { color: #ef4444; }
+
+    /* ── Section Head ── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .section-head.mt-6 {
+      margin-top: 24px;
+    }
+    .section-head-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-icon {
+      font-size: 0.75rem;
+      color: #fb923c;
+    }
+    .section-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #94a3b8;
+    }
+    .section-count {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    /* ── Problems List ── */
+    .problem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ── Problem Card ── */
+    .problem-card {
+      display: flex;
+      width: 100%;
+      text-align: left;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 16px;
+      color: inherit;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .problem-card:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+    }
+    
+    .problem-num {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      color: #52665A;
+      color: #cbd5e1;
     }
 
-    .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-    .title {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #0f172a;
+    .problem-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .problem-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin: 0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .cat { font-size: 0.6rem; color: #8A9B8F; }
 
-    .tag {
+    .problem-meta {
+      display: flex;
+    }
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: #94a3b8;
+    }
+    .meta-chip-icon {
       font-size: 0.55rem;
+      opacity: 0.7;
+    }
+
+    .problem-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .difficulty-badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 2px 8px;
-      border-radius: 5px;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 6px;
       white-space: nowrap;
     }
-    .tag[data-d="Easy"] { background: #ecfdf5; color: #059669; }
-    .tag[data-d="Medium"] { background: #fffbeb; color: #d97706; }
-    .tag[data-d="Hard"] { background: #fef2f2; color: #dc2626; }
+    .difficulty-badge.easy { color: #10b981; background: rgba(16,185,129,0.1); }
+    .difficulty-badge.medium { color: #f59e0b; background: rgba(245,158,11,0.1); }
+    .difficulty-badge.hard { color: #ef4444; background: rgba(239,68,68,0.1); }
+
+    .problem-card.completed {
+      border-color: rgba(16,185,129,0.3);
+      background: rgba(16,185,129,0.02);
+    }
   `
 })
 export class LcListComponent {
-  problems = [
-    { number: 1, title: 'Two Sum', difficulty: 'Easy', category: 'Arrays' },
-    { number: 2, title: 'Add Two Numbers', difficulty: 'Medium', category: 'Linked Lists' },
-    { number: 3, title: 'Longest Substring Without Repeating', difficulty: 'Medium', category: 'Strings' },
-    { number: 5, title: 'Longest Palindromic Substring', difficulty: 'Medium', category: 'Strings' },
-    { number: 15, title: '3Sum', difficulty: 'Medium', category: 'Arrays' },
-    { number: 20, title: 'Valid Parentheses', difficulty: 'Easy', category: 'Stacks' },
-    { number: 21, title: 'Merge Two Sorted Lists', difficulty: 'Easy', category: 'Linked Lists' },
-    { number: 49, title: 'Group Anagrams', difficulty: 'Medium', category: 'Hashing' },
-    { number: 53, title: 'Maximum Subarray', difficulty: 'Medium', category: 'Dynamic Programming' },
-    { number: 121, title: 'Best Time to Buy and Sell Stock', difficulty: 'Easy', category: 'Arrays' },
-    { number: 200, title: 'Number of Islands', difficulty: 'Medium', category: 'Graphs' },
-    { number: 206, title: 'Reverse Linked List', difficulty: 'Easy', category: 'Linked Lists' }
-  ];
+  dataService = inject(DataService);
+  private router = inject(Router);
+  private adGate = inject(AdGateService);
+
+  problems = signal<LeetCodeProblem[]>(LEETCODE_PROBLEMS);
+
+  // Computeds for totals
+  easyTotalCount = computed(() => this.problems().filter(p => p.difficulty === 'Easy').length);
+  mediumTotalCount = computed(() => this.problems().filter(p => p.difficulty === 'Medium').length);
+  hardTotalCount = computed(() => this.problems().filter(p => p.difficulty === 'Hard').length);
+
+  // Computeds for completed counts
+  easyCompletedCount = computed(() =>
+    this.problems().filter(p => p.difficulty === 'Easy' && this.dataService.leetcodeCompletedIds().has(p.number)).length
+  );
+  mediumCompletedCount = computed(() =>
+    this.problems().filter(p => p.difficulty === 'Medium' && this.dataService.leetcodeCompletedIds().has(p.number)).length
+  );
+  hardCompletedCount = computed(() =>
+    this.problems().filter(p => p.difficulty === 'Hard' && this.dataService.leetcodeCompletedIds().has(p.number)).length
+  );
+
+  isUnlocked(id: number): boolean {
+    this.adGate.unlockedItems();
+    return this.adGate.isItemUnlocked(`lc::${id}`);
+  }
+
+  async openLc(p: LeetCodeProblem) {
+    const itemId = `lc::${p.number}`;
+    if (!this.dataService.leetcodeCompletedIds().has(p.number) && !this.isUnlocked(p.number)) {
+      const allowed = await this.adGate.unlockItemWithAd(itemId, 'this algorithm problem');
+      if (!allowed) return;
+    }
+    this.router.navigate(['/leetcode', p.number]);
+  }
 }

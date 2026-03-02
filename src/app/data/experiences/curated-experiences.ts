@@ -460,4 +460,308 @@ export const CURATED_EXPERIENCES: InterviewExperience[] = [
       'Brush up on database design — normalization, indexes, joins'
     ]
   }
+  ,
+  {
+    id: 'exp-swiggy-sde2-2024',
+    company: 'Swiggy',
+    role: 'SDE-2 (Java Backend)',
+    yearsOfExperience: 3,
+    difficulty: 'medium',
+    result: 'offer',
+    source: 'curated',
+    date: '2024-10-03',
+    tags: ['java', 'spring-boot', 'microservices', 'kafka', 'redis', 'lld'],
+    rounds: [
+      {
+        roundNumber: 1,
+        type: 'Online Assessment',
+        description: 'Two algorithmic problems on HackerRank with a 75-minute time limit.',
+        questions: [
+          'Minimum cost path in a grid (DP)',
+          'Find all valid parentheses combinations for N pairs'
+        ],
+        duration: '75 minutes'
+      },
+      {
+        roundNumber: 2,
+        type: 'Technical Round 1 — DSA',
+        description: 'Live coding with a senior engineer. Focus on problem-solving approach and edge cases.',
+        questions: [
+          'Serialize and deserialize a binary tree',
+          'Find median from a data stream using two heaps',
+          'Given an array, find all pairs with sum equal to K (O(n) expected)'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 3,
+        type: 'Technical Round 2 — Java & System Design',
+        description: 'Deep-dive into Spring Boot internals, followed by a system design problem.',
+        questions: [
+          'How does Spring Boot auto-configuration work internally?',
+          'Explain @Async and how you configure the underlying thread pool',
+          'Design a real-time order tracking system for 5M daily orders',
+          'How would you handle Kafka consumer lag at scale?'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 4,
+        type: 'LLD Round',
+        description: 'Low-level design of a core product feature.',
+        questions: [
+          'Design the Swiggy delivery partner assignment system (OOP + state machine)',
+          'Class diagram: Restaurant → Menu → MenuItem → Order → LineItem',
+          'How do you handle concurrent restaurant capacity updates?'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 5,
+        type: 'Hiring Manager Round',
+        description: 'Culture, past experience, and career motivation.',
+        questions: [
+          'Tell me about a time your system had a production outage',
+          'How do you prioritize competing technical tasks?',
+          'Why Swiggy and not another food-tech company?'
+        ],
+        duration: '45 minutes'
+      }
+    ],
+    summary: 'Swiggy\'s process is well-organized with a strong focus on practical engineering problems relevant to their scale. The LLD round was domain-specific (delivery systems), which caught many candidates off-guard. Interviewers were collaborative and gave hints when genuinely stuck. Offer timeline was 5 business days.',
+    tips: [
+      'Practice LLD for food-delivery domains: order placement, delivery routing, real-time tracking',
+      'Understand how to monitor and scale Kafka consumers — common topic at product companies',
+      'Know @Async, @Scheduled, and Spring Boot actuator deeply',
+      'Study two-pointer and heap problems — they come up repeatedly at Swiggy'
+    ]
+  },
+  {
+    id: 'exp-paypal-javadev-2024',
+    company: 'PayPal',
+    role: 'Software Engineer II (Java)',
+    yearsOfExperience: 4,
+    difficulty: 'hard',
+    result: 'offer',
+    source: 'curated',
+    date: '2024-11-12',
+    tags: ['java', 'spring-boot', 'microservices', 'payments', 'security', 'concurrency'],
+    rounds: [
+      {
+        roundNumber: 1,
+        type: 'Recruiter Screen',
+        description: 'Overview of background, salary expectations, and role alignment.',
+        questions: [
+          'Walk me through your current role and tech stack',
+          'What\'s your expected compensation range?'
+        ],
+        duration: '30 minutes'
+      },
+      {
+        roundNumber: 2,
+        type: 'Technical Phone Screen',
+        description: 'One DSA problem + Java fundamentals over HackerRank CodePair.',
+        questions: [
+          'Implement a thread-safe token bucket rate limiter',
+          'What are the differences between volatile and AtomicInteger?',
+          'Explain Java memory model and happens-before semantics'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 3,
+        type: 'Onsite — Core Java & Concurrency',
+        description: 'Advanced Java concurrency and reliability engineering.',
+        questions: [
+          'How do you prevent deadlocks in a payment processing pipeline?',
+          'Explain CompletableFuture composition — thenCompose vs thenCombine',
+          'Write a custom thread pool with bounded queue and reject policy',
+          'How does the Fork/Join framework differ from ExecutorService?'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 4,
+        type: 'Onsite — System Design',
+        description: 'Design a payment processing system with idempotency guarantees.',
+        questions: [
+          'Design idempotent payment API — what happens on retries?',
+          'How do you handle distributed transactions across services?',
+          'Saga pattern vs 2PC — trade-offs in payments context',
+          'How would you design a fraud detection pipeline?'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 5,
+        type: 'Onsite — Application Security',
+        description: 'Security practices and secure coding for financial applications.',
+        questions: [
+          'How do you prevent SQL injection and XSS in a Spring Boot app?',
+          'Explain OAuth 2.0 and how you would implement it',
+          'What is CSRF and how does Spring Security handle it?'
+        ],
+        duration: '45 minutes'
+      }
+    ],
+    summary: 'PayPal interviews are notably more security and reliability focused than typical product companies. They care deeply about idempotency, distributed consistency, and secure coding. Come prepared with real examples of handling production failures. Excellent compensation and comprehensive benefits.',
+    tips: [
+      'Master idempotency patterns — storing request IDs, deduplication keys, and retry logic',
+      'Understand distributed transaction alternatives: Saga, TCC, Outbox pattern',
+      'Know Spring Security filter chain and OAuth 2.0 resource server configuration thoroughly',
+      'Study Java concurrency deeply — ForkJoinPool, CompletableFuture, StampedLock'
+    ]
+  },
+  {
+    id: 'exp-uber-sde2-2024',
+    company: 'Uber',
+    role: 'Software Engineer II (Backend Java)',
+    yearsOfExperience: 3,
+    difficulty: 'hard',
+    result: 'offer',
+    source: 'curated',
+    date: '2024-04-29',
+    tags: ['java', 'microservices', 'system-design', 'algorithms', 'distributed-systems'],
+    rounds: [
+      {
+        roundNumber: 1,
+        type: 'Online Assessment',
+        description: 'Two coding problems + one debugging problem on Karat interview platform.',
+        questions: [
+          'Given a list of ride events, compute surge multiplier per zone',
+          'Find the shortest path between two GPS coordinates (BFS variant)',
+          'Debug: fix a concurrency bug in a shared ride-matching cache'
+        ],
+        duration: '90 minutes'
+      },
+      {
+        roundNumber: 2,
+        type: 'Coding Interview 1',
+        description: 'Data structures and algorithm problem-solving with clean code emphasis.',
+        questions: [
+          'Design a ride-fare estimator with distance and surge factors (OOP)',
+          'Find all trips within a given bounding box using spatial indexing concepts',
+          'Compress a GPS path by removing redundant intermediate points (Ramer-Douglas algo)'
+        ],
+        duration: '45 minutes'
+      },
+      {
+        roundNumber: 3,
+        type: 'Coding Interview 2',
+        description: 'Concurrency and distributed primitives.',
+        questions: [
+          'Implement a distributed rate limiter using Redis primitives',
+          'Write a read-through cache with TTL and background refresh',
+          'Design a producer-consumer with back-pressure using SemaphoreSlim'
+        ],
+        duration: '45 minutes'
+      },
+      {
+        roundNumber: 4,
+        type: 'System Design',
+        description: 'Design Uber\'s core ride matching system.',
+        questions: [
+          'How do you match drivers to riders in real-time at global scale?',
+          'Geospatial indexing: H3, Geohash, or QuadTree — which and why?',
+          'How do you handle driver location updates (millions per second)?',
+          'What happens during a city-level outage — graceful degradation?'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 5,
+        type: 'Behavioral',
+        description: 'Leadership, cross-functional collaboration, and engineering excellence.',
+        questions: [
+          'Tell me about a time you drove a significant technical improvement',
+          'Describe a disagreement with a peer engineer — how did you resolve it?',
+          'How do you handle urgent production issues during a release?'
+        ],
+        duration: '30 minutes'
+      }
+    ],
+    summary: 'Uber focuses heavily on real-world distributed systems problems. The system design round is specifically about their core geo-matching and routing domain — generic answers won\'t cut it. Coding problems often relate to maps and location data. The team was impressive and collaborative.',
+    tips: [
+      'Study H3 geospatial indexing and Geohash — Uber uses both extensively',
+      'Understand consistent hashing and its application for driver location assignment',
+      'Graph problems with weighted edges are common — study Dijkstra and A*',
+      'Read Uber Engineering Blog posts before the interview for domain context'
+    ]
+  },
+  {
+    id: 'exp-phonepe-sde2-2024',
+    company: 'PhonePe',
+    role: 'SDE-2 (Java Backend)',
+    yearsOfExperience: 3,
+    difficulty: 'medium',
+    result: 'offer',
+    source: 'curated',
+    date: '2024-12-10',
+    tags: ['java', 'spring-boot', 'microservices', 'kafka', 'payments', 'lld'],
+    rounds: [
+      {
+        roundNumber: 1,
+        type: 'Online Assessment',
+        description: 'Two algorithmic problems on HackerRank — 60 minutes.',
+        questions: [
+          'Merge intervals — given UPI transaction windows, find overlapping ones',
+          'Sliding window: find max distinct payees in any 7-day window'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 2,
+        type: 'Technical Round 1 — Java',
+        description: 'Core Java and Spring Boot internals with live coding.',
+        questions: [
+          'How does Spring\'s @Transactional interact with the proxy mechanism?',
+          'Write a custom annotation to log method execution time using AOP',
+          'Explain ConcurrentHashMap\'s internal segmentation in Java 8+',
+          'What is G1 GC and when would you choose it over ZGC?'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 3,
+        type: 'Technical Round 2 — LLD',
+        description: 'Low-level design simulating a PhonePe core feature.',
+        questions: [
+          'Design a UPI payment flow with transaction state machine (INITIATED → PENDING → SUCCESS/FAILED)',
+          'Class design for a split-bill feature (Splitwise-like)',
+          'How do you handle concurrent debit/credit to the same wallet?'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 4,
+        type: 'System Design',
+        description: 'Design a high-throughput payment notification system.',
+        questions: [
+          'Design a system to send real-time payment notifications to 50M users',
+          'How do you guarantee exactly-once delivery with Kafka?',
+          'How do you handle bank downtime and retry with exponential backoff?',
+          'Circuit breaker pattern — how would you implement it for bank calls?'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 5,
+        type: 'HR + Director Round',
+        description: 'Final round with director-level engineer + HR.',
+        questions: [
+          'What excites you about the fintech and payments space?',
+          'Describe your biggest technical contribution at your current company',
+          'How do you keep up with evolving Java and Spring ecosystem?'
+        ],
+        duration: '45 minutes'
+      }
+    ],
+    summary: 'PhonePe has a very product-centric engineering culture. All technical problems are grounded in real fintech scenarios. The LLD round specifically tested payment domain knowledge — generic designs scored lower. They value engineers who understand the business impact of technical decisions. Excellent ESOP structure.',
+    tips: [
+      'Study the UPI payment flow end-to-end — NPCI, bank APIs, transaction states',
+      'Know Kafka exactly-once semantics: idempotent producers + transactional consumers',
+      'Practice circuit breaker, retry, and bulkhead patterns — essential for payment systems',
+      'Spring AOP is asked in almost every PhonePe interview — know it inside out'
+    ]
+  }
 ];

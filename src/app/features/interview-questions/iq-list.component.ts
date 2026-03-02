@@ -1,130 +1,450 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { DataService } from '../../data.service';
 
 @Component({
   selector: 'app-iq-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonSearchbar, IonButtons, IonMenuButton],
+  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton],
   template: `
     <ion-header class="ion-no-border" translucent="true">
-      <ion-toolbar>
+      <ion-toolbar class="iq-toolbar">
         <ion-buttons slot="start">
           <ion-menu-button color="light"></ion-menu-button>
         </ion-buttons>
-        <ion-title class="brand-title">JavaIQ</ion-title>
-      </ion-toolbar>
-      <ion-toolbar>
-        <ion-searchbar placeholder="Search questions..." animated="true" />
+        <ion-title class="iq-brand">
+          <span class="brand-icon">☕</span> JavaIQ
+        </ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
-      <div class="page">
-        <!-- Stats -->
-        <div class="stats">
-          <div class="stat">
-            <span class="stat-num indigo">{{ totalQuestions }}</span>
-            <span class="stat-lbl">Questions</span>
+    <ion-content class="iq-page-content">
+      <div class="page-wrapper">
+
+        <!-- Hero Section -->
+        <div class="hero-section">
+          <div class="hero-glow"></div>
+          <h1 class="hero-title">Master Your<br><span class="hero-accent">Java Interview</span></h1>
+          <p class="hero-subtitle">Curated questions from top tech companies</p>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+          <div class="stat-item">
+            <span class="stat-value">{{ totalQuestions }}</span>
+            <span class="stat-label">Questions</span>
           </div>
-          <div class="stat-div"></div>
-          <div class="stat">
-            <span class="stat-num cyan">{{ categories.length }}</span>
-            <span class="stat-lbl">Topics</span>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">{{ totalVisited() }}</span>
+            <span class="stat-label">Covered</span>
           </div>
-          <div class="stat-div"></div>
-          <div class="stat">
-            <span class="stat-num green">50+</span>
-            <span class="stat-lbl">Companies</span>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">{{ overallProgress() }}%</span>
+            <span class="stat-label">Progress</span>
           </div>
         </div>
 
-        <!-- Topics -->
-        <span class="section-label">BROWSE BY TOPIC</span>
-        <div class="grid">
+        <!-- Overall progress bar -->
+        <div class="overall-progress-track">
+          <div class="overall-progress-bar" [style.width.%]="overallProgress()"></div>
+        </div>
+
+        <!-- Section Header -->
+        <div class="section-header">
+          <span class="section-tag">
+            <i class="fa-solid fa-layer-group section-tag-icon"></i>
+            Browse Topics
+          </span>
+        </div>
+
+        <!-- Topic Grid -->
+        <div class="topic-grid">
           @for (cat of categories; track cat.key) {
-            <a [routerLink]="['/interview-questions', cat.key]" class="topic">
-              <div class="topic-icon" [style.background]="cat.bg">{{ cat.icon }}</div>
-              <span class="topic-name">{{ cat.title }}</span>
-              <span class="topic-count">{{ cat.questionCount }} questions</span>
+            <a [routerLink]="['/interview-questions', cat.key]" class="topic-card" [style.--accent]="cat.accentColor">
+              <div class="topic-accent-line"></div>
+              <div class="topic-card-inner">
+                <div class="topic-icon-wrap" [style.background]="cat.iconBg">
+                  <i [class]="cat.faIcon" class="topic-fa-icon" [style.color]="cat.accentColor"></i>
+                </div>
+                <div class="topic-info">
+                  <h3 class="topic-name">{{ cat.title }}</h3>
+                  <span class="topic-count">
+                    {{ getVisited(cat.categoryName) }} / {{ cat.questionCount }} covered
+                  </span>
+                </div>
+                <div class="topic-arrow">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </div>
+              </div>
+              <div class="topic-progress-track">
+                <div class="topic-progress-bar"
+                     [style.width.%]="getProgressPercent(cat.categoryName)"
+                     [style.background]="cat.accentColor"></div>
+              </div>
             </a>
           }
+        </div>
+
+        <!-- Footer -->
+        <div class="page-footer">
+          <p class="footer-text">Built with ❤️ for Java developers</p>
         </div>
       </div>
     </ion-content>
   `,
   styles: `
-    .page { padding: 4px 16px 100px; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-    /* Stats */
-    .stats {
+    /* ── Page Setup ── */
+    .iq-toolbar {
+      --background: #0b1120;
+      --color: white;
+      --border-style: none;
+    }
+    .iq-brand {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .brand-icon {
+      font-size: 1.1rem;
+    }
+
+    .iq-page-content {
+      --background: #0b1120;
+    }
+
+    .page-wrapper {
+      padding: 0 16px 100px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ── Hero Section ── */
+    .hero-section {
+      position: relative;
+      text-align: center;
+      padding: 28px 16px 24px;
+    }
+    .hero-glow {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: #e2e8f0;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin: 0 0 8px;
+      position: relative;
+    }
+    .hero-accent {
+      background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      color: #64748b;
+      font-weight: 500;
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Stats Bar ── */
+    .stats-bar {
       display: flex;
       align-items: center;
       justify-content: space-evenly;
-      background: #fff;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06);
       border-radius: 16px;
-      border: 1px solid #D6DDD2;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      padding: 18px 12px;
-      margin-bottom: 24px;
+      padding: 18px 8px;
+      margin-bottom: 12px;
     }
-    .stat { text-align: center; }
-    .stat-num { display: block; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
-    .stat-num.indigo { color: #1B4332; }
-    .stat-num.cyan { color: #2D6A4F; }
-    .stat-num.green { color: #059669; }
-    .stat-lbl { display: block; font-size: 0.6rem; color: #8A9B8F; font-weight: 600; margin-top: 5px; }
-    .stat-div { width: 1px; height: 32px; background: #D6DDD2; }
+    .stat-item {
+      text-align: center;
+      flex: 1;
+    }
+    .stat-value {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      background: linear-gradient(135deg, #10b981, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-top: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .stat-divider {
+      width: 1px;
+      height: 28px;
+      background: rgba(255,255,255,0.08);
+    }
 
-    /* Section label */
-    .section-label { display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.15em; color: #1B4332; margin-bottom: 14px; }
+    /* ── Overall Progress ── */
+    .overall-progress-track {
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .overall-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #34d399);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
 
-    /* Grid */
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    /* ── Section Header ── */
+    .section-header {
+      margin-bottom: 14px;
+    }
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #94a3b8;
+    }
+    .section-tag-icon {
+      font-size: 0.65rem;
+      color: #10b981;
+    }
 
-    /* Topic card */
-    .topic {
+    /* ── Topic Grid ── */
+    .topic-grid {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 18px 10px 16px;
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid #D6DDD2;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      gap: 10px;
+    }
+
+    /* ── Topic Card ── */
+    .topic-card {
+      position: relative;
+      display: block;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 0;
       text-decoration: none;
       color: inherit;
-      transition: box-shadow 0.2s, transform 0.2s;
+      overflow: hidden;
+      transition: all 0.2s ease;
     }
-    .topic:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.06); transform: translateY(-1px); }
+    .topic-card:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      transform: translateY(-2px);
+    }
+    .topic-card:active {
+      transform: scale(0.98);
+    }
 
-    .topic-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 13px;
+    /* Accent line on left */
+    .topic-accent-line {
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 3px;
+      background: var(--accent, #10b981);
+      border-radius: 0 3px 3px 0;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .topic-card:hover .topic-accent-line {
+      opacity: 1;
+    }
+
+    .topic-card-inner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 16px 10px 20px;
+    }
+
+    /* Icon */
+    .topic-icon-wrap {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
-      margin-bottom: 10px;
     }
-    .topic-name { font-size: 0.8rem; font-weight: 700; color: #1B1B1B; text-align: center; line-height: 1.2; }
-    .topic-count { font-size: 0.6rem; color: #8A9B8F; font-weight: 500; margin-top: 3px; }
+    .topic-fa-icon {
+      font-size: 1.15rem;
+    }
+
+    /* Info */
+    .topic-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .topic-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin: 0 0 2px;
+      letter-spacing: -0.01em;
+    }
+    .topic-count {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* Arrow */
+    .topic-arrow {
+      flex-shrink: 0;
+      font-size: 11px;
+      color: #475569;
+      transition: all 0.2s ease;
+    }
+    .topic-card:hover .topic-arrow {
+      color: var(--accent, #10b981);
+      transform: translateX(2px);
+    }
+
+    /* Progress bar */
+    .topic-progress-track {
+      height: 3px;
+      background: rgba(255,255,255,0.04);
+      margin: 0 20px 12px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .topic-progress-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    /* ── Footer ── */
+    .page-footer {
+      text-align: center;
+      margin-top: 40px;
+    }
+    .footer-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      color: #334155;
+      font-weight: 500;
+      margin: 0;
+    }
   `
 })
 export class IqListComponent {
+  private dataService = inject(DataService);
+
   categories = [
-    { key: 'core-java', title: 'Core Java', icon: '☕', bg: '#fff7ed', questionCount: 45 },
-    { key: 'spring-boot', title: 'Spring Boot', icon: '🚀', bg: '#ecfeff', questionCount: 35 },
-    { key: 'hibernate', title: 'Hibernate', icon: '🗄️', bg: '#faf5ff', questionCount: 20 },
-    { key: 'microservices', title: 'Microservices', icon: '🔗', bg: '#eff6ff', questionCount: 25 },
-    { key: 'multithreading', title: 'Multithreading', icon: '⚡', bg: '#fefce8', questionCount: 15 },
-    { key: 'spring-reactive', title: 'Reactive', icon: '🌊', bg: '#f0fdfa', questionCount: 12 },
-    { key: 'reactive-prog', title: 'RxJava', icon: '📡', bg: '#fdf2f8', questionCount: 15 },
-    { key: 'coding-patterns', title: 'Patterns', icon: '🧩', bg: '#eef2ff', questionCount: 18 }
+    {
+      key: 'core-java', title: 'Core Java', categoryName: 'Core Java', questionCount: 51,
+      faIcon: 'fa-solid fa-mug-hot', accentColor: '#f59e0b',
+      iconBg: 'rgba(245,158,11,0.12)'
+    },
+    {
+      key: 'spring-boot', title: 'Spring Boot', categoryName: 'Spring Boot', questionCount: 52,
+      faIcon: 'fa-solid fa-leaf', accentColor: '#10b981',
+      iconBg: 'rgba(16,185,129,0.12)'
+    },
+    {
+      key: 'microservices', title: 'Microservices', categoryName: 'Microservices', questionCount: 35,
+      faIcon: 'fa-solid fa-cubes', accentColor: '#8b5cf6',
+      iconBg: 'rgba(139,92,246,0.12)'
+    },
+    {
+      key: 'hibernate', title: 'Hibernate', categoryName: 'Hibernate', questionCount: 29,
+      faIcon: 'fa-solid fa-database', accentColor: '#f97316',
+      iconBg: 'rgba(249,115,22,0.12)'
+    },
+    {
+      key: 'coding-patterns', title: 'Coding Questions', categoryName: 'Coding Questions', questionCount: 20,
+      faIcon: 'fa-solid fa-code', accentColor: '#06b6d4',
+      iconBg: 'rgba(6,182,212,0.12)'
+    },
+    {
+      key: 'reactive-prog', title: 'Reactive Programming', categoryName: 'Reactive Programming', questionCount: 18,
+      faIcon: 'fa-solid fa-bolt', accentColor: '#ec4899',
+      iconBg: 'rgba(236,72,153,0.12)'
+    },
+    {
+      key: 'multithreading', title: 'Multithreading', categoryName: 'Multithreading', questionCount: 17,
+      faIcon: 'fa-solid fa-arrows-spin', accentColor: '#eab308',
+      iconBg: 'rgba(234,179,8,0.12)'
+    },
+    {
+      key: 'spring-reactive', title: 'Spring Reactive', categoryName: 'Spring Reactive', questionCount: 13,
+      faIcon: 'fa-solid fa-wave-square', accentColor: '#3b82f6',
+      iconBg: 'rgba(59,130,246,0.12)'
+    }
   ];
 
   get totalQuestions() {
     return this.categories.reduce((s, c) => s + c.questionCount, 0);
+  }
+
+  totalVisited = computed(() => {
+    // Touch the signal to track changes
+    this.dataService.revealedQuestionIds();
+    return this.categories.reduce((s, c) => s + this.dataService.getVisitedCount(c.categoryName), 0);
+  });
+
+  overallProgress = computed(() => {
+    this.dataService.revealedQuestionIds();
+    const total = this.totalQuestions;
+    if (total === 0) return 0;
+    return Math.round((this.totalVisited() / total) * 100);
+  });
+
+  getVisited(categoryName: string): number {
+    return this.dataService.getVisitedCount(categoryName);
+  }
+
+  getProgressPercent(categoryName: string): number {
+    return this.dataService.getProgress(categoryName);
   }
 }

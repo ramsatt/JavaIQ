@@ -7,4 +7,5 @@ export interface Question {
   code?: string;
   subConcepts?: { title: string; description: string; }[];
   useCases?: { icon: string; title: string; description: string; color: string; bg: string; }[];
+  coreConceptDescription?: string;
 }

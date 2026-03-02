@@ -34,7 +34,9 @@ export class DataService {
   // Signals for local state
   points = signal<number>(0);
   revealedQuestionIds = signal<Set<number>>(new Set());
-  
+  leetcodeCompletedIds = signal<Set<number>>(new Set());
+  completedTopicIds = signal<Set<string>>(new Set());
+
   constructor() {
     // Synchronize points and progress when user changes
     effect(() => {
@@ -56,11 +58,15 @@ export class DataService {
       const data = userDoc.data();
       this.points.set(data['points'] || 0);
       this.revealedQuestionIds.set(new Set(data['revealedIds'] || []));
+      this.leetcodeCompletedIds.set(new Set(data['leetcodeCompletedIds'] || []));
+      this.completedTopicIds.set(new Set(data['completedTopicIds'] || []));
     } else {
       // Initialize new user in Firestore
       await setDoc(userDocRef, {
         points: 0,
         revealedIds: [],
+        leetcodeCompletedIds: [],
+        completedTopicIds: [],
         displayName: this.authService.user()?.displayName || 'Anonymous',
         lastUpdated: new Date()
       });
@@ -70,14 +76,20 @@ export class DataService {
   private loadLocalData() {
     const storedPoints = localStorage.getItem('user_points');
     const storedRevealed = localStorage.getItem('revealed_questions');
-    
+    const storedLeetcode = localStorage.getItem('leetcode_completed');
+    const storedTopics = localStorage.getItem('completed_topics');
+
     if (storedPoints) this.points.set(parseInt(storedPoints));
     if (storedRevealed) this.revealedQuestionIds.set(new Set(JSON.parse(storedRevealed)));
+    if (storedLeetcode) this.leetcodeCompletedIds.set(new Set(JSON.parse(storedLeetcode)));
+    if (storedTopics) this.completedTopicIds.set(new Set(JSON.parse(storedTopics)));
   }
 
   private saveLocalData() {
     localStorage.setItem('user_points', this.points().toString());
     localStorage.setItem('revealed_questions', JSON.stringify(Array.from(this.revealedQuestionIds())));
+    localStorage.setItem('leetcode_completed', JSON.stringify(Array.from(this.leetcodeCompletedIds())));
+    localStorage.setItem('completed_topics', JSON.stringify(Array.from(this.completedTopicIds())));
   }
 
   async addPoints(amount: number) {
@@ -131,6 +143,67 @@ export class DataService {
     }
   }
 
+  async markLeetcodeCompleted(id: number) {
+    if (this.leetcodeCompletedIds().has(id)) return;
+
+    this.leetcodeCompletedIds.update(set => {
+      const newSet = new Set(set);
+      newSet.add(id);
+      return newSet;
+    });
+    this.saveLocalData();
+
+    const user = this.authService.user();
+    if (user) {
+      const userDocRef = doc(this.firestore, `users/${user.uid}`);
+      await updateDoc(userDocRef, {
+        leetcodeCompletedIds: Array.from(this.leetcodeCompletedIds()),
+        lastUpdated: new Date()
+      });
+    }
+  }
+
+  /** Mark a tutorial topic as completed. topicId = "courseSlug::topicSlug" */
+  async markTopicComplete(topicId: string) {
+    if (this.completedTopicIds().has(topicId)) return;
+
+    this.completedTopicIds.update(set => {
+      const newSet = new Set(set);
+      newSet.add(topicId);
+      return newSet;
+    });
+    this.saveLocalData();
+
+    const user = this.authService.user();
+    if (user) {
+      const userDocRef = doc(this.firestore, `users/${user.uid}`);
+      await updateDoc(userDocRef, {
+        completedTopicIds: Array.from(this.completedTopicIds()),
+        lastUpdated: new Date()
+      });
+    }
+  }
+
+  isTopicComplete(topicId: string): boolean {
+    return this.completedTopicIds().has(topicId);
+  }
+
+  /** Returns count of completed topics for a given course slug */
+  getCourseCompletedCount(courseSlug: string): number {
+    const prefix = `${courseSlug}::`;
+    let count = 0;
+    for (const id of this.completedTopicIds()) {
+      if (id.startsWith(prefix)) count++;
+    }
+    return count;
+  }
+
+  /** Returns 0–100 percent progress for a course */
+  getCourseProgress(courseSlug: string, totalTopics: number): number {
+    if (totalTopics === 0) return 0;
+    return Math.round((this.getCourseCompletedCount(courseSlug) / totalTopics) * 100);
+  }
+
   getQuestions(category: string = 'All'): Question[] {
     let filtered: Question[] = [];
 
@@ -157,6 +230,30 @@ export class DataService {
     return Math.round((revealedInCategory / categoryQuestions.length) * 100);
   }
 
+  getVisitedCount(category: string): number {
+    const categoryQuestions = QUESTION_MAP[category] || [];
+    return categoryQuestions.filter(q => this.revealedQuestionIds().has(q.id)).length;
+  }
+
+  getCategoryQuestionsBySlug(slug: string): Question[] {
+    const title = this.slugToTitle(slug);
+    return QUESTION_MAP[title] || [];
+  }
+
+  slugToTitle(slug: string): string {
+    const titleMap: Record<string, string> = {
+      'core-java': 'Core Java',
+      'spring-boot': 'Spring Boot',
+      'hibernate': 'Hibernate',
+      'microservices': 'Microservices',
+      'multithreading': 'Multithreading',
+      'spring-reactive': 'Spring Reactive',
+      'reactive-prog': 'Reactive Programming',
+      'coding-patterns': 'Coding Questions'
+    };
+    return titleMap[slug] || slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  }
+
   getCategoryStars(category: string): number {
     const progress = this.getProgress(category);
     if (progress >= 100) return 3;
@@ -169,7 +266,7 @@ export class DataService {
   private readonly CATEGORY_PATH = [
     'Core Java',
     'Spring Boot',
-    'Microservices', 
+    'Microservices',
     'Hibernate',
     'Spring Reactive',
     'Multithreading',

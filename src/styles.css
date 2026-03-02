@@ -57,6 +57,10 @@
    Ionic Theme Variables — Forest Green
    ========================================== */
 :root {
+  /* AdMob banner height — set dynamically by AdMobService when banner renders.
+     Defaults to 0 so nothing shifts on web. */
+  --admob-banner-height: 0px;
+
   --ion-background-color: #F5F7F2;
   --ion-background-color-rgb: 245, 247, 242;
   --ion-text-color: #1B1B1B;

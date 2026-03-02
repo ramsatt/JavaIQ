@@ -1,6 +1,8 @@
-import { Component, ChangeDetectionStrategy, inject, signal, ViewContainerRef, ViewChild, Type, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonIcon } from '@ionic/angular/standalone';
+import { Component, ChangeDetectionStrategy, inject, signal, ViewContainerRef, ViewChild, Type, OnInit, computed } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle } from '@ionic/angular/standalone';
+import { DataService } from '../../data.service';
+import { AdGateService } from '../../ad-gate.service';
 
 // Lazy import map for all topic components
 const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = {
@@ -109,18 +111,27 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
   }
 };
 
+// Flat list of topic slugs per course for prev/next navigation
+const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
+  Object.entries(TOPIC_MAP).map(([course, topics]) => [course, Object.keys(topics)])
+);
+
 @Component({
   selector: 'app-topic-router',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonIcon],
+  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle],
   host: { 'class': 'ion-page' },
   template: `
     <ion-header translucent="true" class="ion-no-border">
-      <ion-toolbar>
+      <ion-toolbar class="topic-toolbar">
         <ion-buttons slot="start">
           <ion-back-button [defaultHref]="'/tutorials/' + courseSlug()" text="" color="light" />
         </ion-buttons>
-        <ion-title class="brand-title">JavaIQ</ion-title>
+        <ion-title class="topic-toolbar-title">
+          <span class="toolbar-course">{{ courseSlug() }}</span>
+          <span class="toolbar-sep">›</span>
+          <span class="toolbar-topic-idx">{{ topicIndex() + 1 }}/{{ totalTopics() }}</span>
+        </ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -142,16 +153,87 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
           <h2>Coming Soon</h2>
           <p>We're currently crafting this tutorial chapter for you. Stay tuned!</p>
           <a [routerLink]="['/tutorials', courseSlug()]" class="back-link">
-            <ion-icon name="arrow-back-outline"></ion-icon>
+            <i class="fa-solid fa-arrow-left"></i>
             Back to Course
           </a>
         </div>
       }
-      
-      <div style="height: 120px; display: block;"></div>
+
+      @if (!loading() && !notFound()) {
+        <!-- Nav + Complete bar -->
+        <div class="nav-bar">
+
+          <!-- Progress strip -->
+          <div class="progress-strip">
+            <div class="progress-fill" [style.width.%]="courseProgress()"></div>
+          </div>
+
+          <div class="nav-row">
+            <!-- Prev -->
+            @if (prevTopicSlug()) {
+              <a class="nav-btn nav-prev" [routerLink]="['/tutorials', courseSlug(), prevTopicSlug()]">
+                <i class="fa-solid fa-arrow-left nav-btn-icon"></i>
+                <span class="nav-btn-label">Previous</span>
+              </a>
+            } @else {
+              <a class="nav-btn nav-prev disabled" [routerLink]="['/tutorials', courseSlug()]">
+                <i class="fa-solid fa-th-list nav-btn-icon"></i>
+                <span class="nav-btn-label">Syllabus</span>
+              </a>
+            }
+
+            <!-- Mark complete -->
+            @if (isCurrentComplete()) {
+              <button class="complete-btn complete-btn-done" disabled>
+                <i class="fa-solid fa-circle-check complete-icon"></i>
+                Completed!
+              </button>
+            } @else {
+              <button class="complete-btn" (click)="markComplete()">
+                <i class="fa-regular fa-circle-check complete-icon"></i>
+                Mark Done
+              </button>
+            }
+
+            <!-- Next -->
+            @if (nextTopicSlug()) {
+              <a class="nav-btn nav-next" [routerLink]="['/tutorials', courseSlug(), nextTopicSlug()]">
+                <span class="nav-btn-label">Next</span>
+                <i class="fa-solid fa-arrow-right nav-btn-icon"></i>
+              </a>
+            } @else {
+              <a class="nav-btn nav-next" [routerLink]="['/tutorials', courseSlug()]">
+                <span class="nav-btn-label">Done!</span>
+                <i class="fa-solid fa-flag-checkered nav-btn-icon"></i>
+              </a>
+            }
+          </div>
+        </div>
+      }
+
+      <div style="height: calc(120px + var(--admob-banner-height, 0px)); display: block;"></div>
     </ion-content>
   `,
   styles: `
+    /* ── Toolbar ── */
+    .topic-toolbar {
+      --background: #0b1120;
+      --color: white;
+      --border-style: none;
+    }
+    .topic-toolbar-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem !important;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: capitalize;
+    }
+    .toolbar-sep { opacity: 0.4; }
+    .toolbar-topic-idx { color: #64748b; font-size: 0.7rem; }
+
+    /* ── Scroll container ── */
     .tutorial-scroll-container {
       display: block;
       width: 100%;
@@ -159,7 +241,7 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
       padding-bottom: 40px;
     }
 
-    /* Loading State */
+    /* ── Loading ── */
     .loading {
       display: flex;
       flex-direction: column;
@@ -167,21 +249,21 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
       justify-content: center;
       min-height: 70vh;
       gap: 20px;
-      color: #52665A;
+      color: #64748b;
       font-size: 0.9rem;
       font-weight: 600;
     }
     .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #D6DDD2;
-      border-top-color: #1B4332;
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255,255,255,0.06);
+      border-top-color: #10b981;
       border-radius: 50%;
-      animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      animation: spin 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Not Found / Coming Soon */
+    /* ── Not Found ── */
     .not-found {
       text-align: center;
       padding: 100px 32px;
@@ -190,42 +272,181 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
       align-items: center;
     }
     .not-found-icon { font-size: 3rem; margin-bottom: 24px; }
-    .not-found h2 { font-size: 1.6rem; font-weight: 800; color: #1B1B1B; margin: 0 0 12px; }
-    .not-found p { font-size: 0.9rem; color: #52665A; line-height: 1.6; margin: 0 0 32px; max-width: 280px; }
-    
+    .not-found h2 { font-size: 1.6rem; font-weight: 800; color: #e2e8f0; margin: 0 0 12px; }
+    .not-found p { font-size: 0.9rem; color: #64748b; line-height: 1.6; margin: 0 0 32px; max-width: 280px; }
     .back-link {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       font-size: 0.85rem;
-      color: #1B4332;
+      color: #10b981;
       text-decoration: none;
       font-weight: 700;
       padding: 12px 24px;
-      background: #D8F3DC;
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
       border-radius: 14px;
       transition: transform 0.2s;
     }
     .back-link:active { transform: scale(0.96); }
-    .back-link ion-icon { font-size: 1.1rem; }
+
+    /* ── Nav Bar (fixed above banner ad + safe-area) ── */
+    .nav-bar {
+      position: fixed;
+      /* Sit above the AdMob banner. --admob-banner-height is set by AdMobService
+         when the banner renders (0px on web, actual height on device). */
+      bottom: var(--admob-banner-height, 0px);
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(11, 17, 32, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    /* Progress strip along the top of the nav bar */
+    .progress-strip {
+      height: 3px;
+      background: rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #34d399);
+      transition: width 0.5s ease;
+    }
+
+    /* ── Nav Row ── */
+    .nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 16px;
+    }
+
+    /* ── Nav Buttons ── */
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-decoration: none;
+      color: #94a3b8;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      transition: all 0.2s ease;
+      min-width: 80px;
+      outline: none;
+    }
+    .nav-btn:hover { color: #e2e8f0; background: rgba(255,255,255,0.08); }
+    .nav-btn:active { transform: scale(0.96); }
+    .nav-btn.disabled { opacity: 0.45; pointer-events: none; }
+    .nav-btn-icon { font-size: 0.65rem; }
+    .nav-prev { justify-content: flex-start; }
+    .nav-next { justify-content: flex-end; }
+
+    /* ── Complete Button ── */
+    .complete-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 18px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: rgba(16,185,129,0.15);
+      color: #34d399;
+      border: 1px solid rgba(16,185,129,0.3);
+      flex: 1;
+      justify-content: center;
+      max-width: 160px;
+    }
+    .complete-btn:hover {
+      background: rgba(16,185,129,0.25);
+      transform: scale(1.02);
+    }
+    .complete-btn:active { transform: scale(0.97); }
+    .complete-btn-done {
+      background: rgba(16,185,129,0.08) !important;
+      color: #10b981 !important;
+      border-color: rgba(16,185,129,0.2) !important;
+      cursor: default !important;
+    }
+    .complete-icon { font-size: 0.85rem; }
   `
 })
 export class TopicRouterComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private vcr = inject(ViewContainerRef);
+  private dataService = inject(DataService);
+  private adGate = inject(AdGateService);
 
   courseSlug = signal('');
+  topicSlug = signal('');
   loading = signal(true);
   notFound = signal(false);
 
   @ViewChild('outlet', { read: ViewContainerRef, static: true })
   outlet!: ViewContainerRef;
 
+  // ── Navigation computed values ──
+  topicSlugs = computed(() => TOPIC_ORDER[this.courseSlug()] ?? []);
+  topicIndex = computed(() => this.topicSlugs().indexOf(this.topicSlug()));
+  totalTopics = computed(() => this.topicSlugs().length);
+  prevTopicSlug = computed(() => {
+    const i = this.topicIndex();
+    return i > 0 ? this.topicSlugs()[i - 1] : null;
+  });
+  nextTopicSlug = computed(() => {
+    const i = this.topicIndex();
+    const slugs = this.topicSlugs();
+    return i < slugs.length - 1 ? slugs[i + 1] : null;
+  });
+
+  // ── Progress computed values ──
+  isCurrentComplete = computed(() => {
+    this.dataService.completedTopicIds(); // track reactively
+    return this.dataService.isTopicComplete(`${this.courseSlug()}::${this.topicSlug()}`);
+  });
+  courseProgress = computed(() => {
+    this.dataService.completedTopicIds(); // track reactively
+    return this.dataService.getCourseProgress(this.courseSlug(), this.totalTopics());
+  });
+
+  async markComplete() {
+    const topicId = `${this.courseSlug()}::${this.topicSlug()}`;
+    await this.dataService.markTopicComplete(topicId);
+    await this.dataService.addPoints(2);
+
+    // Show interstitial after completing a topic
+    await this.adGate.onContentCompleted();
+
+    // Auto-navigate to next after a short delay
+    const next = this.nextTopicSlug();
+    if (next) {
+      setTimeout(() => {
+        this.router.navigate(['/tutorials', this.courseSlug(), next]);
+      }, 600);
+    }
+  }
+
   ngOnInit() {
     this.route.paramMap.subscribe(async params => {
       const slug = params.get('slug') ?? '';
       const topic = params.get('topic') ?? '';
       this.courseSlug.set(slug);
+      this.topicSlug.set(topic);
 
       const courseTopics = TOPIC_MAP[slug];
       const loader = courseTopics?.[topic];
@@ -236,6 +457,19 @@ export class TopicRouterComponent implements OnInit {
         return;
       }
 
+      // ── Ad Gate: per-topic permanent unlock ──
+      const topicId = `${slug}::${topic}`;
+      if (!this.dataService.isTopicComplete(topicId) && !this.adGate.isItemUnlocked(topicId)) {
+        const allowed = await this.adGate.unlockItemWithAd(topicId, 'this topic');
+        if (!allowed) {
+          // User denied the ad, send them back to the course syllabus
+          this.router.navigate(['/tutorials', slug]);
+          return;
+        }
+      }
+
+      this.loading.set(true);
+      this.notFound.set(false);
       try {
         const component = await loader();
         this.outlet.clear();

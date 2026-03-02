@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle } from '@ionic/angular/standalone';
-import { IconComponent } from '../../shared/icon.component';
+import { DataService } from '../../data.service';
+import { AdGateService } from '../../ad-gate.service';
 
 interface Topic {
   slug: string;
@@ -11,14 +12,23 @@ interface Topic {
   duration: string;
 }
 
+interface CourseData {
+  badge: string;
+  title: string;
+  subtitle: string;
+  estimatedTime: string;
+  topics: Topic[];
+  themeColor: string;
+}
+
 @Component({
   selector: 'app-tutorial-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IconComponent, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle],
+  imports: [IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle],
   host: { 'class': 'ion-page' },
   template: `
     <ion-header translucent="true" class="ion-no-border">
-      <ion-toolbar>
+      <ion-toolbar class="tut-toolbar">
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/tutorials" text="" color="light" />
         </ion-buttons>
@@ -26,74 +36,145 @@ interface Topic {
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
+    <ion-content class="tut-content">
       <!-- Premium Centered Hero -->
       <div class="hero">
-        <div class="hero-glow"></div>
+        <div class="hero-glow" [style.background]="'radial-gradient(circle, ' + courseData().themeColor + '20 0%, transparent 70%)'"></div>
         <div class="hero-content">
           <div class="badge-wrapper">
-            <span class="badge">{{ courseData().badge }}</span>
+            <span class="badge" [style.color]="courseData().themeColor" [style.background]="courseData().themeColor + '15'" [style.border-color]="courseData().themeColor + '30'">
+              {{ courseData().badge }}
+            </span>
           </div>
           <h1 class="title">{{ courseData().title }}</h1>
           <p class="subtitle">{{ courseData().subtitle }}</p>
-          
+
           <div class="stat-pill-row">
             <div class="stat-pill">
-              <app-icon name="book-open" [size]="14" />
+              <i class="fa-solid fa-book-open stat-icon"></i>
               <span>{{ courseData().topics.length }} Chapters</span>
             </div>
-            <div class="stat-pill accent">
-              <app-icon name="clock" [size]="14" />
+            <div class="stat-pill accent" [style.color]="courseData().themeColor" [style.border-color]="courseData().themeColor + '40'">
+              <i class="fa-regular fa-clock stat-icon"></i>
               <span>{{ courseData().estimatedTime }}</span>
             </div>
           </div>
+
+          <!-- Progress -->
+          @if (completedCount() > 0) {
+            <div class="progress-wrap">
+              <div class="progress-track">
+                <div class="progress-bar" [style.width.%]="progressPct()" [style.background]="courseData().themeColor"></div>
+              </div>
+              <span class="progress-label" [style.color]="courseData().themeColor">
+                {{ completedCount() }} / {{ courseData().topics.length }} completed
+              </span>
+            </div>
+          }
         </div>
       </div>
 
       <div class="page-container">
         <!-- Curriculum List -->
         <div class="section-header">
-          <span class="section-label">CURRICULUM</span>
+          <div class="section-head-left">
+            <i class="fa-solid fa-layer-group section-icon" [style.color]="courseData().themeColor"></i>
+            <span class="section-label">CURRICULUM</span>
+          </div>
           <span class="topic-count">{{ courseData().topics.length }} Topics</span>
         </div>
 
         <div class="list">
           @for (topic of courseData().topics; track topic.slug; let i = $index) {
-            <a [routerLink]="['/tutorials', slug(), topic.slug]" class="topic-card">
-              <div class="topic-num-outer">
-                <div class="topic-num">{{ i + 1 }}</div>
+            <button (click)="openTopic(topic)" class="topic-card"
+               [class.topic-done]="isComplete(slug(), topic.slug)"
+               [style.--accent]="courseData().themeColor">
+              <div class="topic-accent-left"></div>
+              
+              <div class="topic-card-inner">
+                <div class="topic-num-outer" [style.background]="isComplete(slug(), topic.slug) ? courseData().themeColor + '20' : courseData().themeColor + '15'">
+                  @if (isComplete(slug(), topic.slug)) {
+                    <div class="topic-num topic-num-done" [style.color]="courseData().themeColor">
+                      <i class="fa-solid fa-check"></i>
+                    </div>
+                  } @else {
+                    <div class="topic-num" [style.color]="courseData().themeColor">{{ i + 1 }}</div>
+                  }
+                </div>
+                
+                <div class="topic-body">
+                  <span class="topic-title" [class.topic-title-done]="isComplete(slug(), topic.slug)">{{ topic.title }}</span>
+                  <span class="topic-desc">{{ topic.description }}</span>
+                </div>
+                
+                <div class="topic-meta">
+                  <span class="topic-dur">
+                    <i class="fa-regular fa-clock topic-dur-icon"></i>
+                    {{ topic.duration }}
+                  </span>
+                  @if (isComplete(slug(), topic.slug)) {
+                    <span class="done-badge">Done</span>
+                  } @else if (isUnlocked(slug(), topic.slug)) {
+                    <div class="topic-arrow">
+                      <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                  } @else {
+                    <div class="topic-arrow locked-icon">
+                      <i class="fa-solid fa-lock"></i>
+                    </div>
+                  }
+                </div>
               </div>
-              <div class="topic-body">
-                <span class="topic-title">{{ topic.title }}</span>
-                <span class="topic-desc">{{ topic.description }}</span>
-              </div>
-              <div class="topic-meta">
-                <span class="topic-dur">{{ topic.duration }}</span>
-                <app-icon name="chevron-right" [size]="14" css="green-arrow" />
-              </div>
-            </a>
+            </button>
           }
         </div>
       </div>
-      
-      <div style="height: 100px;"></div>
+
+      <!-- Footer -->
+      <div class="tut-footer">
+        <p class="footer-text">Built with ❤️ for Java developers</p>
+      </div>
     </ion-content>
   `,
   styles: `
-    .page-container { padding: 0 20px 20px; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-    /* Centered Hero — Forest Green */
+    /* ── Page Setup ── */
+    .tut-toolbar {
+      --background: #0b1120;
+      --color: white;
+      --border-style: none;
+    }
+    .brand-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: white;
+    }
+
+    .tut-content {
+      --background: #0b1120;
+    }
+
+    .page-container {
+      padding: 0 16px 40px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ── Hero Section ── */
     .hero {
       position: relative;
-      background: linear-gradient(145deg, #081C15 0%, #1B4332 50%, #2D6A4F 100%);
-      padding: 64px 24px 48px;
-      margin-bottom: 32px;
+      background: linear-gradient(145deg, #0b1120 0%, #161b22 100%);
+      padding: 32px 20px 48px;
       color: #fff;
       overflow: hidden;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 24px;
     }
     .hero-glow {
       position: absolute;
@@ -102,145 +183,342 @@ interface Topic {
       transform: translateX(-50%);
       width: 300px;
       height: 300px;
-      background: radial-gradient(circle, rgba(218,165,32,0.15) 0%, transparent 70%);
-      filter: blur(60px);
+      filter: blur(50px);
+      pointer-events: none;
     }
-    .hero-content { position: relative; z-index: 1; max-width: 600px; }
-    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+    }
+
     .badge-wrapper { margin-bottom: 20px; }
     .badge {
-      display: inline-block;
-      background: #DAA520;
-      color: #081C15;
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-size: 0.62rem;
-      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
       letter-spacing: 0.12em;
+      border: 1px solid;
+      border-radius: 20px;
+      padding: 4px 12px;
     }
 
-    .title { 
-      margin: 0 0 14px; 
-      font-size: 2.2rem; 
-      font-weight: 800; 
-      letter-spacing: -0.04em; 
-      line-height: 1; 
-      color: #fff;
+    .title {
+      font-family: 'Inter', sans-serif;
+      margin: 0 0 12px;
+      font-size: 1.85rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: #e2e8f0;
     }
-    .subtitle { 
-      margin: 0 0 28px; 
-      font-size: 0.95rem; 
-      color: #B7E4C7; 
-      line-height: 1.5; 
-      opacity: 0.9;
+    .subtitle {
+      font-family: 'Inter', sans-serif;
+      margin: 0 0 28px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.5;
     }
 
-    .stat-pill-row { 
-      display: flex; 
-      gap: 12px; 
+    /* Hero Stats */
+    .stat-pill-row {
+      display: flex;
+      gap: 12px;
       justify-content: center;
     }
     .stat-pill {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.08);
       padding: 8px 16px;
       border-radius: 50px;
+      font-family: 'Inter', sans-serif;
       font-size: 0.72rem;
       font-weight: 600;
-      color: #fff;
+      color: #cbd5e1;
     }
-    .stat-pill.accent { border-color: rgba(218,165,32,0.3); color: #DAA520; }
+    .stat-icon {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
 
-    /* Section Header */
+    /* ── Section Header ── */
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      padding: 0 4px;
+      margin-bottom: 16px;
     }
-    .section-label { 
-      font-size: 0.65rem; 
-      font-weight: 800; 
-      letter-spacing: 0.15em; 
-      color: #1B4332; 
-    }
-    .topic-count {
-      font-size: 0.65rem;
-      font-weight: 600;
-      color: #8A9B8F;
-    }
-
-    .list { display: flex; flex-direction: column; gap: 10px; }
-
-    .topic-card {
+    .section-head-left {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 18px;
-      background: #fff;
-      border-radius: 20px;
-      border: 1px solid #D6DDD2;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.2s;
+      gap: 8px;
     }
-    .topic-card:hover { 
-      transform: translateY(-2px); 
-      box-shadow: 0 8px 24px rgba(27,67,50,0.08);
-      border-color: #B5C4B1;
+    .section-icon {
+      font-size: 0.75rem;
+    }
+    .section-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      color: #94a3b8;
+    }
+    .topic-count {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #475569;
     }
 
+    /* ── Curriculum List ── */
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .topic-card {
+      position: relative;
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      color: inherit;
+      overflow: hidden;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .topic-card:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.1);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      transform: translateY(-2px);
+    }
+    .topic-card:active {
+      transform: scale(0.98);
+    }
+
+    .topic-accent-left {
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 3px;
+      background: var(--accent, #8b5cf6);
+      border-radius: 0 3px 3px 0;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+    .topic-card:hover .topic-accent-left {
+      opacity: 1;
+    }
+
+    .topic-card-inner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 16px 16px 20px;
+    }
+
+    /* Topic Number Badge */
     .topic-num-outer {
       padding: 2px;
-      border-radius: 12px;
-      background: #D8F3DC;
+      border-radius: 10px;
+      flex-shrink: 0;
     }
     .topic-num {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #fff;
-      color: #1B4332;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(11, 17, 32, 0.8);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-family: 'Inter', sans-serif;
       font-size: 0.85rem;
       font-weight: 800;
     }
 
-    .topic-body { flex: 1; min-width: 0; }
-    .topic-title { display: block; font-size: 0.92rem; font-weight: 700; color: #1B1B1B; margin-bottom: 4px; }
+    /* Body */
+    .topic-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .topic-title {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
     .topic-desc {
+      font-family: 'Inter', sans-serif;
       font-size: 0.75rem;
-      color: #52665A;
-      line-height: 1.5;
+      color: #64748b;
+      line-height: 1.45;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
+    /* Meta */
     .topic-meta {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 10px;
+      gap: 6px;
+      flex-shrink: 0;
     }
-    .topic-dur { font-size: 0.65rem; color: #8A9B8F; font-weight: 600; }
-    :host ::ng-deep .green-arrow { color: #B5C4B1; }
-    .topic-card:hover :host ::ng-deep .green-arrow { color: #DAA520; }
+    .topic-dur {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .topic-dur-icon {
+      font-size: 0.6rem;
+    }
+    .topic-arrow {
+      font-size: 11px;
+      color: #475569;
+      transition: all 0.2s ease;
+      margin-top: 4px;
+    }
+    .topic-card:hover .topic-arrow {
+      color: var(--accent, #8b5cf6);
+      transform: translateX(2px);
+    }
+
+    /* ── Progress Bar ── */
+    .progress-wrap {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      max-width: 360px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    .progress-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      opacity: 0.9;
+    }
+
+    /* ── Footer ── */
+    .tut-footer {
+      text-align: center;
+      margin-top: 32px;
+      padding-bottom: 32px;
+    }
+    .footer-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      color: #334155;
+      font-weight: 500;
+      margin: 0;
+    }
+    /* Completed card state */
+    .topic-done {
+      border-color: rgba(255,255,255,0.1) !important;
+    }
+    .topic-num-done {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(11,17,32,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+    .topic-title-done {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .done-badge {
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(16,185,129,0.15);
+      color: #34d399;
+      text-transform: uppercase;
+    }
   `
 })
 export class TutorialDetailComponent {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private dataService = inject(DataService);
+  private adGate = inject(AdGateService);
   slug = signal('');
+
+  completedCount = computed(() => {
+    this.dataService.completedTopicIds(); // track signal reactively
+    return this.dataService.getCourseCompletedCount(this.slug());
+  });
+
+  progressPct = computed(() => {
+    const total = this.courseData().topics.length;
+    return total === 0 ? 0 : Math.round((this.completedCount() / total) * 100);
+  });
+
+  isComplete(courseSlug: string, topicSlug: string): boolean {
+    return this.dataService.isTopicComplete(`${courseSlug}::${topicSlug}`);
+  }
+
+  isUnlocked(courseSlug: string, topicSlug: string): boolean {
+    // Calling the signal registers the dependency for reactivity
+    this.adGate.unlockedItems();
+    return this.adGate.isItemUnlocked(`${courseSlug}::${topicSlug}`);
+  }
+
+  async openTopic(topic: Topic) {
+    const topicId = `${this.slug()}::${topic.slug}`;
+
+    // If neither complete nor previously unlocked, gated with reward ad
+    if (!this.isComplete(this.slug(), topic.slug) && !this.adGate.isItemUnlocked(topicId)) {
+      const allowed = await this.adGate.unlockItemWithAd(topicId, topic.title);
+      if (!allowed) return;
+    }
+
+    // Success -> Navigate
+    await this.router.navigate(['/tutorials', this.slug(), topic.slug]);
+  }
 
   // Course data map
   private courses: Record<string, CourseData> = {
@@ -249,6 +527,7 @@ export class TutorialDetailComponent {
       title: 'Core Java Masterclass',
       subtitle: 'From fundamentals to modern Java features. Master OOP, Collections, Streams, and more.',
       estimatedTime: '8 hours',
+      themeColor: '#f59e0b',
       topics: [
         { slug: 'arrays', title: 'Java Arrays', description: 'Fixed-size containers, traversal, searching, and sorting', iconName: 'box', duration: '30 min' },
         { slug: 'strings', title: 'Strings & StringBuilder', description: 'Immutability, string pool, and efficient string manipulation', iconName: 'code', duration: '35 min' },
@@ -272,6 +551,7 @@ export class TutorialDetailComponent {
       title: 'Spring Framework Deep Dive',
       subtitle: 'Master the foundation of enterprise Java. IoC, DI, AOP, MVC, Security, and more.',
       estimatedTime: '10 hours',
+      themeColor: '#10b981',
       topics: [
         { slug: 'spring-ioc', title: 'IoC Container', description: 'Inversion of Control, ApplicationContext, bean lifecycle', iconName: 'box', duration: '35 min' },
         { slug: 'spring-di', title: 'Dependency Injection', description: 'Constructor, setter, field injection, qualifiers', iconName: 'link', duration: '40 min' },
@@ -292,6 +572,7 @@ export class TutorialDetailComponent {
       title: 'Spring Boot Mastery',
       subtitle: 'Build production-ready apps fast. Auto-configuration, starters, REST APIs, security, actuator, and deployment.',
       estimatedTime: '10 hours',
+      themeColor: '#3b82f6',
       topics: [
         { slug: 'sb-auto-config', title: 'Auto-Configuration', description: 'How Spring Boot auto-configures beans, @EnableAutoConfiguration', iconName: 'zap', duration: '30 min' },
         { slug: 'sb-starters', title: 'Starters & Dependencies', description: 'Starter POMs, dependency management, BOM', iconName: 'box', duration: '25 min' },
@@ -318,6 +599,7 @@ export class TutorialDetailComponent {
       title: 'Hibernate & JPA Deep Dive',
       subtitle: 'Master ORM fundamentals, entity mapping, relationships, caching, and performance tuning.',
       estimatedTime: '5 hours',
+      themeColor: '#f97316',
       topics: [
         { slug: 'hib-orm', title: 'ORM Fundamentals', description: 'Object-Relational Mapping, SessionFactory, EntityManager', iconName: 'database', duration: '30 min' },
         { slug: 'hib-entities', title: 'Entity Mapping', description: '@Entity, @Table, @Column, ID generation, embeddables', iconName: 'grid', duration: '35 min' },
@@ -336,6 +618,7 @@ export class TutorialDetailComponent {
       title: 'Microservices Architecture',
       subtitle: 'Design and build distributed systems. Service discovery, API gateway, event-driven patterns, and Kubernetes.',
       estimatedTime: '8 hours',
+      themeColor: '#8b5cf6',
       topics: [
         { slug: 'ms-intro', title: 'Microservices Intro', description: 'Monolith vs microservices, bounded contexts, decomposition', iconName: 'grid', duration: '30 min' },
         { slug: 'ms-discovery', title: 'Service Discovery', description: 'Eureka, Consul, service registry, client-side discovery', iconName: 'search', duration: '35 min' },
@@ -358,6 +641,7 @@ export class TutorialDetailComponent {
       title: 'Java Multithreading & Concurrency',
       subtitle: 'Master concurrent programming. Threads, synchronization, executors, CompletableFuture, and virtual threads.',
       estimatedTime: '4 hours',
+      themeColor: '#eab308',
       topics: [
         { slug: 'mt-threads', title: 'Threads & Runnable', description: 'Creating threads, lifecycle, Runnable vs Callable', iconName: 'play', duration: '30 min' },
         { slug: 'mt-sync', title: 'Synchronization', description: 'synchronized, wait/notify, volatile, thread safety', iconName: 'lock', duration: '35 min' },
@@ -374,6 +658,7 @@ export class TutorialDetailComponent {
       title: 'Java Design Patterns',
       subtitle: 'Write maintainable code with proven patterns. Creational, Structural, and Behavioral patterns in Java.',
       estimatedTime: '6 hours',
+      themeColor: '#ec4899',
       topics: [
         { slug: 'dp-singleton', title: 'Singleton', description: 'Thread-safe singleton, enum, lazy initialization', iconName: 'box', duration: '25 min' },
         { slug: 'dp-factory', title: 'Factory Method', description: 'Object creation delegation, abstract factory', iconName: 'settings', duration: '30 min' },
@@ -392,7 +677,7 @@ export class TutorialDetailComponent {
   };
 
   courseData = signal<CourseData>({
-    badge: '', title: '', subtitle: '', estimatedTime: '', topics: []
+    badge: '', title: '', subtitle: '', estimatedTime: '', topics: [], themeColor: '#8b5cf6'
   });
 
   constructor() {
@@ -404,16 +689,9 @@ export class TutorialDetailComponent {
         title: s.replace(/-/g, ' '),
         subtitle: 'Course content coming soon.',
         estimatedTime: 'TBD',
+        themeColor: '#8b5cf6',
         topics: []
       });
     });
   }
-}
-
-interface CourseData {
-  badge: string;
-  title: string;
-  subtitle: string;
-  estimatedTime: string;
-  topics: Topic[];
 }

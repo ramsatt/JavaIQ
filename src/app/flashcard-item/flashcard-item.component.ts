@@ -70,7 +70,7 @@ export class FlashcardItemComponent implements OnChanges {
           'Unlock Answer'
         );
         if (watchAd) {
-          const success = await this.adMobService.showRewardVideo();
+          const success = await this.adMobService.showRewardAd();
           if (success) {
             await this.dataService.addPoints(10);
             // Auto-reveal after earning points
