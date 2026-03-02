@@ -534,6 +534,30 @@ import { AdGateService } from '../../ad-gate.service';
     .nf-icon { font-size: 3rem; color: #334155; margin-bottom: 16px; }
     .nf-title { font-size: 1.1rem; font-weight: 800; color: #e2e8f0; margin: 0 0 8px; }
     .nf-sub { font-size: 0.8rem; color: #64748b; margin: 0; line-height: 1.6; }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .det-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
+    :host-context(html:not(.dark)) .det-content {
+      --background: #F5F7F2;
+    }
+    :host-context(html:not(.dark)) .round-card,
+    :host-context(html:not(.dark)) .summary-card {
+      background: #ffffff !important;
+      border: 1px solid #D6DDD2 !important;
+    }
+    :host-context(html:not(.dark)) .det-company {
+      color: #1B1B1B;
+      -webkit-text-fill-color: #1B1B1B;
+    }
+    :host-context(html:not(.dark)) .det-role {
+      color: #52665A;
+    }
+    :host-context(html:not(.dark)) .sh-txt {
+      color: #52665A;
+    }
   `
 })
 export class ExpDetailComponent {

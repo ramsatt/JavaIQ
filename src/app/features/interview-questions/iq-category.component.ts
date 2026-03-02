@@ -305,6 +305,26 @@ import { AdGateService } from '../../ad-gate.service';
     .q-card:hover .q-card-arrow {
       color: #94a3b8;
     }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .cat-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
+    :host-context(html:not(.dark)) .cat-content {
+      --background: #F5F7F2;
+    }
+    :host-context(html:not(.dark)) .q-card {
+      background: #ffffff !important;
+      border: 1px solid #D6DDD2 !important;
+    }
+    :host-context(html:not(.dark)) .cat-hero-title {
+      color: #1B1B1B;
+      -webkit-text-fill-color: #1B1B1B;
+    }
+    :host-context(html:not(.dark)) .cat-hero-count {
+      color: #52665A;
+    }
   `
 })
 export class IqCategoryComponent {

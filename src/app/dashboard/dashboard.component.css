@@ -1,15 +1,28 @@
+/* Default: light mode */
 :host {
+  --bg-dark: #F5F7F2;
+  --bg-card: #ffffff;
+  --border-subtle: #D6DDD2;
+  --text-primary: #1B1B1B;
+  --text-secondary: #52665A;
+  --accent-primary: #1B4332;
+  --accent-success: #059669;
+  --accent-warning: #d97706;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  display: block;
+}
+
+/* Dark mode */
+:host-context(html.dark) {
   --bg-dark: #0f172a;
   --bg-card: rgba(30, 41, 59, 0.7);
   --border-subtle: rgba(255, 255, 255, 0.08);
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --accent-primary: #3b82f6; /* Professional Blue */
+  --accent-primary: #3b82f6;
   --accent-success: #10b981;
   --accent-warning: #f59e0b;
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  
-  display: block; /* Ensure host element behaves like a block for layout */
 }
 
 .dashboard-container {

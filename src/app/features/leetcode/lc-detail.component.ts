@@ -479,6 +479,22 @@ import { AdGateService } from '../../ad-gate.service';
       border-color: rgba(16,185,129,0.3);
       color: #34d399;
     }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .tut-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
+    :host-context(html:not(.dark)) .tut-content {
+      --background: #F5F7F2;
+    }
+    :host-context(html:not(.dark)) .title {
+      color: #1B1B1B;
+      -webkit-text-fill-color: #1B1B1B;
+    }
+    :host-context(html:not(.dark)) .subtitle {
+      color: #52665A;
+    }
   `
 })
 export class LcDetailComponent {

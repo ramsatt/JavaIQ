@@ -50,15 +50,15 @@ import {
   `,
   styles: `
     ion-tab-bar {
-      --background: #ffffff;
-      border-top: 1px solid #D6DDD2;
+      --background: var(--ion-tab-bar-background, #ffffff);
+      border-top: 1px solid var(--ion-tab-bar-border-color, #D6DDD2);
       box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
       height: 64px;
     }
 
     ion-tab-button {
-      --color: #8A9B8F;
-      --color-selected: #1B4332;
+      --color: var(--color-text-muted, #8A9B8F);
+      --color-selected: var(--ion-color-primary, #1B4332);
       font-size: 0.6rem;
       font-weight: 600;
       letter-spacing: 0.03em;

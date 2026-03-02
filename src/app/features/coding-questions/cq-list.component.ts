@@ -414,6 +414,88 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton 
       font-weight: 500;
       margin: 0;
     }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .tut-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
+    :host-context(html:not(.dark)) .tut-content {
+      --background: #F5F7F2;
+    }
+
+    /* Premium green hero */
+    :host-context(html:not(.dark)) .hero-section {
+      background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 55%, #40916C 100%);
+    }
+    :host-context(html:not(.dark)) .hero-glow-1 {
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    }
+    :host-context(html:not(.dark)) .hero-glow-2 {
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    }
+    :host-context(html:not(.dark)) .hero-badge {
+      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.3);
+    }
+    :host-context(html:not(.dark)) .hero-title {
+      color: #ffffff;
+      -webkit-text-fill-color: #ffffff;
+    }
+    :host-context(html:not(.dark)) .hero-accent {
+      background: linear-gradient(135deg, #86efac 0%, #bbf7d0 60%, #d1fae5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    :host-context(html:not(.dark)) .search-wrapper {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.25);
+    }
+    :host-context(html:not(.dark)) .search-wrapper:focus-within {
+      background: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.4);
+    }
+    :host-context(html:not(.dark)) .search-icon { color: rgba(255,255,255,0.75); }
+    :host-context(html:not(.dark)) .search-input { color: #ffffff; }
+    :host-context(html:not(.dark)) .search-input::placeholder { color: rgba(255,255,255,0.55); }
+
+    /* Course cards */
+    :host-context(html:not(.dark)) .course-card {
+      background: #ffffff;
+      border-color: #D6DDD2;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    :host-context(html:not(.dark)) .course-card:hover {
+      border-color: #B7CCBB;
+      box-shadow: 0 6px 20px rgba(27,67,50,0.1);
+    }
+    :host-context(html:not(.dark)) .course-title { color: #1B1B1B; }
+    :host-context(html:not(.dark)) .meta-chip { color: #8A9B8F; }
+    :host-context(html:not(.dark)) .course-arrow { color: #B7CCBB; }
+    :host-context(html:not(.dark)) .course-card:hover .course-arrow { color: var(--accent, #1B4332); }
+    :host-context(html:not(.dark)) .section-title { color: #52665A; }
+    :host-context(html:not(.dark)) .section-count { color: #8A9B8F; }
+    :host-context(html:not(.dark)) .section-icon { color: #1B4332; }
+    :host-context(html:not(.dark)) .footer-text { color: #8A9B8F; }
+
+    /* Filter chips */
+    :host-context(html:not(.dark)) .filter-chip {
+      background: #ffffff !important;
+      border-color: #D6DDD2 !important;
+      color: #52665A !important;
+    }
+    :host-context(html:not(.dark)) .filter-chip:hover {
+      background: #F5F7F2 !important;
+      border-color: #B7CCBB !important;
+      color: #1B4332 !important;
+    }
+    :host-context(html:not(.dark)) .filter-active {
+      background: #1B4332 !important;
+      color: white !important;
+      border-color: #1B4332 !important;
+    }
   `
 })
 export class CqListComponent {

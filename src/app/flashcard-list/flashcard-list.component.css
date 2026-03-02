@@ -10,13 +10,13 @@
   font-weight: 700;
   font-size: 1.5rem;
   letter-spacing: 0.5px;
-  color: #ffffff; /* Explicitly white */
+  color: #ffffff; /* Works on dark background */
 }
 
 .app-subtitle {
   font-size: 0.85rem;
   opacity: 0.8;
-  color: #cbd5e1; /* Slate 300 */
+  color: #cbd5e1;
 }
 
 .btn-icon-back {
@@ -36,6 +36,40 @@
 .btn-icon-back:hover {
   background: rgba(30, 41, 59, 0.9);
   transform: scale(1.05);
+}
+
+/* Light mode overrides */
+:host-context(html:not(.dark)) .category-title {
+  color: #1B1B1B;
+}
+
+:host-context(html:not(.dark)) .app-subtitle {
+  color: #52665A;
+  opacity: 1;
+}
+
+:host-context(html:not(.dark)) .btn-icon-back {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: #D6DDD2;
+  color: #1B4332;
+}
+
+:host-context(html:not(.dark)) .btn-icon-back:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+:host-context(html:not(.dark)) .points-badge-pill {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(218, 165, 32, 0.4);
+}
+
+:host-context(html:not(.dark)) .progress-indicator .current {
+  color: #1B1B1B;
+}
+
+:host-context(html:not(.dark)) .progress-indicator .divider,
+:host-context(html:not(.dark)) .progress-indicator .total {
+  color: rgba(0, 0, 0, 0.3);
 }
 
 .points-badge-pill {

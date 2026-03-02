@@ -37,7 +37,16 @@
       "Bash(printf '%s\\\\n' 'BT = chr\\(96\\)')",
       "Bash(printf '%s\\\\n' 'dest = \"\"D:/A21/JavaIQ/.claude/worktrees/awesome-proskuriakova/src/app/data/tutorials/java-fundamentals.ts\"\"')",
       "Bash(printf '%s\\\\n' 'print\\(\"\"Script loaded, path:\"\", dest\\)')",
-      "Bash(py /tmp/wjf.py)"
+      "Bash(py /tmp/wjf.py)",
+      "Bash(ls -la /Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/src/app/*.ts)",
+      "Bash(grep -r \"dark\\\\|theme\\\\|color\" /Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/src/app/*.ts)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(ln -s /Users/sathishkumarramalingam/projects/JavaIQ/node_modules /Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/node_modules)",
+      "WebFetch(domain:www.linkedin.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:ramsatt.com)",
+      "Bash(curl -s \"https://api.github.com/users/ramsatt\")",
+      "Bash(curl -s \"https://api.github.com/users/ramsatt/repos?sort=updated&per_page=10\")"
     ]
   }
 }

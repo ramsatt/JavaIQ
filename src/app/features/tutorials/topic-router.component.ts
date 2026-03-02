@@ -383,6 +383,12 @@ const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
       cursor: default !important;
     }
     .complete-icon { font-size: 0.85rem; }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .topic-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
   `
 })
 export class TopicRouterComponent implements OnInit {
