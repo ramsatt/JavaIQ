@@ -478,6 +478,26 @@ interface CourseData {
       color: #34d399;
       text-transform: uppercase;
     }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .tut-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
+    :host-context(html:not(.dark)) .tut-content {
+      --background: #F5F7F2;
+    }
+    :host-context(html:not(.dark)) .topic-card {
+      background: #ffffff !important;
+      border: 1px solid #D6DDD2 !important;
+    }
+    :host-context(html:not(.dark)) .title {
+      color: #1B1B1B;
+      -webkit-text-fill-color: #1B1B1B;
+    }
+    :host-context(html:not(.dark)) .subtitle {
+      color: #52665A;
+    }
   `
 })
 export class TutorialDetailComponent {

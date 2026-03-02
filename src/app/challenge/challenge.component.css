@@ -1,10 +1,75 @@
+/* Default: light mode */
 :host {
   display: block;
   min-height: 100vh;
-  background: #0f172a; /* Slate 900 */
-  color: #f8fafc;
+  background: #F5F7F2;
+  color: #1B1B1B;
   font-family: 'Inter', sans-serif;
   overflow: hidden;
+}
+
+/* Dark mode restores original game aesthetic */
+:host-context(html.dark) {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+/* Light mode key element overrides */
+:host-context(html:not(.dark)) .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: #D6DDD2;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+:host-context(html:not(.dark)) .question-text {
+  color: #1B1B1B;
+}
+
+:host-context(html:not(.dark)) .progress-pill,
+:host-context(html:not(.dark)) .score-pill {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: #D6DDD2;
+  color: #52665A;
+}
+
+:host-context(html:not(.dark)) .card-header-badge {
+  background: rgba(0, 0, 0, 0.05);
+  color: #52665A;
+}
+
+:host-context(html:not(.dark)) .timer-container {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+:host-context(html:not(.dark)) .miss {
+  background: #E2E8F0;
+  color: #52665A;
+}
+
+:host-context(html:not(.dark)) .miss:hover {
+  background: #CBD5E1;
+}
+
+:host-context(html:not(.dark)) .xp-summary-list {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+:host-context(html:not(.dark)) .summary-row {
+  color: #52665A;
+}
+
+:host-context(html:not(.dark)) .total-row {
+  color: #1B1B1B;
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+:host-context(html:not(.dark)) .star-rating {
+  color: #CBD5E1;
+}
+
+:host-context(html:not(.dark)) .xp-bar-bg {
+  background: rgba(0, 0, 0, 0.08);
 }
 
 .game-container {

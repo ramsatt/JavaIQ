@@ -418,6 +418,81 @@ import { DataService } from '../../data.service';
       border-color: rgba(16,185,129,0.3);
       background: rgba(16,185,129,0.02);
     }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .tut-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
+    :host-context(html:not(.dark)) .tut-content {
+      --background: #F5F7F2;
+    }
+
+    /* Premium green hero */
+    :host-context(html:not(.dark)) .hero-section {
+      background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 55%, #40916C 100%);
+    }
+    :host-context(html:not(.dark)) .hero-glow-1 {
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    }
+    :host-context(html:not(.dark)) .hero-glow-2 {
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    }
+    :host-context(html:not(.dark)) .hero-badge {
+      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.3);
+    }
+    :host-context(html:not(.dark)) .hero-title {
+      color: #ffffff;
+      -webkit-text-fill-color: #ffffff;
+    }
+    :host-context(html:not(.dark)) .hero-accent {
+      background: linear-gradient(135deg, #86efac 0%, #bbf7d0 60%, #d1fae5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    :host-context(html:not(.dark)) .search-wrapper {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.25);
+    }
+    :host-context(html:not(.dark)) .search-wrapper:focus-within {
+      background: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.4);
+    }
+    :host-context(html:not(.dark)) .search-icon { color: rgba(255,255,255,0.75); }
+    :host-context(html:not(.dark)) .search-input { color: #ffffff; }
+    :host-context(html:not(.dark)) .search-input::placeholder { color: rgba(255,255,255,0.55); }
+
+    /* Body items */
+    :host-context(html:not(.dark)) .progress-card {
+      background: #ffffff;
+      border-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .stat-box {
+      background: rgba(27,67,50,0.04);
+      border-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .stat-label { color: #52665A; }
+    :host-context(html:not(.dark)) .problem-card {
+      background: #ffffff;
+      border-color: #D6DDD2;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    :host-context(html:not(.dark)) .problem-card:hover {
+      border-color: #B7CCBB;
+      box-shadow: 0 4px 16px rgba(27,67,50,0.1);
+    }
+    :host-context(html:not(.dark)) .problem-num {
+      background: rgba(27,67,50,0.06);
+      color: #52665A;
+    }
+    :host-context(html:not(.dark)) .problem-title { color: #1B1B1B; }
+    :host-context(html:not(.dark)) .meta-chip { color: #8A9B8F; }
+    :host-context(html:not(.dark)) .section-title { color: #52665A; }
+    :host-context(html:not(.dark)) .section-count { color: #8A9B8F; }
+    :host-context(html:not(.dark)) .section-icon { color: #1B4332; }
   `
 })
 export class LcListComponent {

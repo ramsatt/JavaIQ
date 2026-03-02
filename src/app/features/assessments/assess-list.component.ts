@@ -397,6 +397,92 @@ interface Assessment {
     .info-text { display: flex; flex-direction: column; gap: 4px; }
     .info-title { font-size: 0.8rem; font-weight: 700; color: #e2e8f0; }
     .info-desc { font-size: 0.72rem; color: #64748b; line-height: 1.5; }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .assess-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
+    :host-context(html:not(.dark)) .assess-content {
+      --background: #F5F7F2;
+    }
+
+    /* Premium green hero */
+    :host-context(html:not(.dark)) .hero {
+      background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 55%, #40916C 100%);
+    }
+    :host-context(html:not(.dark)) .hero-glow.g1 {
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    }
+    :host-context(html:not(.dark)) .hero-glow.g2 {
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    }
+    :host-context(html:not(.dark)) .hero-badge {
+      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.3);
+    }
+    :host-context(html:not(.dark)) .hero-title {
+      color: #ffffff;
+      -webkit-text-fill-color: #ffffff;
+    }
+    :host-context(html:not(.dark)) .hero-accent {
+      background: linear-gradient(135deg, #86efac 0%, #bbf7d0 60%, #d1fae5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    :host-context(html:not(.dark)) .hero-sub {
+      color: rgba(255,255,255,0.75);
+    }
+    :host-context(html:not(.dark)) .hero-stats {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.2);
+    }
+    :host-context(html:not(.dark)) .stat-num {
+      background: linear-gradient(135deg, #d1fae5, #86efac);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    :host-context(html:not(.dark)) .stat-lbl { color: rgba(255,255,255,0.65); }
+    :host-context(html:not(.dark)) .stat-div { background: rgba(255,255,255,0.2); }
+
+    /* Cards */
+    :host-context(html:not(.dark)) .assess-card {
+      background: #ffffff;
+      border-color: #D6DDD2;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    :host-context(html:not(.dark)) .assess-card:hover {
+      border-color: #B7CCBB;
+      box-shadow: 0 6px 20px rgba(27,67,50,0.1);
+    }
+    :host-context(html:not(.dark)) .assess-title { color: #1B1B1B; }
+    :host-context(html:not(.dark)) .assess-desc { color: #52665A; }
+    :host-context(html:not(.dark)) .meta-chip { color: #8A9B8F; background: rgba(27,67,50,0.04); border-color: #D6DDD2; }
+    :host-context(html:not(.dark)) .sec-title { color: #52665A; }
+    :host-context(html:not(.dark)) .sec-count { color: #8A9B8F; }
+    :host-context(html:not(.dark)) .sec-icon { color: #1B4332; }
+    :host-context(html:not(.dark)) .info-card {
+      background: rgba(27,67,50,0.04);
+      border-color: rgba(27,67,50,0.15);
+    }
+    :host-context(html:not(.dark)) .info-title { color: #1B1B1B; }
+    :host-context(html:not(.dark)) .info-desc { color: #52665A; }
+    :host-context(html:not(.dark)) .info-icon { color: #1B4332; }
+
+    /* Filters */
+    :host-context(html:not(.dark)) .fpill {
+      background: #ffffff !important;
+      border-color: #D6DDD2 !important;
+      color: #52665A !important;
+    }
+    :host-context(html:not(.dark)) .fpill-active {
+      background: #1B4332 !important;
+      color: white !important;
+      border-color: #1B4332 !important;
+    }
   `
 })
 export class AssessListComponent {

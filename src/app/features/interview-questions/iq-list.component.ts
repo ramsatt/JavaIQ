@@ -25,6 +25,7 @@ import { DataService } from '../../data.service';
         <!-- Hero Section -->
         <div class="hero-section">
           <div class="hero-glow"></div>
+          <div class="hero-badge">💼 Interview Prep</div>
           <h1 class="hero-title">Master Your<br><span class="hero-accent">Java Interview</span></h1>
           <p class="hero-subtitle">Curated questions from top tech companies</p>
         </div>
@@ -160,6 +161,22 @@ import { DataService } from '../../data.service';
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #10b981;
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
+      border-radius: 100px;
+      padding: 5px 14px;
+      margin-bottom: 14px;
     }
     .hero-subtitle {
       font-family: 'Inter', sans-serif;
@@ -375,6 +392,86 @@ import { DataService } from '../../data.service';
       font-weight: 500;
       margin: 0;
     }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .iq-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
+    :host-context(html:not(.dark)) .iq-page-content {
+      --background: #F5F7F2;
+    }
+
+    /* Premium green hero — full bleed with generous spacing */
+    :host-context(html:not(.dark)) .hero-section {
+      background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 55%, #40916C 100%);
+      padding: 44px 32px 60px;
+      margin: 0 -16px;
+    }
+    :host-context(html:not(.dark)) .hero-glow {
+      background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+    }
+    :host-context(html:not(.dark)) .hero-badge {
+      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.3);
+    }
+    :host-context(html:not(.dark)) .hero-title {
+      color: #ffffff;
+      -webkit-text-fill-color: #ffffff;
+    }
+    :host-context(html:not(.dark)) .hero-accent {
+      background: linear-gradient(135deg, #86efac 0%, #bbf7d0 60%, #d1fae5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    :host-context(html:not(.dark)) .hero-subtitle {
+      color: rgba(255,255,255,0.75);
+    }
+
+    /* Stats bar overlaps the hero bottom edge */
+    :host-context(html:not(.dark)) .stats-bar {
+      background: #ffffff;
+      border-color: #D6DDD2;
+      box-shadow: 0 4px 20px rgba(27,67,50,0.15);
+      border-radius: 16px;
+      margin-top: -32px;
+      position: relative;
+      z-index: 2;
+    }
+    :host-context(html:not(.dark)) .stat-value {
+      background: linear-gradient(135deg, #1B4332, #2D6A4F);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    :host-context(html:not(.dark)) .stat-label { color: #52665A; }
+    :host-context(html:not(.dark)) .stat-divider { background: #D6DDD2; }
+    :host-context(html:not(.dark)) .overall-progress-track {
+      background: rgba(27,67,50,0.08);
+    }
+
+    /* Topic cards */
+    :host-context(html:not(.dark)) .topic-card {
+      background: #ffffff;
+      border-color: #D6DDD2;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    :host-context(html:not(.dark)) .topic-card:hover {
+      border-color: #B7CCBB;
+      box-shadow: 0 6px 20px rgba(27,67,50,0.1);
+    }
+    :host-context(html:not(.dark)) .topic-progress-track {
+      background: rgba(27,67,50,0.06);
+    }
+    :host-context(html:not(.dark)) .topic-name { color: #1B1B1B; }
+    :host-context(html:not(.dark)) .topic-count { color: #8A9B8F; }
+    :host-context(html:not(.dark)) .topic-arrow { color: #B7CCBB; }
+    :host-context(html:not(.dark)) .topic-card:hover .topic-arrow { color: var(--accent, #1B4332); }
+    :host-context(html:not(.dark)) .section-tag { color: #52665A; }
+    :host-context(html:not(.dark)) .section-tag-icon { color: #1B4332; }
+    :host-context(html:not(.dark)) .footer-text { color: #8A9B8F; }
   `
 })
 export class IqListComponent {

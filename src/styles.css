@@ -505,3 +505,157 @@ a.no-underline {
   text-decoration: none;
   color: inherit;
 }
+
+/* ==========================================
+   Dark Mode — CSS Variable Overrides
+   ========================================== */
+html.dark {
+  color-scheme: dark;
+
+  /* Tailwind theme variable overrides */
+  --color-bg-primary: #0f172a;
+  --color-bg-surface: #1e293b;
+  --color-bg-elevated: #253350;
+  --color-bg-page: #0f172a;
+
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(255, 255, 255, 0.15);
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 10px 25px rgba(0, 0, 0, 0.4), 0 4px 10px rgba(0, 0, 0, 0.3);
+
+  /* Ionic variable overrides */
+  --ion-background-color: #0f172a;
+  --ion-background-color-rgb: 15, 23, 42;
+  --ion-text-color: #f8fafc;
+  --ion-text-color-rgb: 248, 250, 252;
+  --ion-toolbar-background: #1e293b;
+  --ion-toolbar-color: #f8fafc;
+  --ion-tab-bar-background: #1e293b;
+  --ion-tab-bar-border-color: rgba(255, 255, 255, 0.08);
+  --ion-card-background: #1e293b;
+  --ion-item-background: transparent;
+}
+
+/* ==========================================
+   Dark Mode — Global Element Overrides
+   ========================================== */
+html.dark body {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+html.dark ion-content {
+  --background: #0f172a;
+}
+
+html.dark ion-toolbar {
+  --background: #1e293b;
+  --color: #f8fafc;
+}
+
+html.dark ion-tab-bar {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark .card {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark .card:hover,
+html.dark .card:active {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+html.dark :not(pre)>code {
+  background: #1e3a2f;
+  color: #86efac;
+}
+
+html.dark .section-title {
+  color: #64748b;
+}
+
+html.dark .pill {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+html.dark .pill:hover {
+  border-color: #2d6a4f;
+  color: #86efac;
+  background: rgba(45, 106, 79, 0.2);
+}
+
+html.dark .pill-active {
+  background: #2d6a4f;
+  color: #f8fafc;
+  border-color: #2d6a4f;
+}
+
+html.dark .badge-easy {
+  background: rgba(5, 150, 105, 0.2);
+  color: #34d399;
+}
+
+html.dark .badge-medium {
+  background: rgba(217, 119, 6, 0.2);
+  color: #fbbf24;
+}
+
+html.dark .badge-hard {
+  background: rgba(220, 38, 38, 0.2);
+  color: #f87171;
+}
+
+html.dark .badge-beginner {
+  background: rgba(5, 150, 105, 0.2);
+  color: #34d399;
+}
+
+html.dark .badge-intermediate {
+  background: rgba(27, 67, 50, 0.3);
+  color: #86efac;
+}
+
+html.dark .badge-advanced {
+  background: rgba(220, 38, 38, 0.2);
+  color: #f87171;
+}
+
+html.dark .outcome-selected {
+  background: rgba(5, 150, 105, 0.2);
+  color: #34d399;
+}
+
+html.dark .outcome-rejected {
+  background: rgba(220, 38, 38, 0.2);
+  color: #f87171;
+}
+
+html.dark .outcome-pending {
+  background: rgba(217, 119, 6, 0.2);
+  color: #fbbf24;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ==========================================
+   Light Mode — Sidebar (ion-menu) Overrides
+   ========================================== */
+html:not(.dark) ion-menu::part(container) {
+  background: #ffffff;
+  border-right: 1px solid #D6DDD2;
+}

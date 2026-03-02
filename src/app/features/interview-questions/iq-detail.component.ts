@@ -478,6 +478,27 @@ import { AdGateService } from '../../ad-gate.service';
     .code-body::-webkit-scrollbar-track { background: transparent; }
     .code-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
     .code-body::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .detail-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
+    :host-context(html:not(.dark)) .detail-content {
+      --background: #F5F7F2;
+    }
+    :host-context(html:not(.dark)) .definition-card,
+    :host-context(html:not(.dark)) .usecase-card {
+      background: #ffffff !important;
+      border: 1px solid #D6DDD2 !important;
+    }
+    :host-context(html:not(.dark)) .detail-title {
+      color: #1B1B1B;
+      -webkit-text-fill-color: #1B1B1B;
+    }
+    :host-context(html:not(.dark)) .detail-answer {
+      color: #52665A;
+    }
   `
 })
 export class IqDetailComponent {

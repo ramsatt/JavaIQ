@@ -62,6 +62,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/experiences/exp-detail.component').then(m => m.ExpDetailComponent)
   },
   {
+    path: 'about',
+    loadComponent: () => import('./features/about/about.component').then(m => m.AboutComponent)
+  },
+  {
     path: '',
     redirectTo: 'tutorials',
     pathMatch: 'full'

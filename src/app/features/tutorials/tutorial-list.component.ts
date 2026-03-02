@@ -493,6 +493,130 @@ interface TutorialCourse {
       font-weight: 500;
       margin: 0;
     }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .tut-toolbar {
+      --background: #1B4332;
+      --color: white;
+    }
+    :host-context(html:not(.dark)) .tut-content {
+      --background: #F5F7F2;
+    }
+
+    /* Premium green hero in light mode */
+    :host-context(html:not(.dark)) .hero-section {
+      background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 55%, #40916C 100%);
+    }
+    :host-context(html:not(.dark)) .hero-glow-1 {
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    }
+    :host-context(html:not(.dark)) .hero-glow-2 {
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    }
+    :host-context(html:not(.dark)) .hero-badge {
+      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.3);
+    }
+    :host-context(html:not(.dark)) .hero-title {
+      color: #ffffff;
+      -webkit-text-fill-color: #ffffff;
+    }
+    :host-context(html:not(.dark)) .hero-accent {
+      background: linear-gradient(135deg, #86efac 0%, #bbf7d0 60%, #d1fae5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    :host-context(html:not(.dark)) .hero-subtitle {
+      color: rgba(255,255,255,0.75);
+    }
+    :host-context(html:not(.dark)) .hero-stats {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    :host-context(html:not(.dark)) .hero-stat-val {
+      background: linear-gradient(135deg, #d1fae5, #86efac);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    :host-context(html:not(.dark)) .hero-stat-lbl {
+      color: rgba(255,255,255,0.65);
+    }
+    :host-context(html:not(.dark)) .hero-stat-divider {
+      background: rgba(255,255,255,0.2);
+    }
+
+    /* Course cards in light mode */
+    :host-context(html:not(.dark)) .course-card {
+      background: #ffffff;
+      border-color: #D6DDD2;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    :host-context(html:not(.dark)) .course-card:hover {
+      background: #ffffff;
+      border-color: #B7CCBB;
+      box-shadow: 0 6px 20px rgba(27,67,50,0.1);
+    }
+    :host-context(html:not(.dark)) .course-title {
+      color: #1B1B1B;
+    }
+    :host-context(html:not(.dark)) .course-desc {
+      color: #52665A;
+    }
+    :host-context(html:not(.dark)) .meta-chip {
+      background: rgba(27,67,50,0.04);
+      border-color: #D6DDD2;
+      color: #8A9B8F;
+    }
+    :host-context(html:not(.dark)) .course-arrow {
+      color: #B7CCBB;
+    }
+    :host-context(html:not(.dark)) .course-card:hover .course-arrow {
+      color: var(--accent, #1B4332);
+    }
+
+    /* Section header */
+    :host-context(html:not(.dark)) .section-icon { color: #1B4332; }
+    :host-context(html:not(.dark)) .section-title { color: #52665A; }
+    :host-context(html:not(.dark)) .section-count { color: #8A9B8F; }
+
+    /* Filter chips */
+    :host-context(html:not(.dark)) .filter-chip {
+      background: #ffffff !important;
+      border-color: #D6DDD2 !important;
+      color: #52665A !important;
+    }
+    :host-context(html:not(.dark)) .filter-chip:hover {
+      background: #F5F7F2 !important;
+      border-color: #B7CCBB !important;
+      color: #1B4332 !important;
+    }
+    :host-context(html:not(.dark)) .filter-active {
+      background: #1B4332 !important;
+      color: white !important;
+      border-color: #1B4332 !important;
+    }
+
+    /* Footer */
+    :host-context(html:not(.dark)) .footer-text { color: #8A9B8F; }
+
+    /* Diff tags light mode */
+    :host-context(html:not(.dark)) .diff-tag[data-level="beginner"] {
+      background: rgba(5,150,105,0.1);
+      color: #059669;
+    }
+    :host-context(html:not(.dark)) .diff-tag[data-level="intermediate"] {
+      background: rgba(27,67,50,0.1);
+      color: #1B4332;
+    }
+    :host-context(html:not(.dark)) .diff-tag[data-level="advanced"] {
+      background: rgba(220,38,38,0.1);
+      color: #dc2626;
+    }
   `
 })
 export class TutorialListComponent {
