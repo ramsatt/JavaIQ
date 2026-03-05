@@ -7,6 +7,12 @@ import { AdGateService } from '../../ad-gate.service';
 // Lazy import map for all topic components
 const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = {
   'core-java': {
+    'data-types':        () => import('./topics/data-types.component').then(m => m.DataTypesComponent),
+    'variables-casting': () => import('./topics/variables-casting.component').then(m => m.VariablesCastingComponent),
+    'operators':         () => import('./topics/operators.component').then(m => m.OperatorsComponent),
+    'control-flow':      () => import('./topics/control-flow.component').then(m => m.ControlFlowComponent),
+    'loops':             () => import('./topics/loops.component').then(m => m.LoopsComponent),
+    'methods':           () => import('./topics/methods.component').then(m => m.MethodsComponent),
     'arrays': () => import('./topics/arrays.component').then(m => m.ArraysComponent),
     'strings': () => import('./topics/strings.component').then(m => m.StringsComponent),
     'oop-classes': () => import('./topics/oop-classes.component').then(m => m.OopClassesComponent),
@@ -14,6 +20,10 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
     'polymorphism': () => import('./topics/polymorphism.component').then(m => m.PolymorphismComponent),
     'abstraction': () => import('./topics/abstraction.component').then(m => m.AbstractionComponent),
     'encapsulation': () => import('./topics/encapsulation.component').then(m => m.EncapsulationComponent),
+    'enums':         () => import('./topics/enums.component').then(m => m.EnumsComponent),
+    'nested-classes': () => import('./topics/nested-classes.component').then(m => m.NestedClassesComponent),
+    'final-static':  () => import('./topics/final-static.component').then(m => m.FinalStaticComponent),
+    'object-class':  () => import('./topics/object-class.component').then(m => m.ObjectClassComponent),
     'exceptions': () => import('./topics/exceptions.component').then(m => m.ExceptionsComponent),
     'collections-list': () => import('./topics/collections-list.component').then(m => m.CollectionsListComponent),
     'collections-map': () => import('./topics/collections-map.component').then(m => m.CollectionsMapComponent),
