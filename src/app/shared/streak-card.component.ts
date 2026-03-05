@@ -2,8 +2,8 @@ import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/c
 import { GamificationService } from '../gamification.service';
 
 interface StreakMilestone {
-  days:   number;
-  label:  string;
+  days: number;
+  label: string;
   reward: string;
 }
 
@@ -223,7 +223,7 @@ interface StreakMilestone {
     .milestone-reward {
       font-size: 0.64rem;
       font-weight: 600;
-      color: rgba(212,168,83,0.70);
+      color: #22d3ee; /* bright cyan */
       font-style: italic;
     }
   `]
@@ -232,11 +232,11 @@ export class StreakCardComponent {
   game = inject(GamificationService);
 
   private readonly MILESTONES: StreakMilestone[] = [
-    { days: 7,   label: '7-Day Warrior',    reward: '100 XP bonus ahead' },
-    { days: 14,  label: '14-Day Devotee',   reward: '250 XP bonus ahead' },
-    { days: 30,  label: 'Monthly Master',   reward: 'Rare badge unlock'  },
-    { days: 60,  label: '60-Day Legend',    reward: 'Elite badge unlock'  },
-    { days: 100, label: '100-Day Champion', reward: 'Hall of Fame'        }
+    { days: 7, label: '7-Day Warrior', reward: '100 XP bonus ahead' },
+    { days: 14, label: '14-Day Devotee', reward: '250 XP bonus ahead' },
+    { days: 30, label: 'Monthly Master', reward: 'Rare badge unlock' },
+    { days: 60, label: '60-Day Legend', reward: 'Elite badge unlock' },
+    { days: 100, label: '100-Day Champion', reward: 'Hall of Fame' }
   ];
 
   nextMilestone = computed((): StreakMilestone => {
@@ -245,13 +245,13 @@ export class StreakCardComponent {
   });
 
   private prevMilestoneDay = computed((): number => {
-    const s   = this.game.streak();
+    const s = this.game.streak();
     const idx = this.MILESTONES.findIndex(m => m.days > s);
     return idx > 0 ? this.MILESTONES[idx - 1].days : 0;
   });
 
   milestoneProgress = computed((): number => {
-    const s  = this.game.streak();
+    const s = this.game.streak();
     const lo = this.prevMilestoneDay();
     const hi = this.nextMilestone().days;
     if (hi <= lo) return 100;

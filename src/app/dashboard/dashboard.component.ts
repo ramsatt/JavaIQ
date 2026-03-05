@@ -2,7 +2,8 @@ import { Component, inject, signal, computed, ViewChild, OnDestroy, OnInit } fro
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SearchModalComponent } from '../search-modal/search-modal.component';
-import { IonContent, IonMenuButton } from '@ionic/angular/standalone';
+import { IonContent, IonMenuButton, IonHeader } from '@ionic/angular/standalone';
+import { AppHeaderComponent } from '../shared/app-header.component';
 import { DataService } from '../data.service';
 import { AuthService } from '../auth.service';
 import { GamificationService } from '../gamification.service';
@@ -23,12 +24,12 @@ import { AlertService } from '../alert.service';
   imports: [
     CommonModule,
     IonContent,
-    IonMenuButton,
     StreakCardComponent,
     QotdCardComponent,
     ContinueLearningCardComponent,
     DailyGoalCardComponent,
-    SearchModalComponent
+    AppHeaderComponent,
+    IonHeader
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
@@ -40,10 +41,10 @@ export class DashboardComponent implements OnDestroy {
   public authService = inject(AuthService);
   public gameService = inject(GamificationService);
   public achService = inject(AchievementService);
-  public dcService   = inject(DailyChallengeService);
-  public studyPlan   = inject(StudyPlanService);
-  public wrongSvc    = inject(WrongAnswerService);
-  private alertSvc   = inject(AlertService);
+  public dcService = inject(DailyChallengeService);
+  public studyPlan = inject(StudyPlanService);
+  public wrongSvc = inject(WrongAnswerService);
+  private alertSvc = inject(AlertService);
 
   showAllModules = signal(false);
 
@@ -78,9 +79,8 @@ export class DashboardComponent implements OnDestroy {
   goToDailyChallenge() { this.router.navigate(['/daily-challenge']); }
   goToStudyPlan() { this.router.navigate(['/study-plan']); }
   goToMockInterview() { this.router.navigate(['/mock-interview']); }
-  goToProgress()      { this.router.navigate(['/progress']); }
-  goToReview()        { this.router.navigate(['/review']); }
-  openSearch()        { this.searchModal?.open(); }
+  goToProgress() { this.router.navigate(['/progress']); }
+  goToReview() { this.router.navigate(['/review']); }
 
   overallPct = computed(() => {
     const total = this.dataService.getAllQuestionsStable().length;
@@ -185,15 +185,5 @@ export class DashboardComponent implements OnDestroy {
 
   login() {
     this.authService.loginWithGoogle();
-  }
-
-  async logout() {
-    const confirmed = await this.alertSvc.confirm(
-      'Are you sure you want to sign out?',
-      'Sign Out'
-    );
-    if (confirmed) {
-      this.authService.logout();
-    }
   }
 }

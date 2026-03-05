@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader } from '@ionic/angular/standalone';
+import { AppHeaderComponent } from '../../shared/app-header.component';
 
 interface Assessment {
   id: string;
@@ -19,14 +20,10 @@ interface Assessment {
 @Component({
   selector: 'app-assess-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton],
+  imports: [RouterLink, IonContent, AppHeaderComponent, IonHeader],
   template: `
-    <ion-header class="ion-no-border" translucent="true">
-      <ion-toolbar class="assess-toolbar">
-        <ion-buttons slot="start">
-          <ion-menu-button color="light"></ion-menu-button>
-        </ion-buttons>
-      </ion-toolbar>
+    <ion-header class="ion-no-border">
+      <app-header></app-header>
     </ion-header>
 
     <ion-content class="assess-content">

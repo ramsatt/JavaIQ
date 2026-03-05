@@ -1,22 +1,16 @@
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { IonContent, IonRefresher, IonRefresherContent, IonHeader } from '@ionic/angular/standalone';
 import { DataService } from '../../data.service';
+import { AppHeaderComponent } from '../../shared/app-header.component';
 
 @Component({
   selector: 'app-iq-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonRefresher, IonRefresherContent],
+  imports: [RouterLink, IonContent, IonRefresher, IonRefresherContent, AppHeaderComponent, IonHeader],
   template: `
-    <ion-header class="ion-no-border" translucent="true">
-      <ion-toolbar class="iq-toolbar">
-        <ion-buttons slot="start">
-          <ion-menu-button color="light"></ion-menu-button>
-        </ion-buttons>
-        <ion-title class="iq-brand">
-          <span class="brand-icon">☕</span> JavaIQ
-        </ion-title>
-      </ion-toolbar>
+    <ion-header class="ion-no-border">
+      <app-header></app-header>
     </ion-header>
 
     <ion-content class="iq-page-content">

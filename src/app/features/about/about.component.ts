@@ -1,19 +1,13 @@
 import { Component } from '@angular/core';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader } from '@ionic/angular/standalone';
+import { AppHeaderComponent } from '../../shared/app-header.component';
 
 @Component({
   selector: 'app-about',
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton],
+  imports: [IonContent, AppHeaderComponent, IonHeader],
   template: `
-    <ion-header class="ion-no-border" translucent="true">
-      <ion-toolbar class="about-toolbar">
-        <ion-buttons slot="start">
-          <ion-menu-button color="light"></ion-menu-button>
-        </ion-buttons>
-        <ion-title class="about-brand">
-          <span class="brand-icon">☕</span> JavaIQ
-        </ion-title>
-      </ion-toolbar>
+    <ion-header class="ion-no-border">
+      <app-header></app-header>
     </ion-header>
 
     <ion-content class="about-page-content">

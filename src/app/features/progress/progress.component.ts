@@ -3,24 +3,25 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { IonContent } from '@ionic/angular/standalone';
+import { IonContent, IonHeader } from '@ionic/angular/standalone';
 import { DataService } from '../../data.service';
 import { GamificationService } from '../../gamification.service';
 import { WrongAnswerService } from '../../services/wrong-answer.service';
 import { DailyChallengeService } from '../../daily-challenge.service';
 import { AchievementService } from '../../services/achievement.service';
+import { AppHeaderComponent } from '../../shared/app-header.component';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-  { name: 'Core Java',            emoji: '☕', color: '#f97316' },
-  { name: 'Spring Boot',          emoji: '🌿', color: '#22c55e' },
-  { name: 'Microservices',        emoji: '🔗', color: '#38bdf8' },
-  { name: 'Hibernate',            emoji: '🗄️', color: '#a855f7' },
-  { name: 'Multithreading',       emoji: '🧵', color: '#ec4899' },
-  { name: 'Spring Reactive',      emoji: '⚡', color: '#eab308' },
+  { name: 'Core Java', emoji: '☕', color: '#f97316' },
+  { name: 'Spring Boot', emoji: '🌿', color: '#22c55e' },
+  { name: 'Microservices', emoji: '🔗', color: '#38bdf8' },
+  { name: 'Hibernate', emoji: '🗄️', color: '#a855f7' },
+  { name: 'Multithreading', emoji: '🧵', color: '#ec4899' },
+  { name: 'Spring Reactive', emoji: '⚡', color: '#eab308' },
   { name: 'Reactive Programming', emoji: '📡', color: '#fb923c' },
-  { name: 'Coding Questions',     emoji: '💻', color: '#10b981' },
+  { name: 'Coding Questions', emoji: '💻', color: '#10b981' },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -30,8 +31,11 @@ const CATEGORIES = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'class': 'ion-page' },
   standalone: true,
-  imports: [CommonModule, IonContent],
+  imports: [CommonModule, IonContent, AppHeaderComponent, IonHeader],
   template: `
+    <ion-header class="ion-no-border">
+      <app-header></app-header>
+    </ion-header>
     <ion-content class="pr-content">
       <div class="pr-body">
 
@@ -203,7 +207,7 @@ const CATEGORIES = [
     .pr-content { --background: #0b1120; }
 
     .pr-body {
-      padding: 56px 20px 60px;
+      padding: 24px 20px 60px;
       max-width: 540px;
       margin: 0 auto;
       display: flex;
@@ -409,21 +413,30 @@ const CATEGORIES = [
     /* Light mode overrides */
     :host-context(html:not(.dark)) .pr-content { --background: #f8fafc; }
     :host-context(html:not(.dark)) .pr-title { color: #0f172a; }
-    :host-context(html:not(.dark)) .pr-sub   { color: #94a3b8; }
-    :host-context(html:not(.dark)) .pr-hero, .pr-stat, .pr-cat-row {
-      background: #fff; border-color: #e2e8f0;
+    :host-context(html:not(.dark)) .pr-sub   { color: #64748b; }
+    :host-context(html:not(.dark)) .pr-hero,
+    :host-context(html:not(.dark)) .pr-stat,
+    :host-context(html:not(.dark)) .pr-week-grid,
+    :host-context(html:not(.dark)) .pr-cat-row {
+      background: #fff; border-color: #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
+    :host-context(html:not(.dark)) .pr-cat-row:hover { background: #f1f5f9; }
     :host-context(html:not(.dark)) .pr-cat-name { color: #0f172a; }
     :host-context(html:not(.dark)) .pr-weak-q   { color: #334155; }
+    :host-context(html:not(.dark)) .pr-xp-val,
+    :host-context(html:not(.dark)) .pr-streak-num,
+    :host-context(html:not(.dark)) .pr-stat-num { color: #0f172a; }
+    :host-context(html:not(.dark)) .pr-cat-track { background: #e2e8f0; }
+    :host-context(html:not(.dark)) .pr-day-dot { background: #f1f5f9; border-color: #e2e8f0; }
   `
 })
 export class ProgressComponent {
-  private router  = inject(Router);
-  gameSvc   = inject(GamificationService);
-  dataSvc   = inject(DataService);
-  wrongSvc  = inject(WrongAnswerService);
+  private router = inject(Router);
+  gameSvc = inject(GamificationService);
+  dataSvc = inject(DataService);
+  wrongSvc = inject(WrongAnswerService);
   dcService = inject(DailyChallengeService);
-  achSvc    = inject(AchievementService);
+  achSvc = inject(AchievementService);
 
   readonly categories = CATEGORIES;
 
@@ -476,7 +489,7 @@ export class ProgressComponent {
 
   // ── Template helpers ───────────────────────────────────────────────────────
 
-  getPct(category: string)   { return this.dataSvc.getProgress(category); }
+  getPct(category: string) { return this.dataSvc.getProgress(category); }
   getStars(category: string) { return this.dataSvc.getCategoryStars(category); }
 
   goToCategory(category: string) {

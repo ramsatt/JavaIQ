@@ -3,12 +3,13 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { IonContent } from '@ionic/angular/standalone';
+import { IonContent, IonHeader } from '@ionic/angular/standalone';
 import { DataService, Question } from '../../data.service';
 import { GamificationService } from '../../gamification.service';
 import { WrongAnswerService } from '../../services/wrong-answer.service';
 import { ShareService } from '../../services/share.service';
 import { AnalyticsService } from '../../analytics.service';
+import { AppHeaderComponent } from '../../shared/app-header.component';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -55,8 +56,11 @@ function grade(pct: number): { letter: string; color: string } {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'class': 'ion-page' },
   standalone: true,
-  imports: [CommonModule, IonContent],
+  imports: [CommonModule, IonContent, AppHeaderComponent, IonHeader],
   template: `
+    <ion-header class="ion-no-border">
+      <app-header></app-header>
+    </ion-header>
     <ion-content class="mi-content">
       <div class="mi-wrap">
 

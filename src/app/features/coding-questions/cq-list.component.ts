@@ -1,19 +1,15 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader } from '@ionic/angular/standalone';
+import { AppHeaderComponent } from '../../shared/app-header.component';
 
 @Component({
   selector: 'app-cq-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton],
+  imports: [RouterLink, IonContent, AppHeaderComponent, IonHeader],
   template: `
-    <ion-header class="ion-no-border" translucent="true">
-      <ion-toolbar class="tut-toolbar">
-        <ion-buttons slot="start">
-          <ion-menu-button color="light"></ion-menu-button>
-        </ion-buttons>
-        <ion-title class="brand-title">JavaIQ</ion-title>
-      </ion-toolbar>
+    <ion-header class="ion-no-border">
+      <app-header></app-header>
     </ion-header>
 
     <ion-content class="tut-content">

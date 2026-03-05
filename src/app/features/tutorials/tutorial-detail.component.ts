@@ -546,15 +546,60 @@ interface CourseData {
     :host-context(html:not(.dark)) .tut-content {
       --background: #F5F7F2;
     }
+    :host-context(html:not(.dark)) .hero {
+      background: #1B4332;
+      border-bottom: none;
+    }
+    :host-context(html:not(.dark)) .title {
+      color: #ffffff;
+      -webkit-text-fill-color: #ffffff;
+    }
+    :host-context(html:not(.dark)) .subtitle {
+      color: rgba(255, 255, 255, 0.85);
+    }
+    :host-context(html:not(.dark)) .stat-pill {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+    :host-context(html:not(.dark)) .progress-track {
+      background: rgba(255, 255, 255, 0.2);
+    }
     :host-context(html:not(.dark)) .topic-card {
       background: #ffffff !important;
       border: 1px solid #D6DDD2 !important;
     }
-    :host-context(html:not(.dark)) .title {
-      color: #1B1B1B;
-      -webkit-text-fill-color: #1B1B1B;
+    :host-context(html:not(.dark)) .topic-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-color: #B4C4B1 !important;
     }
-    :host-context(html:not(.dark)) .subtitle {
+    :host-context(html:not(.dark)) .topic-title {
+      color: #1B1B1B;
+    }
+    :host-context(html:not(.dark)) .topic-desc {
+      color: #52665A;
+    }
+    :host-context(html:not(.dark)) .topic-dur {
+      color: #52665A;
+    }
+    :host-context(html:not(.dark)) .topic-arrow {
+      color: #52665A;
+    }
+    :host-context(html:not(.dark)) .topic-count {
+      color: #1B4332;
+    }
+    :host-context(html:not(.dark)) .section-label {
+      color: #1B4332;
+    }
+    :host-context(html:not(.dark)) .topic-num,
+    :host-context(html:not(.dark)) .topic-num-done {
+      background: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    :host-context(html:not(.dark)) .topic-title-done {
+      opacity: 0.6;
+    }
+    :host-context(html:not(.dark)) .footer-text {
       color: #52665A;
     }
   `
@@ -576,9 +621,9 @@ export class TutorialDetailComponent {
     return total === 0 ? 0 : Math.round((this.completedCount() / total) * 100);
   });
 
-  private auth       = inject(AuthService);
-  showCert           = signal(false);
-  readonly userName  = computed(() => this.auth.user()?.displayName ?? 'Java Developer');
+  private auth = inject(AuthService);
+  showCert = signal(false);
+  readonly userName = computed(() => this.auth.user()?.displayName ?? 'Java Developer');
   readonly isCourseComplete = computed(() => this.progressPct() >= 100);
 
   isComplete(courseSlug: string, topicSlug: string): boolean {

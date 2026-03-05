@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
-import { SearchModalComponent } from '../../search-modal/search-modal.component';
+import { IonContent, IonRefresher, IonRefresherContent, IonHeader } from '@ionic/angular/standalone';
+import { AppHeaderComponent } from '../../shared/app-header.component';
 
 interface TutorialCourse {
   slug: string;
@@ -18,22 +18,11 @@ interface TutorialCourse {
 @Component({
   selector: 'app-tutorial-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonRefresher, IonRefresherContent, SearchModalComponent],
+  imports: [RouterLink, IonContent, IonRefresher, IonRefresherContent, AppHeaderComponent, IonHeader],
   template: `
-    <ion-header class="ion-no-border" translucent="true">
-      <ion-toolbar class="tut-toolbar">
-        <ion-buttons slot="start">
-          <ion-menu-button color="light"></ion-menu-button>
-        </ion-buttons>
-        <ion-buttons slot="end">
-          <button class="search-btn" (click)="searchModal.open()">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </button>
-        </ion-buttons>
-      </ion-toolbar>
+    <ion-header class="ion-no-border">
+      <app-header></app-header>
     </ion-header>
-
-    <app-search-modal #searchModal></app-search-modal>
 
     <ion-content class="tut-content">
       <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
@@ -646,8 +635,6 @@ interface TutorialCourse {
   `
 })
 export class TutorialListComponent {
-  @ViewChild('searchModal') searchModal!: SearchModalComponent;
-
   categoryPills = [
     { faIcon: 'fa-solid fa-layer-group', label: 'All', color: '#8b5cf6' },
     { faIcon: 'fa-solid fa-mug-hot', label: 'Core Java', color: '#f59e0b' },

@@ -72,7 +72,7 @@ import { DailyEngagementService } from '../services/daily-engagement.service';
 
     .goal-card {
       border-radius: 18px;
-      padding: 16px 15px;
+      padding: 18px 16px;
       height: 100%;
       box-sizing: border-box;
       display: flex;
@@ -126,7 +126,7 @@ import { DailyEngagementService } from '../services/daily-engagement.service';
     }
 
     /* Tasks */
-    .goal-tasks { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; flex: 1; }
+    .goal-tasks { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
 
     .goal-task {
       display: flex;
@@ -207,6 +207,7 @@ import { DailyEngagementService } from '../services/daily-engagement.service';
       border-radius: 4px;
       overflow: hidden;
       margin-bottom: 8px;
+      margin-top: auto;
     }
 
     :host-context(html.dark) .goal-track { background: rgba(255,255,255,0.09); }

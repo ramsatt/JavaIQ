@@ -1,7 +1,8 @@
 import { Component, inject, ChangeDetectionStrategy, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader } from '@ionic/angular/standalone';
 import { BookmarksService, BookmarkType } from '../../bookmarks.service';
+import { AppHeaderComponent } from '../../shared/app-header.component';
 
 const TYPE_CONFIG: Record<BookmarkType, { label: string; icon: string; color: string }> = {
   tutorial: { label: 'Tutorials', icon: 'fa-solid fa-book-open', color: '#10b981' },
@@ -16,14 +17,10 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
 @Component({
   selector: 'app-bookmarks-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton],
+  imports: [IonContent, AppHeaderComponent, IonHeader],
   template: `
-    <ion-header class="ion-no-border" translucent="true">
-      <ion-toolbar class="bm-toolbar">
-        <ion-buttons slot="start">
-          <ion-menu-button color="light"></ion-menu-button>
-        </ion-buttons>
-      </ion-toolbar>
+    <ion-header class="ion-no-border">
+      <app-header></app-header>
     </ion-header>
 
     <ion-content class="bm-content">

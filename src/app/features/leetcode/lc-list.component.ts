@@ -1,7 +1,8 @@
 import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader } from '@ionic/angular/standalone';
 import { AdGateService } from '../../ad-gate.service';
+import { AppHeaderComponent } from '../../shared/app-header.component';
 
 import { LeetCodeProblem, LEETCODE_PROBLEMS } from '../../data/leetcode-problems';
 import { DataService } from '../../data.service';
@@ -9,15 +10,10 @@ import { DataService } from '../../data.service';
 @Component({
   selector: 'app-lc-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton],
+  imports: [IonContent, AppHeaderComponent, IonHeader],
   template: `
-    <ion-header class="ion-no-border" translucent="true">
-      <ion-toolbar class="tut-toolbar">
-        <ion-buttons slot="start">
-          <ion-menu-button color="light"></ion-menu-button>
-        </ion-buttons>
-        <ion-title class="brand-title">JavaIQ</ion-title>
-      </ion-toolbar>
+    <ion-header class="ion-no-border">
+      <app-header></app-header>
     </ion-header>
 
     <ion-content class="tut-content">

@@ -1,29 +1,9 @@
 <!-- Host element already has class="ion-page" via @Component host binding -->
 
-<!-- ────────── Header — outside ion-content so it stays fixed while page scrolls ────────── -->
-<header class="dash-header">
-  <div class="header-left">
-    <ion-menu-button class="menu-btn" color="light"></ion-menu-button>
-    <div class="wordmark">
-      Java<span class="wm-accent">IQ</span>
-      <span class="wm-pro">PRO</span>
-    </div>
-  </div>
-
-  <div class="header-right">
-    <button class="icon-btn search-btn" (click)="openSearch()" title="Search">🔍</button>
-
-    <div class="streak-badge" [class.streak-on]="gameService.streak() > 0">
-      🔥 <span>{{ gameService.streak() }}</span>
-    </div>
-
-    @if (authService.user()) {
-    <img [src]="authService.user()?.photoURL" class="avatar" (click)="logout()" title="Sign out">
-    } @else {
-    <button class="btn-signin" (click)="login()">Sign In</button>
-    }
-  </div>
-</header>
+<!-- ────────── Header ────────── -->
+<ion-header class="ion-no-border">
+  <app-header></app-header>
+</ion-header>
 
 <!-- ────────── Scrollable body ────────── -->
 <ion-content>
@@ -122,7 +102,7 @@
         </button>
         <button class="qa-tile" (click)="goToLeaderboard()">
           <i class="bi bi-trophy-fill qa-icon" style="color:#f87171"></i>
-          <span class="qa-label">Leader-<br>board</span>
+          <span class="qa-label">Leaderboard</span>
         </button>
       </div>
     </section>
@@ -230,5 +210,3 @@
 
   </main>
 </ion-content>
-
-<app-search-modal></app-search-modal>
