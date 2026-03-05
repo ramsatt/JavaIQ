@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import {
   IonApp, IonRouterOutlet, IonMenu, IonHeader,
   IonContent, IonList, IonItem, IonIcon, IonLabel,
@@ -9,17 +10,19 @@ import { addIcons } from 'ionicons';
 import {
   bookOutline, chatbubblesOutline, codeSlashOutline,
   trophyOutline, clipboardOutline, peopleOutline,
-  moonOutline, sunnyOutline, personCircleOutline
+  moonOutline, sunnyOutline, personCircleOutline,
+  bookmarkOutline, settingsOutline
 } from 'ionicons/icons';
 import { AdMobService } from './admob.service';
 import { CustomAlertComponent } from './custom-alert/custom-alert.component';
 import { ThemeService } from './theme.service';
+import { ConnectivityService } from './connectivity.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    RouterLink, RouterLinkActive, IonApp, IonRouterOutlet, IonMenu,
+    CommonModule, RouterLink, RouterLinkActive, IonApp, IonRouterOutlet, IonMenu,
     IonHeader, IonContent, IonList, IonItem,
     IonIcon, IonLabel, IonMenuToggle, IonFooter, IonToggle, CustomAlertComponent
   ],
@@ -96,6 +99,22 @@ import { ThemeService } from './theme.service';
                 </ion-item>
               </ion-menu-toggle>
 
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/bookmarks" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="bookmark-outline"></ion-icon></div>
+                  <ion-label>Saved</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/settings" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="settings-outline"></ion-icon></div>
+                  <ion-label>Settings</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
               <div class="nav-divider"></div>
 
               <ion-menu-toggle auto-hide="false">
@@ -130,7 +149,15 @@ import { ThemeService } from './theme.service';
       <div id="main-content">
         <ion-router-outlet></ion-router-outlet>
       </div>
-      
+
+      <!-- Offline Banner -->
+      @if (!connectivity.isOnline()) {
+        <div class="offline-banner">
+          <i class="bi bi-wifi-off"></i>
+          You're offline. Progress will sync when connected.
+        </div>
+      }
+
       <app-custom-alert></app-custom-alert>
     </ion-app>
   `,
@@ -448,6 +475,31 @@ import { ThemeService } from './theme.service';
     }
     :host-context(html:not(.dark)) .version { color: #8A9B8F; }
     :host-context(html:not(.dark)) .footer-brand { color: #52665A; }
+
+    /* Offline Banner */
+    .offline-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 99999;
+      background: #b45309;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.01em;
+      animation: slideDown 0.3s ease-out;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
   `]
 })
 export class AppComponent {
@@ -455,13 +507,23 @@ export class AppComponent {
 
   constructor(
     private adMobService: AdMobService,
-    protected themeService: ThemeService
+    protected themeService: ThemeService,
+    protected connectivity: ConnectivityService,
+    private router: Router
   ) {
     addIcons({
       bookOutline, chatbubblesOutline, codeSlashOutline,
       trophyOutline, clipboardOutline, peopleOutline,
-      moonOutline, sunnyOutline, personCircleOutline
+      moonOutline, sunnyOutline, personCircleOutline,
+      bookmarkOutline, settingsOutline
     });
     this.adMobService.showBanner();
+    this.checkFirstLaunch();
+  }
+
+  private checkFirstLaunch() {
+    if (!localStorage.getItem('onboarding_done')) {
+      this.router.navigate(['/onboarding'], { replaceUrl: true });
+    }
   }
 }

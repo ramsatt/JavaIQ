@@ -1,5 +1,5 @@
 import { Injectable, signal, inject, effect } from '@angular/core';
-import { Firestore, doc, getDoc, setDoc, updateDoc, increment, collection, query, orderBy, limit, getDocs } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, setDoc, updateDoc, increment, collection, query, orderBy, limit, getDocs, where, Timestamp } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import { Question } from './data/question.model';
 import { CORE_JAVA_QUESTIONS } from './data/core-java';
@@ -284,11 +284,30 @@ export class DataService {
     return this.getCategoryStars(prevCategory) < 1;
   }
 
-  async getLeaderboard(limitCount: number = 10) {
+  async getLeaderboard(limitCount: number = 20, period: 'alltime' | 'monthly' | 'weekly' = 'alltime') {
     const leaderRef = collection(this.firestore, 'leaderboard');
-    const q = query(leaderRef, orderBy('points', 'desc'), limit(limitCount));
+
+    let q;
+    if (period === 'alltime') {
+      q = query(leaderRef, orderBy('points', 'desc'), limit(limitCount));
+    } else {
+      const now = new Date();
+      let cutoff: Date;
+      if (period === 'weekly') {
+        cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+      } else {
+        cutoff = new Date(now.getFullYear(), now.getMonth(), 1);
+      }
+      q = query(
+        leaderRef,
+        where('lastUpdated', '>=', Timestamp.fromDate(cutoff)),
+        orderBy('lastUpdated', 'desc'),
+        limit(limitCount)
+      );
+    }
+
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return querySnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   }
 
   // Legacy support for older components (can be removed once all components are updated)

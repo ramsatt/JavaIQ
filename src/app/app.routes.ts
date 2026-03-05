@@ -2,6 +2,18 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: 'onboarding',
+    loadComponent: () => import('./onboarding/onboarding.component').then(m => m.OnboardingComponent)
+  },
+  {
+    path: 'profile-setup',
+    loadComponent: () => import('./profile-setup/profile-setup.component').then(m => m.ProfileSetupComponent)
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
+  },
+  {
     path: 'tutorials/:slug/:topic',
     loadComponent: () => import('./features/tutorials/topic-router.component').then(m => m.TopicRouterComponent)
   },
@@ -60,6 +72,18 @@ export const routes: Routes = [
   {
     path: 'experiences/:id',
     loadComponent: () => import('./features/experiences/exp-detail.component').then(m => m.ExpDetailComponent)
+  },
+  {
+    path: 'daily-challenge',
+    loadComponent: () => import('./daily-challenge/daily-challenge.component').then(m => m.DailyChallengeComponent)
+  },
+  {
+    path: 'bookmarks',
+    loadComponent: () => import('./features/bookmarks/bookmarks-list.component').then(m => m.BookmarksListComponent)
+  },
+  {
+    path: 'leaderboard',
+    loadComponent: () => import('./leaderboard/leaderboard.component').then(m => m.LeaderboardComponent)
   },
   {
     path: 'about',

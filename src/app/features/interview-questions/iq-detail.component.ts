@@ -4,6 +4,7 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton 
 import { DataService, Question } from '../../data.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AdGateService } from '../../ad-gate.service';
+import { BookmarksService } from '../../bookmarks.service';
 
 @Component({
   selector: 'app-iq-detail',
@@ -18,6 +19,11 @@ import { AdGateService } from '../../ad-gate.service';
         <ion-title class="brand-title">
           <span class="nav-position">{{ currentIndex() + 1 }} / {{ totalInCategory() }}</span>
         </ion-title>
+        <ion-buttons slot="end">
+          <button class="bm-btn" (click)="toggleBookmark()" [class.bm-active]="isBookmarked()">
+            <i [class]="isBookmarked() ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'"></i>
+          </button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
@@ -171,6 +177,19 @@ import { AdGateService } from '../../ad-gate.service';
       --background: #0b1120;
       --color: white;
     }
+    .bm-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #64748b;
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-right: 8px;
+      transition: all 0.2s;
+    }
+    .bm-btn.bm-active { color: #6366f1; border-color: rgba(99,102,241,0.4); background: rgba(99,102,241,0.12); }
     .brand-title {
       font-family: 'Inter', sans-serif;
       font-weight: 800;
@@ -507,6 +526,7 @@ export class IqDetailComponent {
   private dataService = inject(DataService);
   private sanitizer = inject(DomSanitizer);
   private adGate = inject(AdGateService);
+  private bookmarksService = inject(BookmarksService);
 
   question = signal<Question | null>(null);
   copied = signal(false);
@@ -674,6 +694,24 @@ export class IqDetailComponent {
     navigator.clipboard.writeText(code).then(() => {
       this.copied.set(true);
       setTimeout(() => this.copied.set(false), 2000);
+    });
+  }
+
+  isBookmarked(): boolean {
+    const q = this.question();
+    return q ? this.bookmarksService.isBookmarked(`iq-${q.id}`) : false;
+  }
+
+  async toggleBookmark() {
+    const q = this.question();
+    if (!q) return;
+    const slug = this.categorySlug();
+    await this.bookmarksService.toggle({
+      id: `iq-${q.id}`,
+      type: 'interview',
+      title: q.question,
+      subtitle: q.category,
+      route: ['/interview-questions', slug, String(q.id)]
     });
   }
 }

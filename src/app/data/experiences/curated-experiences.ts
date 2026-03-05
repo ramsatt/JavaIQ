@@ -689,6 +689,265 @@ export const CURATED_EXPERIENCES: InterviewExperience[] = [
     ]
   },
   {
+    id: 'exp-google-l4-rejected-2024',
+    company: 'Google',
+    role: 'Software Engineer L4',
+    yearsOfExperience: 5,
+    difficulty: 'hard',
+    result: 'rejected',
+    source: 'curated',
+    date: '2024-08-14',
+    tags: ['java', 'algorithms', 'system-design', 'distributed-systems'],
+    rounds: [
+      {
+        roundNumber: 1,
+        type: 'Phone Screen',
+        description: 'Coding problem on Google Docs. Problem was harder than usual for a phone screen.',
+        questions: ['Design an in-memory file system with mkdir, ls, and cat commands'],
+        duration: '45 minutes'
+      },
+      {
+        roundNumber: 2,
+        type: 'Onsite - Coding 1',
+        description: 'Graph problem. I struggled with the follow-up question on distributed graphs.',
+        questions: [
+          'Clone a directed graph with random pointers',
+          'Follow-up: How would you handle this if the graph were distributed across 100 machines?'
+        ],
+        duration: '45 minutes'
+      },
+      {
+        roundNumber: 3,
+        type: 'Onsite - Coding 2',
+        description: 'Dynamic programming — I got the right approach but had a bug in the state transition.',
+        questions: ['Edit distance with weighted operations (not all operations cost 1)'],
+        duration: '45 minutes'
+      },
+      {
+        roundNumber: 4,
+        type: 'System Design',
+        description: 'Design YouTube. My architecture was solid but I missed discussing CDN and video chunking.',
+        questions: [
+          'Design the video upload and processing pipeline',
+          'How do you serve video at 1 billion views/day?',
+          'Recommendation system — basic approach'
+        ],
+        duration: '45 minutes'
+      },
+      {
+        roundNumber: 5,
+        type: 'Googleyness',
+        description: 'Behavioral round — went well, but didn\'t save the overall process.',
+        questions: [
+          'Tell me about a time you navigated ambiguity in a large project',
+          'Describe how you influenced a team decision without authority'
+        ],
+        duration: '45 minutes'
+      }
+    ],
+    summary: 'Google L4 is significantly harder than L3. The bar for distributed systems knowledge is high — generic answers on system design won\'t cut it. I passed the behavioral and phone screen but fell short on two coding rounds due to bugs under pressure. Feedback was that my problem-solving approach was strong but execution had errors. Applied again 6 months later.',
+    tips: [
+      'For L4, system design must go deep on distributed systems — read Designing Data-Intensive Applications',
+      'Practice coding in Google Docs — no autocomplete, no syntax highlighting changes your flow',
+      'The follow-up questions are where L4 differentiation happens — prepare for distributed variants',
+      'Don\'t rush to code — spend the first 5 minutes clarifying and designing on paper'
+    ]
+  },
+  {
+    id: 'exp-paytm-sde2-rejected-2024',
+    company: 'Paytm',
+    role: 'SDE-2 (Java Backend)',
+    yearsOfExperience: 3,
+    difficulty: 'medium',
+    result: 'rejected',
+    source: 'curated',
+    date: '2024-07-03',
+    tags: ['java', 'spring-boot', 'payments', 'lld', 'multithreading'],
+    rounds: [
+      {
+        roundNumber: 1,
+        type: 'Online Assessment',
+        description: 'Two problems on HackerRank, 60 minutes. Both were medium-level.',
+        questions: ['Minimum cost to connect all points', 'Subarray with given XOR'],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 2,
+        type: 'Technical Round 1',
+        description: 'Java internals and Spring Boot. Went reasonably well.',
+        questions: [
+          'Explain how HashMap handles hash collisions in Java 8+',
+          'Write a thread-safe lazy singleton without synchronized on every call',
+          'What is @Transactional(propagation = REQUIRES_NEW) used for?'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 3,
+        type: 'Technical Round 2 — LLD',
+        description: 'LLD round on payments. I struggled with the concurrency aspect of wallet debit.',
+        questions: [
+          'Design a digital wallet system (add money, pay, transfer)',
+          'How do you prevent double-debit in a distributed wallet system?',
+          'Model the transaction states (INITIATED, PROCESSING, SUCCESS, FAILED, REVERSED)'
+        ],
+        duration: '60 minutes'
+      }
+    ],
+    summary: 'I was rejected after Round 3. The LLD round exposed a gap in my understanding of distributed locking and idempotency patterns in payments. The interviewer asked how I would prevent double-charging and I answered with database-level locking, which they felt was not scalable. In hindsight, I should have discussed idempotency keys and optimistic locking. The feedback was polite and specific.',
+    tips: [
+      'For fintech interviews, study idempotency patterns deeply — it comes up in every payment company',
+      'Know the difference between pessimistic and optimistic locking and when each is appropriate',
+      'Practice LLD for payment domains: wallet, UPI flow, refund handling',
+      'A rejected LLD doesn\'t mean failure — treat it as a learning loop and apply the feedback'
+    ]
+  },
+  {
+    id: 'exp-tcs-seniordev-2024',
+    company: 'TCS',
+    role: 'Senior Java Developer',
+    yearsOfExperience: 5,
+    difficulty: 'easy',
+    result: 'offer',
+    source: 'curated',
+    date: '2024-04-11',
+    tags: ['java', 'spring-boot', 'hibernate', 'rest-api', 'sql'],
+    rounds: [
+      {
+        roundNumber: 1,
+        type: 'Technical Round 1',
+        description: 'Java and Spring Boot fundamentals. Questions were straightforward.',
+        questions: [
+          'What is the difference between JDK, JRE, and JVM?',
+          'Explain Spring Bean scopes',
+          'What are the different types of JPA relationships?',
+          'Write a simple REST API method using Spring Boot'
+        ],
+        duration: '45 minutes'
+      },
+      {
+        roundNumber: 2,
+        type: 'Managerial Round',
+        description: 'Leadership and experience discussion.',
+        questions: [
+          'Walk me through your most complex project',
+          'How do you handle tight deadlines?',
+          'Tell me about a time you mentored a junior developer'
+        ],
+        duration: '30 minutes'
+      },
+      {
+        roundNumber: 3,
+        type: 'HR Round',
+        description: 'Compensation and joining date discussion.',
+        questions: ['What is your expected CTC?', 'When can you join?'],
+        duration: '20 minutes'
+      }
+    ],
+    summary: 'TCS interviews for senior roles are straightforward compared to product companies. Focus is on practical Java knowledge, project experience, and communication skills. The bar is significantly lower than FAANG/startups. Offer came within 3 days. Good stability and benefits for those prioritising work-life balance over cutting-edge tech.',
+    tips: [
+      'Core Java and Spring Boot fundamentals are sufficient — no DSA puzzles at TCS senior level',
+      'Have detailed project stories ready — they ask about past experience extensively',
+      'Research TCS\'s work culture before the HR round — show enthusiasm for their model',
+      'Negotiation is possible — don\'t accept the first offer without asking for better compensation'
+    ]
+  },
+  {
+    id: 'exp-wipro-techlead-withdrew-2024',
+    company: 'Wipro',
+    role: 'Java Tech Lead',
+    yearsOfExperience: 8,
+    difficulty: 'easy',
+    result: 'withdrew',
+    source: 'curated',
+    date: '2024-05-22',
+    tags: ['java', 'spring-boot', 'microservices', 'team-lead'],
+    rounds: [
+      {
+        roundNumber: 1,
+        type: 'Technical Round',
+        description: 'Java and architecture discussion. Went very smoothly.',
+        questions: [
+          'How do you design a microservices architecture for a new project?',
+          'Explain your experience with CI/CD pipelines',
+          'How do you handle technical debt in a long-running project?'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 2,
+        type: 'Managerial Round',
+        description: 'Leadership philosophy and team management.',
+        questions: [
+          'How do you handle underperforming team members?',
+          'Describe your approach to code reviews',
+          'How do you balance feature delivery with technical quality?'
+        ],
+        duration: '45 minutes'
+      }
+    ],
+    summary: 'Both rounds went well and I received a verbal offer. However, I withdrew before the formal offer letter after receiving a better offer from another company with significantly higher compensation and more interesting technical work. Wipro\'s process was smooth and professional, but the role\'s tech stack felt dated compared to my other options. No regrets — the right decision for my career growth.',
+    tips: [
+      'Wipro Tech Lead roles focus more on leadership and process than raw coding ability',
+      'Always run parallel processes — don\'t put all your eggs in one basket',
+      'It is completely professional to withdraw before signing — do it politely and promptly',
+      'Compensation at service companies is typically lower than product companies at the same level'
+    ]
+  },
+  {
+    id: 'exp-myntra-sde2-pending-2024',
+    company: 'Myntra',
+    role: 'SDE-2 (Java Backend)',
+    yearsOfExperience: 3,
+    difficulty: 'medium',
+    result: 'pending',
+    source: 'curated',
+    date: '2024-12-28',
+    tags: ['java', 'spring-boot', 'kafka', 'microservices', 'lld'],
+    rounds: [
+      {
+        roundNumber: 1,
+        type: 'Online Assessment',
+        description: 'Two DSA problems, 90 minutes.',
+        questions: [
+          'Rearrange array so no two adjacent elements are same (greedy + heap)',
+          'Minimum number of jumps to reach end (DP)'
+        ],
+        duration: '90 minutes'
+      },
+      {
+        roundNumber: 2,
+        type: 'Technical Round 1',
+        description: 'Java and Spring Boot internals. Strong round — felt confident.',
+        questions: [
+          'How does Spring Boot auto-configuration work?',
+          'Explain Kafka consumer group and partition assignment',
+          'Write a custom exception handler using @ControllerAdvice',
+          'N+1 problem — how to detect and fix in Hibernate'
+        ],
+        duration: '60 minutes'
+      },
+      {
+        roundNumber: 3,
+        type: 'System Design',
+        description: 'Design a flash sale system for Myntra. Went well, still awaiting feedback.',
+        questions: [
+          'Handle 100K concurrent users trying to buy the same limited product',
+          'How do you prevent overselling with distributed inventory?',
+          'Cart reservation and timeout logic'
+        ],
+        duration: '60 minutes'
+      }
+    ],
+    summary: 'Completed all 3 rounds in December 2024. The process was well-organised and interviewers were engaging. Currently waiting for the final decision — it has been 2 weeks since round 3. The recruiter said the decision committee meets bi-weekly. Staying patient while continuing to interview elsewhere.',
+    tips: [
+      'Flash sale and inventory systems are common design topics at e-commerce companies — prepare them',
+      'Always continue interviewing elsewhere while waiting — pending doesn\'t mean offer',
+      'Follow up politely after 2 weeks if you haven\'t heard back',
+      'The wait is normal — Myntra\'s process involves multiple decision-makers'
+    ]
+  },
+  {
     id: 'exp-phonepe-sde2-2024',
     company: 'PhonePe',
     role: 'SDE-2 (Java Backend)',

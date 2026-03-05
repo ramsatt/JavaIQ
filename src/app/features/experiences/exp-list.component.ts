@@ -61,6 +61,10 @@ interface ExpCard {
               <span class="stat-lbl">Companies</span>
             </div>
           </div>
+          <p class="hero-disclaimer">
+            <i class="fa-solid fa-circle-info"></i>
+            Experiences shared by community members. Results may vary.
+          </p>
         </div>
       </div>
 
@@ -186,7 +190,7 @@ interface ExpCard {
           </div>
           <h3 class="cta-title">Share Your Story</h3>
           <p class="cta-sub">Help fellow Java developers by sharing your interview experience</p>
-          <button class="cta-btn">
+          <button class="cta-btn" (click)="submitExperience()">
             <i class="fa-solid fa-plus"></i>
             Submit Experience
           </button>
@@ -294,6 +298,17 @@ interface ExpCard {
       margin-top: 2px;
     }
     .stat-div { width: 1px; height: 24px; background: rgba(255,255,255,0.07); }
+
+    .hero-disclaimer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.62rem;
+      color: #475569;
+      margin: 10px 0 0;
+      font-weight: 500;
+    }
+    .hero-disclaimer i { font-size: 0.6rem; opacity: 0.7; }
 
     /* ── Body ── */
     .body { padding: 20px 16px 100px; max-width: 600px; margin: 0 auto; }
@@ -676,7 +691,7 @@ export class ExpListComponent {
   private router = inject(Router);
   private adGate = inject(AdGateService);
 
-  companies = ['All', 'Amazon', 'Google', 'Flipkart', 'Microsoft', 'Walmart', 'J.P. Morgan', 'Zomato', 'Infosys', 'Swiggy', 'PayPal', 'Uber', 'PhonePe'];
+  companies = ['All', 'Amazon', 'Google', 'Flipkart', 'Microsoft', 'Walmart', 'J.P. Morgan', 'Zomato', 'Infosys', 'Swiggy', 'PayPal', 'Uber', 'PhonePe', 'Paytm', 'TCS', 'Wipro', 'Myntra'];
   difficulties = [
     { val: 'all', label: 'All', color: '#94a3b8' },
     { val: 'easy', label: 'Easy', color: '#10b981' },
@@ -862,6 +877,76 @@ export class ExpListComponent {
       rounds: 3,
       date: '2024-02-05',
       tags: ['java', 'spring-boot', 'hibernate', 'rest-api']
+    },
+    {
+      id: 'exp-google-l4-rejected-2024',
+      company: 'Google',
+      companyIcon: 'fa-brands fa-google',
+      companyColor: '#6366f1',
+      companyBg: 'rgba(99,102,241,0.12)',
+      role: 'Software Engineer L4',
+      yoe: 5,
+      result: 'rejected',
+      difficulty: 'hard',
+      rounds: 5,
+      date: '2024-08-14',
+      tags: ['java', 'algorithms', 'system-design', 'distributed-systems', 'lld']
+    },
+    {
+      id: 'exp-paytm-sde2-rejected-2024',
+      company: 'Paytm',
+      companyIcon: 'fa-solid fa-wallet',
+      companyColor: '#0ea5e9',
+      companyBg: 'rgba(14,165,233,0.12)',
+      role: 'SDE-2 (Java Backend)',
+      yoe: 3,
+      result: 'rejected',
+      difficulty: 'medium',
+      rounds: 3,
+      date: '2024-09-05',
+      tags: ['java', 'spring-boot', 'payments', 'multithreading']
+    },
+    {
+      id: 'exp-tcs-seniordev-2024',
+      company: 'TCS',
+      companyIcon: 'fa-solid fa-building',
+      companyColor: '#06b6d4',
+      companyBg: 'rgba(6,182,212,0.12)',
+      role: 'Senior Developer (Java)',
+      yoe: 5,
+      result: 'offer',
+      difficulty: 'easy',
+      rounds: 3,
+      date: '2024-10-22',
+      tags: ['java', 'spring-boot', 'hibernate', 'rest-api', 'microservices']
+    },
+    {
+      id: 'exp-wipro-techlead-withdrew-2024',
+      company: 'Wipro',
+      companyIcon: 'fa-solid fa-network-wired',
+      companyColor: '#a78bfa',
+      companyBg: 'rgba(167,139,250,0.12)',
+      role: 'Tech Lead (Java)',
+      yoe: 8,
+      result: 'withdrew',
+      difficulty: 'easy',
+      rounds: 2,
+      date: '2024-11-08',
+      tags: ['java', 'spring-boot', 'architecture', 'team-lead']
+    },
+    {
+      id: 'exp-myntra-sde2-pending-2024',
+      company: 'Myntra',
+      companyIcon: 'fa-solid fa-shirt',
+      companyColor: '#f472b6',
+      companyBg: 'rgba(244,114,182,0.12)',
+      role: 'SDE-2 (Java Backend)',
+      yoe: 3,
+      result: 'pending',
+      difficulty: 'medium',
+      rounds: 3,
+      date: '2024-12-18',
+      tags: ['java', 'spring-boot', 'kafka', 'redis', 'lld']
     }
   ];
 
@@ -903,6 +988,10 @@ export class ExpListComponent {
   isUnlocked(id: string): boolean {
     this.adGate.unlockedItems();
     return this.adGate.isItemUnlocked(`exp::${id}`);
+  }
+
+  submitExperience() {
+    window.open('https://forms.gle/JavaIQExperience', '_blank', 'noopener,noreferrer');
   }
 
   async openExp(exp: ExpCard) {

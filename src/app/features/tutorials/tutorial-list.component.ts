@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { SearchModalComponent } from '../../search-modal/search-modal.component';
 
 interface TutorialCourse {
   slug: string;
@@ -17,17 +18,27 @@ interface TutorialCourse {
 @Component({
   selector: 'app-tutorial-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton],
+  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonRefresher, IonRefresherContent, SearchModalComponent],
   template: `
     <ion-header class="ion-no-border" translucent="true">
       <ion-toolbar class="tut-toolbar">
         <ion-buttons slot="start">
           <ion-menu-button color="light"></ion-menu-button>
         </ion-buttons>
+        <ion-buttons slot="end">
+          <button class="search-btn" (click)="searchModal.open()">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
+    <app-search-modal #searchModal></app-search-modal>
+
     <ion-content class="tut-content">
+      <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
       <!-- Hero Section -->
       <div class="hero-section">
         <div class="hero-glow hero-glow-1"></div>
@@ -130,6 +141,21 @@ interface TutorialCourse {
   `,
   styles: `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    /* ── Search Button ── */
+    .search-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #94a3b8;
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-right: 8px;
+      transition: all 0.2s;
+    }
+    .search-btn:hover { color: #e2e8f0; background: rgba(255,255,255,0.1); }
 
     /* ── Page Setup ── */
     .tut-toolbar {
@@ -620,6 +646,8 @@ interface TutorialCourse {
   `
 })
 export class TutorialListComponent {
+  @ViewChild('searchModal') searchModal!: SearchModalComponent;
+
   categoryPills = [
     { faIcon: 'fa-solid fa-layer-group', label: 'All', color: '#8b5cf6' },
     { faIcon: 'fa-solid fa-mug-hot', label: 'Core Java', color: '#f59e0b' },
@@ -679,5 +707,9 @@ export class TutorialListComponent {
 
   get totalHours() {
     return this.courses.reduce((s, c) => s + parseInt(c.estimatedTime), 0);
+  }
+
+  handleRefresh(event: CustomEvent) {
+    setTimeout(() => (event.detail as any).complete(), 500);
   }
 }

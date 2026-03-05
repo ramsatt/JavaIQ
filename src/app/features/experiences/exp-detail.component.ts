@@ -610,7 +610,8 @@ export class ExpDetailComponent {
       Amazon: '#f59e0b', Google: '#6366f1', Flipkart: '#f97316',
       Microsoft: '#22d3ee', Walmart: '#3b82f6', 'J.P. Morgan': '#8b5cf6',
       Zomato: '#ef4444', Infosys: '#10b981',
-      Swiggy: '#f97316', PayPal: '#009cde', Uber: '#e2e8f0', PhonePe: '#6d28d9'
+      Swiggy: '#f97316', PayPal: '#009cde', Uber: '#e2e8f0', PhonePe: '#6d28d9',
+      Paytm: '#0ea5e9', TCS: '#06b6d4', Wipro: '#a78bfa', Myntra: '#f472b6'
     };
     return map[company] ?? '#10b981';
   }
@@ -622,7 +623,9 @@ export class ExpDetailComponent {
       Walmart: 'rgba(59,130,246,0.12)', 'J.P. Morgan': 'rgba(139,92,246,0.12)',
       Zomato: 'rgba(239,68,68,0.12)', Infosys: 'rgba(16,185,129,0.12)',
       Swiggy: 'rgba(249,115,22,0.12)', PayPal: 'rgba(0,156,222,0.12)',
-      Uber: 'rgba(226,232,240,0.08)', PhonePe: 'rgba(109,40,217,0.12)'
+      Uber: 'rgba(226,232,240,0.08)', PhonePe: 'rgba(109,40,217,0.12)',
+      Paytm: 'rgba(14,165,233,0.12)', TCS: 'rgba(6,182,212,0.12)',
+      Wipro: 'rgba(167,139,250,0.12)', Myntra: 'rgba(244,114,182,0.12)'
     };
     return map[company] ?? 'rgba(16,185,129,0.12)';
   }
@@ -634,7 +637,9 @@ export class ExpDetailComponent {
       Walmart: 'fa-solid fa-store', 'J.P. Morgan': 'fa-solid fa-building-columns',
       Zomato: 'fa-solid fa-utensils', Infosys: 'fa-solid fa-laptop-code',
       Swiggy: 'fa-solid fa-bowl-food', PayPal: 'fa-brands fa-paypal',
-      Uber: 'fa-solid fa-car', PhonePe: 'fa-solid fa-mobile-screen'
+      Uber: 'fa-solid fa-car', PhonePe: 'fa-solid fa-mobile-screen',
+      Paytm: 'fa-solid fa-wallet', TCS: 'fa-solid fa-building',
+      Wipro: 'fa-solid fa-network-wired', Myntra: 'fa-solid fa-shirt'
     };
     return map[company] ?? 'fa-solid fa-building';
   }

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../data.service';
+import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -17,7 +18,9 @@ import { Router } from '@angular/router';
       </header>
 
       <div class="tabs">
-        <button [class.active]="activeTab === 'points'" (click)="activeTab = 'points'">Top Points</button>
+        <button [class.active]="activePeriod() === 'alltime'" (click)="setPeriod('alltime')">All Time</button>
+        <button [class.active]="activePeriod() === 'monthly'" (click)="setPeriod('monthly')">This Month</button>
+        <button [class.active]="activePeriod() === 'weekly'" (click)="setPeriod('weekly')">This Week</button>
       </div>
 
       <div class="list">
@@ -28,7 +31,9 @@ import { Router } from '@angular/router';
           </div>
         } @else {
           @for (user of users(); track user.id; let i = $index) {
-            <div class="user-row" [class.top-three]="i < 3">
+            <div class="user-row"
+                 [class.top-three]="i < 3"
+                 [class.current-user]="isCurrentUser(user.id)">
               <div class="rank">
                 @if (i === 0) { 🥇 }
                 @else if (i === 1) { 🥈 }
@@ -37,6 +42,9 @@ import { Router } from '@angular/router';
               </div>
               <div class="user-info">
                 <span class="name">{{ user.displayName || 'Anonymous' }}</span>
+                @if (isCurrentUser(user.id)) {
+                  <span class="you-badge">You</span>
+                }
               </div>
               <div class="points">
                 <i class="bi bi-lightning-charge-fill"></i>
@@ -46,7 +54,7 @@ import { Router } from '@angular/router';
           } @empty {
             <div class="empty-state">
               <i class="bi bi-trophy"></i>
-              <p>No champions yet. Be the first!</p>
+              <p>No activity this period yet. Be the first!</p>
             </div>
           }
         }
@@ -87,10 +95,12 @@ import { Router } from '@angular/router';
       background: rgba(255,255,255,0.05);
       border: none;
       color: #94a3b8;
-      padding: 10px 24px;
+      padding: 8px 18px;
       border-radius: 25px;
       font-weight: 600;
+      font-size: 0.78rem;
       transition: all 0.2s;
+      cursor: pointer;
     }
     .tabs button.active {
       background: linear-gradient(135deg, #F2994A 0%, #F2C94C 100%);
@@ -161,30 +171,61 @@ import { Router } from '@angular/router';
       display: block;
       opacity: 0.5;
     }
+    .current-user {
+      border-color: rgba(242, 153, 74, 0.4) !important;
+      background: rgba(242, 153, 74, 0.06) !important;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .you-badge {
+      font-size: 0.55rem;
+      font-weight: 800;
+      background: rgba(242,153,74,0.15);
+      color: #F2994A;
+      border: 1px solid rgba(242,153,74,0.35);
+      border-radius: 5px;
+      padding: 2px 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
   `]
 })
 export class LeaderboardComponent implements OnInit {
   private dataService = inject(DataService);
+  private authService = inject(AuthService);
   private router = inject(Router);
-  
+
   users = signal<any[]>([]);
   loading = signal<boolean>(true);
-  activeTab = 'points';
+  activePeriod = signal<'alltime' | 'monthly' | 'weekly'>('alltime');
 
   async ngOnInit() {
+    await this.fetchLeaderboard();
+  }
+
+  async setPeriod(period: 'alltime' | 'monthly' | 'weekly') {
+    this.activePeriod.set(period);
     await this.fetchLeaderboard();
   }
 
   async fetchLeaderboard() {
     this.loading.set(true);
     try {
-      const data = await this.dataService.getLeaderboard();
+      const data = await this.dataService.getLeaderboard(20, this.activePeriod());
       this.users.set(data);
-    } catch (error) {
-      console.error('Error loading leaderboard:', error);
+    } catch {
+      this.users.set([]);
     } finally {
       this.loading.set(false);
     }
+  }
+
+  isCurrentUser(uid: string): boolean {
+    return this.authService.user()?.uid === uid;
   }
 
   goBack() {

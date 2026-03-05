@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { DataService } from '../data.service';
 import { AuthService } from '../auth.service';
 import { GamificationService } from '../gamification.service';
+import { DailyChallengeService } from '../daily-challenge.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,6 +18,7 @@ export class DashboardComponent {
   public dataService = inject(DataService);
   public authService = inject(AuthService);
   public gameService = inject(GamificationService);
+  public dcService = inject(DailyChallengeService);
 
   categories = [
     { name: 'Core Java', icon: 'bi-cup-hot', color: '#FF5252' },
@@ -49,6 +51,21 @@ export class DashboardComponent {
     if (this.isLocked(category)) return;
     // Route to Challenge Component for the "Game" experience
     this.router.navigate(['/challenge', category]);
+  }
+
+  goToDailyChallenge() {
+    this.router.navigate(['/daily-challenge']);
+  }
+
+  dcCountdown(): string {
+    const now = new Date();
+    const reset = new Date();
+    reset.setDate(reset.getDate() + 1);
+    reset.setHours(0, 0, 0, 0);
+    const diff = reset.getTime() - now.getTime();
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    return `${h}h ${m}m`;
   }
 
   goToLeaderboard() {

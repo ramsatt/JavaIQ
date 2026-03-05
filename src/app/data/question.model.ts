@@ -8,4 +8,5 @@ export interface Question {
   subConcepts?: { title: string; description: string; }[];
   useCases?: { icon: string; title: string; description: string; color: string; bg: string; }[];
   coreConceptDescription?: string;
+  addedOn?: string;   // ISO date string e.g. '2025-03-01' — used for "NEW" badge
 }

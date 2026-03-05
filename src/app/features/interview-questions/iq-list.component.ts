@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { DataService } from '../../data.service';
 
 @Component({
   selector: 'app-iq-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton],
+  imports: [RouterLink, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonRefresher, IonRefresherContent],
   template: `
     <ion-header class="ion-no-border" translucent="true">
       <ion-toolbar class="iq-toolbar">
@@ -20,6 +20,9 @@ import { DataService } from '../../data.service';
     </ion-header>
 
     <ion-content class="iq-page-content">
+      <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
       <div class="page-wrapper">
 
         <!-- Hero Section -->
@@ -543,5 +546,10 @@ export class IqListComponent {
 
   getProgressPercent(categoryName: string): number {
     return this.dataService.getProgress(categoryName);
+  }
+
+  handleRefresh(event: CustomEvent) {
+    // Data is reactive via signals — just complete the refresher
+    setTimeout(() => (event.detail as any).complete(), 500);
   }
 }

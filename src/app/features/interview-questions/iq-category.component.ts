@@ -57,7 +57,12 @@ import { AdGateService } from '../../ad-gate.service';
                   </div>
                 </div>
                 <div class="q-card-body">
-                  <h3 class="q-title">{{ q.question }}</h3>
+                  <div class="q-title-row">
+                    <h3 class="q-title">{{ q.question }}</h3>
+                    @if (isNew(q.addedOn)) {
+                      <span class="new-badge">NEW</span>
+                    }
+                  </div>
                   @if (q.asked_metadata) {
                     <div class="q-meta">
                       <i class="fa-solid fa-building-columns q-meta-icon"></i>
@@ -262,6 +267,19 @@ import { AdGateService } from '../../ad-gate.service';
 
     /* ── Card Body ── */
     .q-card-body { flex: 1; min-width: 0; }
+    .q-title-row { display: flex; align-items: flex-start; gap: 8px; }
+    .new-badge {
+      flex-shrink: 0;
+      font-size: 0.48rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: rgba(16,185,129,0.15);
+      color: #10b981;
+      border: 1px solid rgba(16,185,129,0.3);
+      margin-top: 2px;
+    }
     .q-title {
       font-family: 'Inter', sans-serif;
       font-size: 0.9rem;
@@ -361,6 +379,12 @@ export class IqCategoryComponent {
 
   isRevealed(id: number): boolean {
     return this.dataService.revealedQuestionIds().has(id);
+  }
+
+  isNew(addedOn?: string): boolean {
+    if (!addedOn) return false;
+    const diff = Date.now() - new Date(addedOn).getTime();
+    return diff < 30 * 24 * 60 * 60 * 1000; // 30 days
   }
 
   isUnlocked(id: number): boolean {

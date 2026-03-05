@@ -121,6 +121,7 @@
 .stat-icon.level span { position: absolute; font-size: 0.7rem; font-weight: 700; color: white; margin-top: 1px;}
 
 .stat-icon.streak.active { color: #f97316; background: rgba(249, 115, 22, 0.1); }
+.stat-icon.shield { color: #818cf8; background: rgba(99, 102, 241, 0.1); }
 
 .stat-value {
   font-weight: 600;
@@ -420,6 +421,115 @@
   color: var(--text-secondary);
   width: 32px;
   text-align: right;
+}
+
+/* --- Daily Challenge Card --- */
+.daily-challenge-section {
+  max-width: 800px;
+  margin: 0 auto 16px;
+  padding: 0 20px;
+}
+
+.dc-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.06));
+  border: 1px solid rgba(245,158,11,0.3);
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.dc-card:hover:not(.dc-done) {
+  transform: translateY(-1px);
+  border-color: rgba(245,158,11,0.5);
+}
+
+.dc-card.dc-done {
+  cursor: default;
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(16,185,129,0.25);
+}
+
+.dc-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dc-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(245,158,11,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: #f59e0b;
+}
+
+.dc-card.dc-done .dc-icon-wrap {
+  background: rgba(16,185,129,0.1);
+  color: #10b981;
+}
+
+.dc-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dc-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.dc-sub {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.dc-sub strong { color: #f59e0b; }
+
+.dc-card-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dc-done-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #10b981;
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 20px;
+  padding: 4px 10px;
+}
+
+.dc-streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #f97316;
+  background: rgba(249,115,22,0.1);
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 20px;
+  padding: 4px 10px;
+}
+
+.dc-arrow {
+  color: #f59e0b;
+  font-size: 0.8rem;
 }
 
 .card-locked-msg {
