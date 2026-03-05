@@ -1,15 +1,31 @@
-import { Component, inject, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
 import { ThemeService } from '../../theme.service';
 import { AuthService } from '../../auth.service';
 import { AlertService } from '../../alert.service';
-import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
+import { NotificationService } from '../../services/notification.service';
+import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+
+const GOALS = [
+  { key: 'faang',   label: 'Crack FAANG',   emoji: '🎯' },
+  { key: 'switch',  label: 'Switch Jobs',   emoji: '🚀' },
+  { key: 'first',   label: 'Get First Job', emoji: '🌱' },
+  { key: 'upskill', label: 'Upskill',       emoji: '📈' },
+];
+
+const REMINDER_TIMES = [
+  { hour: 8,  label: '8:00 AM'  },
+  { hour: 12, label: '12:00 PM' },
+  { hour: 18, label: '6:00 PM'  },
+  { hour: 21, label: '9:00 PM'  },
+];
 
 @Component({
   selector: 'app-settings',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton],
+  imports: [CommonModule, IonContent, IonHeader, IonToolbar, IonButtons, IonMenuButton],
   template: `
     <ion-header class="ion-no-border" translucent="true">
       <ion-toolbar class="set-toolbar">
@@ -64,6 +80,36 @@ import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
           </div>
         </div>
 
+        <!-- Goal -->
+        <div class="set-section">
+          <span class="set-section-label">Learning Goal</span>
+          <div class="set-card">
+            @if (!showGoalPicker()) {
+              <div class="set-row" (click)="showGoalPicker.set(true)">
+                <div class="set-row-left">
+                  <div class="set-icon-wrap" style="background:rgba(245,158,11,0.12)">
+                    <span style="font-size:1rem">{{ currentGoalEmoji() }}</span>
+                  </div>
+                  <div>
+                    <span class="set-row-label">{{ currentGoalLabel() }}</span>
+                    <span class="set-row-sub">Tap to change your goal</span>
+                  </div>
+                </div>
+                <i class="fa-solid fa-chevron-right set-chevron"></i>
+              </div>
+            } @else {
+              <div class="goal-picker">
+                @for (g of goals; track g.key) {
+                  <button class="goal-opt" [class.goal-opt-sel]="goalKey() === g.key" (click)="setGoal(g.key)">
+                    <span>{{ g.emoji }}</span>
+                    <span class="goal-opt-label">{{ g.label }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
         <!-- Notifications -->
         <div class="set-section">
           <span class="set-section-label">Notifications</span>
@@ -78,10 +124,30 @@ import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
                   <span class="set-row-sub">Get nudged to keep your streak</span>
                 </div>
               </div>
-              <div class="toggle-track" [class.toggle-on]="notifEnabled()" (click)="$event.stopPropagation(); toggleNotifications()">
+              <div class="toggle-track" [class.toggle-on]="notifSvc.notificationsEnabled()" (click)="$event.stopPropagation(); toggleNotifications()">
                 <div class="toggle-thumb"></div>
               </div>
             </div>
+
+            @if (notifSvc.notificationsEnabled()) {
+              <div class="set-divider"></div>
+              <div class="set-row set-version-row">
+                <div class="set-row-left">
+                  <div class="set-icon-wrap" style="background:rgba(99,102,241,0.12)">
+                    <i class="fa-solid fa-clock" style="color:#818cf8"></i>
+                  </div>
+                  <span class="set-row-label">Reminder Time</span>
+                </div>
+              </div>
+              <div class="time-picker-row">
+                @for (t of reminderTimes; track t.hour) {
+                  <button class="time-chip" [class.time-chip-sel]="notifSvc.reminderHour() === t.hour"
+                    (click)="setReminderHour(t.hour)">
+                    {{ t.label }}
+                  </button>
+                }
+              </div>
+            }
           </div>
         </div>
 
@@ -223,6 +289,46 @@ import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
     }
     .toggle-on .toggle-thumb { transform: translateX(18px); }
 
+    /* Goal picker */
+    .goal-picker {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .goal-opt {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 12px 8px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid rgba(255,255,255,0.07);
+      cursor: pointer;
+      transition: all 0.18s;
+      font-size: 1.2rem;
+    }
+    .goal-opt:hover { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); }
+    .goal-opt-sel { background: rgba(16,185,129,0.12) !important; border-color: #10b981 !important; }
+    .goal-opt-label { font-size: 0.72rem; font-weight: 600; color: #cbd5e1; }
+
+    /* Time picker */
+    .time-picker-row {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 0 16px 14px;
+    }
+    .time-chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem; font-weight: 600;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .time-chip:hover { background: rgba(99,102,241,0.12); color: #a5b4fc; }
+    .time-chip-sel { background: rgba(99,102,241,0.2) !important; border-color: #818cf8 !important; color: #c7d2fe !important; }
+
     /* Logout */
     .set-logout-btn {
       width: 100%; padding: 14px;
@@ -239,33 +345,42 @@ import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
   `
 })
 export class SettingsComponent implements OnInit {
-  themeService = inject(ThemeService);
-  auth = inject(AuthService);
+  themeService  = inject(ThemeService);
+  auth          = inject(AuthService);
+  notifSvc      = inject(NotificationService);
   private alertService = inject(AlertService);
-  private router = inject(Router);
-  private firestore = inject(Firestore);
+  private router       = inject(Router);
+  private firestore    = inject(Firestore);
 
-  notifEnabled = signal(true);
+  readonly goals         = GOALS;
+  readonly reminderTimes = REMINDER_TIMES;
 
-  ngOnInit() {
-    // Load notification preference from localStorage as quick read
-    const stored = localStorage.getItem('notif_enabled');
-    if (stored !== null) this.notifEnabled.set(stored !== 'false');
-  }
+  goalKey        = signal(localStorage.getItem('user_goal') ?? '');
+  showGoalPicker = signal(false);
 
-  toggleTheme() {
-    this.themeService.toggle();
-  }
+  currentGoalLabel  = computed(() => GOALS.find(g => g.key === this.goalKey())?.label ?? 'Set a goal');
+  currentGoalEmoji  = computed(() => GOALS.find(g => g.key === this.goalKey())?.emoji ?? '🎯');
+
+  ngOnInit() { /* signals already loaded from localStorage */ }
+
+  toggleTheme() { this.themeService.toggle(); }
 
   async toggleNotifications() {
-    const newVal = !this.notifEnabled();
-    this.notifEnabled.set(newVal);
-    localStorage.setItem('notif_enabled', String(newVal));
+    await this.notifSvc.toggle(!this.notifSvc.notificationsEnabled());
+  }
 
+  async setReminderHour(hour: number) {
+    await this.notifSvc.setReminderHour(hour);
+  }
+
+  async setGoal(key: string) {
+    this.goalKey.set(key);
+    this.showGoalPicker.set(false);
+    localStorage.setItem('user_goal', key);
     const user = this.auth.user();
     if (user) {
       const ref = doc(this.firestore, `users/${user.uid}`);
-      await updateDoc(ref, { notificationsEnabled: newVal }).catch(() => {});
+      await setDoc(ref, { goal: key }, { merge: true });
     }
   }
 
@@ -273,9 +388,7 @@ export class SettingsComponent implements OnInit {
     window.open('https://javaiq.app/privacy', '_blank', 'noopener,noreferrer');
   }
 
-  openAbout() {
-    this.router.navigate(['/about']);
-  }
+  openAbout() { this.router.navigate(['/about']); }
 
   async confirmLogout() {
     const confirmed = await this.alertService.showAlert({
@@ -288,7 +401,7 @@ export class SettingsComponent implements OnInit {
     });
     if (confirmed) {
       await this.auth.logout();
-      this.router.navigate(['/tutorials'], { replaceUrl: true });
+      this.router.navigate(['/dashboard'], { replaceUrl: true });
     }
   }
 }

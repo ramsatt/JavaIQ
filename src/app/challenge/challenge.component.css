@@ -157,9 +157,13 @@
 
 .timer-bar {
   height: 100%;
-  background: #3b82f6;
+  background: #2D6A4F;
   border-radius: 2px;
   transition: width 0.1s linear, background-color 0.3s;
+}
+
+.timer-bar.warning {
+  background: #f59e0b;
 }
 
 .timer-bar.danger {
@@ -281,12 +285,12 @@
 .btn-action:active { transform: scale(0.98); }
 
 .reveal {
-  background: #3b82f6;
+  background: #1B4332;
   color: white;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.35);
 }
 
-.reveal:hover { background: #2563eb; }
+.reveal:hover { background: #2D6A4F; }
 
 .rating-grid {
   display: grid;
@@ -310,9 +314,11 @@
 .hit:hover { background: #059669; }
 
 .primary {
-  background: #3b82f6; 
+  background: #1B4332;
   color: white;
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.35);
 }
+.primary:hover { background: #2D6A4F; }
 
 /* XP Popup */
 .xp-popup {
@@ -424,7 +430,7 @@
 
 .xp-bar-fill {
   height: 100%;
-  background: #3b82f6;
+  background: linear-gradient(90deg, #1B4332, #40916C);
   border-radius: 4px;
 }
 
@@ -462,3 +468,65 @@
 .shake {
   animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }
+
+/* Course completion banner */
+.course-complete-banner {
+  background: linear-gradient(135deg, rgba(27,67,50,0.15), rgba(212,168,83,0.1));
+  border: 1.5px solid rgba(212,168,83,0.35);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #d4a853;
+  text-align: center;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.course-complete-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.btn-cert {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #1B4332, #2D6A4F);
+  color: #d4a853;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.btn-cert:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* Result actions row (Continue + Share) */
+.result-actions-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.result-actions-row .btn-action { flex: 1; }
+
+/* Share button */
+.btn-share-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  color: #94a3b8;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  flex-shrink: 0;
+}
+.btn-share-result:hover { background: rgba(255,255,255,0.14); color: #e2e8f0; }

@@ -5,11 +5,15 @@ import { DataService, Question } from '../data.service';
 import { GamificationService } from '../gamification.service';
 import { DailyEngagementService } from '../services/daily-engagement.service';
 import { AchievementService } from '../services/achievement.service';
+import { ShareService } from '../services/share.service';
+import { AuthService } from '../auth.service';
+import { CertificateComponent } from '../shared/certificate.component';
+import { WrongAnswerService } from '../services/wrong-answer.service';
 
 @Component({
   selector: 'app-challenge',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CertificateComponent],
   templateUrl: './challenge.component.html',
   styleUrls: ['./challenge.component.css']
 })
@@ -20,6 +24,14 @@ export class ChallengeComponent implements OnInit {
   public  gameService  = inject(GamificationService);
   private dailySvc     = inject(DailyEngagementService);
   private achSvc       = inject(AchievementService);
+  private shareSvc     = inject(ShareService);
+  private auth         = inject(AuthService);
+  private wrongSvc     = inject(WrongAnswerService);
+
+  /** Set when 100% of the category has been revealed after this session */
+  courseComplete  = signal(false);
+  showCert        = signal(false);
+  readonly userName = computed(() => this.auth.user()?.displayName ?? 'Java Developer');
 
   /** Total ms taken across all answers, for speed-demon check */
   private totalAnswerTimeMs = 0;
@@ -170,6 +182,8 @@ export class ChallengeComponent implements OnInit {
       this.earnedXp += 2;
       this.gameService.addXp(2);
       this.triggerShake();
+      // Record for review queue
+      this.wrongSvc.recordMiss(this.questions[this.currentIndex].id);
     }
 
     // Next
@@ -200,10 +214,24 @@ export class ChallengeComponent implements OnInit {
       this.totalAnswerTimeMs,
       this.questions.length
     );
+
+    // ── Course completion check ──────────────────────────────────────────────
+    if (this.dataService.getProgress(this.challengeName) >= 100) {
+      this.courseComplete.set(true);
+      this.achSvc.checkCourseCompletion();
+    }
   }
 
   quitGame() {
     this.router.navigate(['/']);
+  }
+
+  shareResult(): void {
+    this.shareSvc.shareDailyResult(this.score, this.questions.length, this.earnedXp);
+  }
+
+  shareCourse(): void {
+    this.shareSvc.shareCertificate(this.challengeName);
   }
 
   triggerXpPopup(xp: number, text: string) {

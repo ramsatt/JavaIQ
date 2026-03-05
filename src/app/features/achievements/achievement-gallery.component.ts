@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { AchievementService, Achievement } from '../../services/achievement.service';
+import { ShareService } from '../../services/share.service';
 
 const RARITY_LABEL: Record<string, string> = {
   common:    'Common',
@@ -60,6 +61,9 @@ const RARITY_COLOR: Record<string, string> = {
               <span class="badge-desc">{{ a.description }}</span>
               @if (a.unlockedAt) {
                 <span class="badge-date">{{ formatDate(a.unlockedAt) }}</span>
+                <button class="share-btn" (click)="share(a)" title="Share achievement">
+                  <i class="bi bi-share-fill"></i>
+                </button>
               }
             </div>
           </div>
@@ -224,11 +228,34 @@ const RARITY_COLOR: Record<string, string> = {
       color: #10b981;
       margin-top: 2px;
     }
+
+    .share-btn {
+      margin-top: 6px;
+      background: rgba(27,67,50,0.08);
+      border: 1px solid rgba(27,67,50,0.18);
+      border-radius: 8px;
+      color: #1B4332;
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.18s;
+    }
+    .share-btn:hover { background: rgba(27,67,50,0.16); }
+    :host-context(html.dark) .share-btn {
+      background: rgba(82,183,136,0.1);
+      border-color: rgba(82,183,136,0.22);
+      color: #52b788;
+    }
+    :host-context(html.dark) .share-btn:hover { background: rgba(82,183,136,0.18); }
   `]
 })
 export class AchievementGalleryComponent {
-  private router  = inject(Router);
-  private achSvc  = inject(AchievementService);
+  private router    = inject(Router);
+  private achSvc    = inject(AchievementService);
+  private shareSvc  = inject(ShareService);
 
   achievements = this.achSvc.achievements;
 
@@ -243,5 +270,9 @@ export class AchievementGalleryComponent {
 
   formatDate(iso: string): string {
     return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  share(a: Achievement): void {
+    this.shareSvc.shareAchievement(a.title, a.description);
   }
 }

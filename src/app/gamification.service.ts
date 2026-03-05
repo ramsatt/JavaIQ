@@ -2,6 +2,7 @@ import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { Firestore, doc, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import { NotificationService } from './services/notification.service';
+import { RatingService } from './services/rating.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class GamificationService {
   private firestore        = inject(Firestore);
   private authService      = inject(AuthService);
   private notifService     = inject(NotificationService);
+  private ratingSvc        = inject(RatingService);
 
   // --- Signals for State ---
   xp = signal<number>(0);
@@ -72,6 +74,7 @@ export class GamificationService {
   addXp(amount: number) {
     this.xp.update(val => val + amount);
     this.updateStreak();
+    this.ratingSvc.checkAfterLevel(this.level());
   }
 
   updateStreak() {

@@ -5,6 +5,10 @@ import { DailyChallengeService } from '../daily-challenge.service';
 import { GamificationService } from '../gamification.service';
 import { DataService } from '../data.service';
 import { AnalyticsService } from '../analytics.service';
+import { DailyEngagementService } from '../services/daily-engagement.service';
+import { ShareService } from '../services/share.service';
+import { WrongAnswerService } from '../services/wrong-answer.service';
+import { RatingService } from '../services/rating.service';
 import { Question } from '../data/question.model';
 
 const XP_MULTIPLIER = 2;
@@ -19,7 +23,7 @@ const TOTAL_QUESTIONS = 5;
     <ion-header class="ion-no-border">
       <ion-toolbar class="dc-toolbar">
         <ion-buttons slot="start">
-          <ion-back-button defaultHref="/tutorials" text="" color="light"></ion-back-button>
+          <ion-back-button defaultHref="/dashboard" text="" color="light"></ion-back-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -54,13 +58,16 @@ const TOTAL_QUESTIONS = 5;
               +{{ earnedXp() }} XP
               <span class="xp-badge">2× Bonus</span>
             </div>
-            @if (gameService.dailyChallengeStreak() > 1) {
+            @if (gameService.streak() > 1) {
               <div class="result-streak">
                 <i class="fa-solid fa-fire"></i>
-                {{ gameService.dailyChallengeStreak() }}-day challenge streak!
+                {{ gameService.streak() }}-day challenge streak!
               </div>
             }
             <button class="dc-btn-primary" (click)="goBack()">Done</button>
+            <button class="dc-share-btn" (click)="shareResult()">
+              <i class="fa-solid fa-share-nodes"></i> Share Result
+            </button>
           </div>
         </div>
       }
@@ -305,6 +312,17 @@ const TOTAL_QUESTIONS = 5;
       box-shadow: 0 4px 16px rgba(245,158,11,0.25);
     }
     .dc-btn-primary:hover { transform: translateY(-1px); }
+
+    .dc-share-btn {
+      width: 100%; padding: 11px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: #94a3b8; font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; margin-top: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .dc-share-btn:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
   `
 })
 export class DailyChallengeComponent implements OnInit, OnDestroy {
@@ -314,7 +332,11 @@ export class DailyChallengeComponent implements OnInit, OnDestroy {
   gameService = inject(GamificationService);
   private dataService = inject(DataService);
   private analytics = inject(AnalyticsService);
-  private router = inject(Router);
+  private dailyEngagement = inject(DailyEngagementService);
+  private shareSvc = inject(ShareService);
+  private wrongSvc   = inject(WrongAnswerService);
+  private ratingSvc  = inject(RatingService);
+  private router     = inject(Router);
 
   questions = signal<Question[]>([]);
   currentIndex = signal(0);
@@ -355,6 +377,9 @@ export class DailyChallengeComponent implements OnInit, OnDestroy {
       this.earnedXp.update(v => v + xp);
       this.gameService.addXp(xp);
       this.dataService.markAsRevealed(this.currentQuestion()!.id);
+      this.wrongSvc.clearMiss(this.currentQuestion()!.id);
+    } else {
+      this.wrongSvc.recordMiss(this.currentQuestion()!.id);
     }
 
     this.answerVisible.set(false);
@@ -368,12 +393,23 @@ export class DailyChallengeComponent implements OnInit, OnDestroy {
 
   private async complete() {
     this.finished.set(true);
-    this.gameService.updateDailyStreak();
+    this.gameService.updateStreak();
+    this.dailyEngagement.markChallengeComplete();
     await this.dcService.markCompleted(this.earnedXp());
     this.analytics.track('daily_challenge_completed', {
       score: this.score(),
       xp_earned: this.earnedXp()
     });
+    // Increment persisted DC completion count, then check for rating prompt
+    const countKey = 'dc_completed_count';
+    const prev = parseInt(localStorage.getItem(countKey) ?? '0', 10);
+    const next = prev + 1;
+    localStorage.setItem(countKey, String(next));
+    this.ratingSvc.checkAfterDailyChallenge(next);
+  }
+
+  shareResult(): void {
+    this.shareSvc.shareDailyResult(this.score(), TOTAL_QUESTIONS, this.earnedXp());
   }
 
   countdown(): string {
@@ -402,6 +438,6 @@ export class DailyChallengeComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/tutorials']);
+    this.router.navigate(['/dashboard']);
   }
 }

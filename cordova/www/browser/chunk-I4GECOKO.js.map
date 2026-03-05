@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/theme.service.ts"],
+  "sourcesContent": ["import { Injectable, effect, signal } from '@angular/core';\n\n@Injectable({ providedIn: 'root' })\nexport class ThemeService {\n  private readonly THEME_KEY = 'app-theme';\n  theme = signal<'light' | 'dark'>(this.getInitialTheme());\n\n  constructor() {\n    effect(() => this.applyTheme(this.theme()));\n  }\n\n  toggle() {\n    this.theme.update(t => (t === 'light' ? 'dark' : 'light'));\n  }\n\n  private getInitialTheme(): 'light' | 'dark' {\n    const saved = localStorage.getItem(this.THEME_KEY);\n    if (saved === 'light' || saved === 'dark') return saved;\n    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';\n  }\n\n  private applyTheme(theme: 'light' | 'dark') {\n    document.documentElement.classList.toggle('dark', theme === 'dark');\n    localStorage.setItem(this.THEME_KEY, theme);\n  }\n}\n"],
+  "mappings": ";;;;;;;;;AAGM,IAAO,eAAP,MAAO,cAAY;EACN,YAAY;EAC7B,QAAQ,OAAyB,KAAK,gBAAe,GAAE,GAAA,YAAA,CAAA,EAAA,WAAA,QAAA,CAAA,IAAA,CAAA,CAAA;EAEvD,cAAA;AACE,WAAO,MAAM,KAAK,WAAW,KAAK,MAAK,CAAE,CAAC;EAC5C;EAEA,SAAM;AACJ,SAAK,MAAM,OAAO,OAAM,MAAM,UAAU,SAAS,OAAQ;EAC3D;EAEQ,kBAAe;AACrB,UAAM,QAAQ,aAAa,QAAQ,KAAK,SAAS;AACjD,QAAI,UAAU,WAAW,UAAU;AAAQ,aAAO;AAClD,WAAO,OAAO,WAAW,8BAA8B,EAAE,UAAU,SAAS;EAC9E;EAEQ,WAAW,OAAuB;AACxC,aAAS,gBAAgB,UAAU,OAAO,QAAQ,UAAU,MAAM;AAClE,iBAAa,QAAQ,KAAK,WAAW,KAAK;EAC5C;;qCArBW,eAAY;EAAA;4EAAZ,eAAY,SAAZ,cAAY,WAAA,YADC,OAAM,CAAA;;;sEACnB,cAAY,CAAA;UADxB;WAAW,EAAE,YAAY,OAAM,CAAE;;;",
+  "names": []
+}

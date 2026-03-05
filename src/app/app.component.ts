@@ -1,25 +1,29 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { Component, computed, effect } from '@angular/core';
+import { inject } from '@angular/core';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs/operators';
 import {
   IonApp, IonRouterOutlet, IonMenu, IonHeader,
   IonContent, IonList, IonItem, IonIcon, IonLabel,
-  IonMenuToggle, IonFooter, IonToggle
+  IonMenuToggle, IonFooter, IonToggle, MenuController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   bookOutline, chatbubblesOutline, codeSlashOutline,
   trophyOutline, clipboardOutline, peopleOutline,
   moonOutline, sunnyOutline, personCircleOutline,
-  homeOutline, ribbonOutline
-  moonOutline, sunnyOutline, personCircleOutline,
-  bookmarkOutline, settingsOutline
+  homeOutline, ribbonOutline,
+  bookmarkOutline, settingsOutline, calendarOutline,
+  briefcaseOutline, barChartOutline, refreshOutline
 } from 'ionicons/icons';
 import { AdMobService } from './admob.service';
 import { CustomAlertComponent } from './custom-alert/custom-alert.component';
 import { ThemeService } from './theme.service';
 import { ConnectivityService } from './connectivity.service';
 import { AchievementToastComponent } from './shared/achievement-toast.component';
+import { WhatsNewComponent } from './shared/whats-new.component';
 
 @Component({
   selector: 'app-root',
@@ -28,11 +32,11 @@ import { AchievementToastComponent } from './shared/achievement-toast.component'
     CommonModule, RouterLink, RouterLinkActive, IonApp, IonRouterOutlet, IonMenu,
     IonHeader, IonContent, IonList, IonItem,
     IonIcon, IonLabel, IonMenuToggle, IonFooter, IonToggle,
-    CustomAlertComponent, AchievementToastComponent
+    CustomAlertComponent, AchievementToastComponent, WhatsNewComponent
   ],
   template: `
     <ion-app>
-      <ion-menu contentId="main-content" type="overlay">
+      <ion-menu menuId="main-menu" contentId="main-content" type="overlay">
         <ion-header class="ion-no-border">
           <div class="menu-header">
             <div class="header-glow header-glow-1"></div>
@@ -112,6 +116,38 @@ import { AchievementToastComponent } from './shared/achievement-toast.component'
               </ion-menu-toggle>
 
               <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/study-plan" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="calendar-outline"></ion-icon></div>
+                  <ion-label>Study Plan</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/mock-interview" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="briefcase-outline"></ion-icon></div>
+                  <ion-label>Mock Interview</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/progress" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="bar-chart-outline"></ion-icon></div>
+                  <ion-label>My Progress</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/review" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="refresh-outline"></ion-icon></div>
+                  <ion-label>Review Queue</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/bookmarks" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="bookmark-outline"></ion-icon></div>
                   <ion-label>Saved</ion-label>
@@ -160,7 +196,7 @@ import { AchievementToastComponent } from './shared/achievement-toast.component'
                 class="theme-toggle">
               </ion-toggle>
             </div>
-            <span class="version">v1.2.0</span>
+            <span class="version">v1.4.0</span>
             <span class="footer-brand">Built with ❤️ for Java developers</span>
           </div>
         </ion-footer>
@@ -178,8 +214,44 @@ import { AchievementToastComponent } from './shared/achievement-toast.component'
         </div>
       }
 
+      <!-- Bottom Navigation Bar -->
+      @if (showBottomNav()) {
+        <nav class="bottom-nav" role="tablist" aria-label="Main navigation">
+          <a class="bnav-tab" [class.active]="isTab('/dashboard')"
+             routerLink="/dashboard" role="tab" aria-label="Home">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+          </a>
+          <a class="bnav-tab"
+             [class.active]="isTab('/tutorials') || isTab('/interview-questions') || isTab('/coding-questions') || isTab('/leetcode') || isTab('/experiences')"
+             routerLink="/tutorials" role="tab" aria-label="Learn">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Learn</span>
+          </a>
+          <a class="bnav-tab bnav-center"
+             [class.active]="isTab('/daily-challenge') || isTab('/assessments')"
+             routerLink="/daily-challenge" role="tab" aria-label="Practice">
+            <div class="bnav-center-pill">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <span>Practice</span>
+          </a>
+          <a class="bnav-tab"
+             [class.active]="isTab('/progress') || isTab('/leaderboard') || isTab('/achievements')"
+             routerLink="/progress" role="tab" aria-label="Progress">
+            <i class="fa-solid fa-chart-simple"></i>
+            <span>Progress</span>
+          </a>
+          <button class="bnav-tab" (click)="openMenu()" role="tab" aria-label="More options">
+            <i class="fa-solid fa-bars"></i>
+            <span>More</span>
+          </button>
+        </nav>
+      }
+
       <app-custom-alert></app-custom-alert>
       <app-achievement-toast></app-achievement-toast>
+      <app-whats-new></app-whats-new>
     </ion-app>
   `,
   styles: [`
@@ -276,7 +348,7 @@ import { AchievementToastComponent } from './shared/achievement-toast.component'
     }
     .profile-info { display: flex; flex-direction: column; gap: 2px; }
     .user-name { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: #e2e8f0; }
-    .user-level { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 500; color: #94a3b8; }
+    .user-level { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; color: #94a3b8; }
 
     /* Navigation items */
     .menu-content {
@@ -286,9 +358,9 @@ import { AchievementToastComponent } from './shared/achievement-toast.component'
     .nav-label {
       display: block;
       font-family: 'Inter', sans-serif;
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       font-weight: 800;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.12em;
       color: #64748b;
       margin-bottom: 16px;
       padding-left: 12px;
@@ -404,10 +476,10 @@ import { AchievementToastComponent } from './shared/achievement-toast.component'
       min-height: unset;
     }
 
-    .version { font-family: 'Inter', sans-serif; font-size: 0.6rem; font-weight: 700; color: #475569; }
+    .version { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 700; color: #475569; }
     .footer-brand {
       font-family: 'Inter', sans-serif;
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: #64748b;
     }
@@ -506,7 +578,7 @@ import { AchievementToastComponent } from './shared/achievement-toast.component'
       z-index: 99999;
       background: #b45309;
       color: #fff;
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       font-weight: 600;
       text-align: center;
       padding: 8px 16px;
@@ -521,28 +593,177 @@ import { AchievementToastComponent } from './shared/achievement-toast.component'
       from { transform: translateY(-100%); }
       to { transform: translateY(0); }
     }
+
+    /* ── Bottom Navigation Bar ── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: stretch;
+      height: calc(60px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: #ffffff;
+      border-top: 1px solid #D6DDD2;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+    }
+
+    .bnav-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      text-decoration: none;
+      color: #94A3B8;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0;
+      position: relative;
+    }
+
+    .bnav-tab i {
+      font-size: 1.2rem;
+      line-height: 1;
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .bnav-tab span {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+
+    .bnav-tab.active {
+      color: #1B4332;
+    }
+
+    .bnav-tab.active i {
+      transform: scale(1.12);
+    }
+
+    .bnav-tab.active::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 32px;
+      height: 2px;
+      background: #1B4332;
+      border-radius: 0 0 4px 4px;
+    }
+
+    /* Center practice button — elevated pill */
+    .bnav-center {
+      position: relative;
+    }
+
+    .bnav-center-pill {
+      width: 44px;
+      height: 32px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1B4332, #2D6A4F);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(27,67,50,0.35);
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.15s ease;
+    }
+
+    .bnav-center-pill i {
+      font-size: 1rem;
+      color: #ffffff !important;
+    }
+
+    .bnav-center.active .bnav-center-pill {
+      background: linear-gradient(135deg, #2D6A4F, #40916C);
+      box-shadow: 0 6px 16px rgba(27,67,50,0.45);
+      transform: scale(1.05);
+    }
+
+    .bnav-center::after { display: none; }
+
+    /* Dark mode */
+    :host-context(html.dark) .bottom-nav {
+      background: #0D1A10;
+      border-top-color: rgba(255,255,255,0.07);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+    }
+
+    :host-context(html.dark) .bnav-tab {
+      color: #4A6B55;
+    }
+
+    :host-context(html.dark) .bnav-tab.active {
+      color: #52B788;
+    }
+
+    :host-context(html.dark) .bnav-tab.active::after {
+      background: #52B788;
+    }
   `]
 })
 export class AppComponent {
   title = 'JavaIQ';
 
-  constructor(
-    private adMobService: AdMobService,
-    protected themeService: ThemeService,
-    protected connectivity: ConnectivityService,
-    private router: Router
-  ) {
+  protected themeService = inject(ThemeService);
+  protected connectivity = inject(ConnectivityService);
+  private adMobService = inject(AdMobService);
+  private router = inject(Router);
+  private menuCtrl = inject(MenuController);
+
+  private navUrl = toSignal(
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+      map(e => (e as NavigationEnd).urlAfterRedirects)
+    ),
+    { initialValue: this.router.url }
+  );
+
+  showBottomNav = computed(() => {
+    const url = this.navUrl() ?? '';
+    return !url.startsWith('/onboarding') &&
+           !url.startsWith('/challenge/') &&
+           !url.startsWith('/certificate');
+  });
+
+  isTab(path: string): boolean {
+    return (this.navUrl() ?? '').startsWith(path);
+  }
+
+  openMenu() {
+    this.menuCtrl.open('main-menu');
+  }
+
+  constructor() {
     addIcons({
       bookOutline, chatbubblesOutline, codeSlashOutline,
       trophyOutline, clipboardOutline, peopleOutline,
       moonOutline, sunnyOutline, personCircleOutline,
-      homeOutline, ribbonOutline
-
-      moonOutline, sunnyOutline, personCircleOutline,
-      bookmarkOutline, settingsOutline
+      homeOutline, ribbonOutline,
+      bookmarkOutline, settingsOutline, calendarOutline,
+      briefcaseOutline, barChartOutline, refreshOutline
     });
     this.adMobService.showBanner();
     this.checkFirstLaunch();
+
+    // Sync html.has-bnav class so global CSS padding can activate
+    effect(() => {
+      if (this.showBottomNav()) {
+        document.documentElement.classList.add('has-bnav');
+      } else {
+        document.documentElement.classList.remove('has-bnav');
+      }
+    });
   }
 
   private checkFirstLaunch() {

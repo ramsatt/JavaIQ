@@ -131,11 +131,39 @@
             </div>
           </div>
 
-          <button class="btn-action primary" (click)="quitGame()">
-            Continue
-          </button>
+          <!-- Course completion banner -->
+          @if (courseComplete()) {
+            <div class="course-complete-banner">
+              🎓 Course Complete!
+              <div class="course-complete-actions">
+                <button class="btn-cert" (click)="showCert.set(true)">
+                  <i class="bi bi-patch-check-fill"></i> Get Certificate
+                </button>
+                <button class="btn-share-result" (click)="shareCourse()">
+                  <i class="bi bi-share-fill"></i> Share
+                </button>
+              </div>
+            </div>
+          }
+
+          <div class="result-actions-row">
+            <button class="btn-action primary" (click)="quitGame()">Continue</button>
+            <button class="btn-share-result" (click)="shareResult()">
+              <i class="bi bi-share-fill"></i>
+            </button>
+          </div>
         </div>
       </div>
     }
   </main>
 </div>
+
+<!-- Certificate modal — rendered outside main layout for clean print -->
+@if (showCert()) {
+  <app-certificate
+    type="course"
+    [title]="challengeName"
+    [visible]="showCert()"
+    [recipientName]="userName()"
+    (closed)="showCert.set(false)" />
+}

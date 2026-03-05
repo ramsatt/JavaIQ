@@ -3,19 +3,35 @@ import {
 } from "./chunk-B2BVUSCA.js";
 import {
   AchievementService
-} from "./chunk-SGPMYDTE.js";
+} from "./chunk-44FD6GSA.js";
+import "./chunk-7TOJMDEE.js";
+import "./chunk-CTHSCSLP.js";
+import "./chunk-QFFHBMTJ.js";
+import {
+  AdMobService,
+  environment
+} from "./chunk-4DYJ5SOT.js";
+import {
+  ScreenTrackingService,
+  getAnalytics,
+  provideAnalytics
+} from "./chunk-BJOCJFQ2.js";
+import {
+  ThemeService
+} from "./chunk-I4GECOKO.js";
+import {
+  AlertService
+} from "./chunk-ZI6SYS5B.js";
+import "./chunk-KHYVC3NX.js";
 import {
   getAuth,
   getFirestore,
   initializeApp,
   provideAuth,
   provideFirebaseApp,
-  provideFirestore
-} from "./chunk-2WD52FID.js";
-import {
-  AdMobService,
-  AlertService
-} from "./chunk-LTABZLCA.js";
+  provideFirestore,
+  toSignal
+} from "./chunk-YU6DDDO5.js";
 import {
   IonApp,
   IonContent,
@@ -29,18 +45,21 @@ import {
   IonMenuToggle,
   IonRouterOutlet,
   IonToggle,
+  MenuController,
   provideIonicAngular
-} from "./chunk-GJAE6IIS.js";
+} from "./chunk-PWZS7QID.js";
 import {
   CommonModule,
+  NavigationEnd,
   NgClass,
   NgIf,
+  Router,
   RouterLink,
   RouterLinkActive,
   bootstrapApplication,
   provideRouter,
   withHashLocation
-} from "./chunk-YUIOCFNR.js";
+} from "./chunk-CSRIGHDB.js";
 import "./chunk-CSKJ3OEL.js";
 import "./chunk-T5LCTCQ6.js";
 import "./chunk-3W5KDKG7.js";
@@ -49,9 +68,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ErrorHandler,
   Injectable,
+  NgZone,
+  computed,
   effect,
+  filter,
   inject,
+  map,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
   setClassMetadata,
@@ -64,7 +88,6 @@ import {
   ɵɵconditionalCreate,
   ɵɵdefineComponent,
   ɵɵdefineInjectable,
-  ɵɵdirectiveInject,
   ɵɵdomElement,
   ɵɵdomElementEnd,
   ɵɵdomElementStart,
@@ -76,6 +99,8 @@ import {
   ɵɵlistener,
   ɵɵnextContext,
   ɵɵproperty,
+  ɵɵrepeater,
+  ɵɵrepeaterCreate,
   ɵɵresetView,
   ɵɵrestoreView,
   ɵɵstyleProp,
@@ -83,7 +108,7 @@ import {
   ɵɵtext,
   ɵɵtextInterpolate,
   ɵɵtextInterpolate1
-} from "./chunk-VBTVL2BZ.js";
+} from "./chunk-L6VISU4K.js";
 import "./chunk-PUOSPVYE.js";
 import "./chunk-YDDVKQH4.js";
 import "./chunk-URDQGTEH.js";
@@ -2507,120 +2532,203 @@ var Zone2 = loadZone();
 patchCommon(Zone2);
 patchBrowser(Zone2);
 
+// src/app/global-error-handler.ts
+var GlobalErrorHandler = class _GlobalErrorHandler {
+  alertService = inject(AlertService);
+  zone = inject(NgZone);
+  handleError(error) {
+    const message = this.extractMessage(error);
+    console.error("[GlobalErrorHandler]", error);
+    if (this.isChunkError(message)) {
+      const reloadKey = "chunk_reload_at";
+      const last = localStorage.getItem(reloadKey);
+      const now = Date.now();
+      if (!last || now - parseInt(last, 10) > 3e4) {
+        localStorage.setItem(reloadKey, String(now));
+        window.location.reload();
+      }
+      return;
+    }
+    this.zone.run(() => {
+      this.alertService.alertInfo("Something went wrong. Please try again or restart the app.", "Oops!").catch(() => {
+      });
+    });
+  }
+  extractMessage(error) {
+    if (error instanceof Error)
+      return error.message;
+    if (typeof error === "string")
+      return error;
+    return String(error);
+  }
+  isChunkError(message) {
+    return message.includes("ChunkLoadError") || message.includes("Loading chunk") || message.includes("Failed to fetch dynamically imported module");
+  }
+  static \u0275fac = function GlobalErrorHandler_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _GlobalErrorHandler)();
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _GlobalErrorHandler, factory: _GlobalErrorHandler.\u0275fac });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(GlobalErrorHandler, [{
+    type: Injectable
+  }], null, null);
+})();
+
 // src/app/app.routes.ts
 var routes = [
   {
+    path: "onboarding",
+    loadComponent: () => import("./chunk-JYXIGM2O.js").then((m) => m.OnboardingComponent)
+  },
+  {
+    path: "profile-setup",
+    loadComponent: () => import("./chunk-IUCFT6KR.js").then((m) => m.ProfileSetupComponent)
+  },
+  {
+    path: "settings",
+    loadComponent: () => import("./chunk-FZ5HDZCK.js").then((m) => m.SettingsComponent)
+  },
+  {
     path: "tutorials/:slug/:topic",
-    loadComponent: () => import("./chunk-KMFHOUIF.js").then((m) => m.TopicRouterComponent)
+    loadComponent: () => import("./chunk-XBRMNJAZ.js").then((m) => m.TopicRouterComponent)
   },
   {
     path: "tutorials",
-    loadComponent: () => import("./chunk-YAXIBQVG.js").then((m) => m.TutorialListComponent)
+    loadComponent: () => import("./chunk-XMCRFWGW.js").then((m) => m.TutorialListComponent)
   },
   {
     path: "tutorials/:slug",
-    loadComponent: () => import("./chunk-GUU65QNL.js").then((m) => m.TutorialDetailComponent)
+    loadComponent: () => import("./chunk-TBE6F4UJ.js").then((m) => m.TutorialDetailComponent)
   },
   {
     path: "interview-questions",
-    loadComponent: () => import("./chunk-WO5TMXA6.js").then((m) => m.IqListComponent)
+    loadComponent: () => import("./chunk-VMQ7S6AC.js").then((m) => m.IqListComponent)
   },
   {
     path: "interview-questions/:category",
-    loadComponent: () => import("./chunk-K5YYDPA2.js").then((m) => m.IqCategoryComponent)
+    loadComponent: () => import("./chunk-I3M3NM5H.js").then((m) => m.IqCategoryComponent)
   },
   {
     path: "interview-questions/:category/:id",
-    loadComponent: () => import("./chunk-GSFDDDPB.js").then((m) => m.IqDetailComponent)
+    loadComponent: () => import("./chunk-AKLBGPGS.js").then((m) => m.IqDetailComponent)
   },
   {
     path: "coding-questions",
-    loadComponent: () => import("./chunk-MOJWFUCX.js").then((m) => m.CqListComponent)
+    loadComponent: () => import("./chunk-6SLUMRVY.js").then((m) => m.CqListComponent)
   },
   {
     path: "coding-questions/:id",
-    loadComponent: () => import("./chunk-IEX3GIX7.js").then((m) => m.CqDetailComponent)
+    loadComponent: () => import("./chunk-OAPHCK6Q.js").then((m) => m.CqDetailComponent)
   },
   {
     path: "leetcode",
-    loadComponent: () => import("./chunk-B36RQB4D.js").then((m) => m.LcListComponent)
+    loadComponent: () => import("./chunk-YBPB2LOL.js").then((m) => m.LcListComponent)
   },
   {
     path: "leetcode/:id",
-    loadComponent: () => import("./chunk-JBMXBHPI.js").then((m) => m.LcDetailComponent)
+    loadComponent: () => import("./chunk-GX6S6OXZ.js").then((m) => m.LcDetailComponent)
   },
   {
     path: "assessments",
-    loadComponent: () => import("./chunk-GWO5RN2P.js").then((m) => m.AssessListComponent)
+    loadComponent: () => import("./chunk-6OZATK3L.js").then((m) => m.AssessListComponent)
   },
   {
     path: "assessments/:id",
-    loadComponent: () => import("./chunk-2ILECOZF.js").then((m) => m.AssessQuizComponent)
+    loadComponent: () => import("./chunk-64HHK3LQ.js").then((m) => m.AssessQuizComponent)
   },
   {
     path: "assessments/:id/result",
-    loadComponent: () => import("./chunk-VUJ4AGPI.js").then((m) => m.AssessResultComponent)
+    loadComponent: () => import("./chunk-G3Y476AG.js").then((m) => m.AssessResultComponent)
   },
   {
     path: "experiences",
-    loadComponent: () => import("./chunk-GD5I6NDS.js").then((m) => m.ExpListComponent)
+    loadComponent: () => import("./chunk-DTFBZNV5.js").then((m) => m.ExpListComponent)
   },
   {
     path: "experiences/:id",
-    loadComponent: () => import("./chunk-FU6WOBQ5.js").then((m) => m.ExpDetailComponent)
+    loadComponent: () => import("./chunk-BNSFMFZY.js").then((m) => m.ExpDetailComponent)
+  },
+  {
+    path: "daily-challenge",
+    loadComponent: () => import("./chunk-JGG5PFCU.js").then((m) => m.DailyChallengeComponent)
+  },
+  {
+    path: "study-plan",
+    loadComponent: () => import("./chunk-QG4ONR3V.js").then((m) => m.StudyPlanComponent)
+  },
+  {
+    path: "mock-interview",
+    loadComponent: () => import("./chunk-ZSBUZYBP.js").then((m) => m.MockInterviewComponent)
+  },
+  {
+    path: "progress",
+    loadComponent: () => import("./chunk-VB7PTNRG.js").then((m) => m.ProgressComponent)
+  },
+  {
+    path: "review",
+    loadComponent: () => import("./chunk-MGHSXSPV.js").then((m) => m.ReviewComponent)
+  },
+  {
+    path: "bookmarks",
+    loadComponent: () => import("./chunk-EWP2YUR2.js").then((m) => m.BookmarksListComponent)
+  },
+  {
+    path: "leaderboard",
+    loadComponent: () => import("./chunk-AFXUPKQW.js").then((m) => m.LeaderboardComponent)
   },
   {
     path: "about",
-    loadComponent: () => import("./chunk-G7AZIPNK.js").then((m) => m.AboutComponent)
+    loadComponent: () => import("./chunk-ITKINDWK.js").then((m) => m.AboutComponent)
   },
   {
     path: "achievements",
-    loadComponent: () => import("./chunk-RV6O7SU2.js").then((m) => m.AchievementGalleryComponent)
+    loadComponent: () => import("./chunk-6SPHT2A6.js").then((m) => m.AchievementGalleryComponent)
+  },
+  {
+    path: "dashboard",
+    loadComponent: () => import("./chunk-M4IS4AKF.js").then((m) => m.DashboardComponent)
   },
   {
     path: "",
-    redirectTo: "tutorials",
+    redirectTo: "dashboard",
     pathMatch: "full"
   },
-  { path: "**", redirectTo: "tutorials" }
+  { path: "**", redirectTo: "dashboard" }
 ];
-
-// src/environments/environment.ts
-var environment = {
-  production: true,
-  firebaseConfig: {
-    apiKey: "AIzaSyAhhnYTEfU724e-FgAr9pVwpPQ259AzhZQ",
-    authDomain: "javaiq.firebaseapp.com",
-    databaseURL: "https://javaiq-default-rtdb.firebaseio.com",
-    projectId: "javaiq",
-    storageBucket: "javaiq.firebasestorage.app",
-    messagingSenderId: "1014219218540",
-    appId: "1:1014219218540:web:5eef46263d6f2f120e0249",
-    measurementId: "G-M2S2VRZ6F4"
-  }
-};
 
 // src/app/app.config.ts
 var appConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withHashLocation()),
     provideIonicAngular({ mode: "md" }),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore())
+    provideFirestore(() => getFirestore()),
+    provideAnalytics(() => getAnalytics()),
+    ScreenTrackingService
   ]
 };
 
 // node_modules/ionicons/icons/index.mjs
+var barChartOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M32 32v432a16 16 0 0 0 16 16h432' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><rect width='80' height='192' x='96' y='224' rx='20' ry='20' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><rect width='80' height='240' x='240' y='176' rx='20' ry='20' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><rect width='80' height='304' x='383.64' y='112' rx='20' ry='20' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
 var bookOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M256 160c16-63.16 76.43-95.41 208-96a15.94 15.94 0 0 1 16 16v288a16 16 0 0 1-16 16c-128 0-177.45 25.81-208 64-30.37-38-80-64-208-64-9.88 0-16-8.05-16-17.93V80a15.94 15.94 0 0 1 16-16c131.57.59 192 32.84 208 96M256 160v288' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
+var bookmarkOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M352 48H160a48 48 0 0 0-48 48v368l144-128 144 128V96a48 48 0 0 0-48-48' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
+var briefcaseOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><rect width='448' height='320' x='32' y='128' rx='48' ry='48' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><path d='M144 128V96a32 32 0 0 1 32-32h160a32 32 0 0 1 32 32v32M480 240H32M320 240v24a8 8 0 0 1-8 8H200a8 8 0 0 1-8-8v-24' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
+var calendarOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><rect width='416' height='384' x='48' y='80' stroke-linejoin='round' rx='48' class='ionicon-fill-none ionicon-stroke-width'/><circle cx='296' cy='232' r='24'/><circle cx='376' cy='232' r='24'/><circle cx='296' cy='312' r='24'/><circle cx='376' cy='312' r='24'/><circle cx='136' cy='312' r='24'/><circle cx='216' cy='312' r='24'/><circle cx='136' cy='392' r='24'/><circle cx='216' cy='392' r='24'/><circle cx='296' cy='392' r='24'/><path stroke-linecap='round' stroke-linejoin='round' d='M128 48v32M384 48v32' class='ionicon-fill-none ionicon-stroke-width'/><path stroke-linejoin='round' d='M464 160H48' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
 var chatbubblesOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M431 320.6c-1-3.6 1.2-8.6 3.3-12.2a34 34 0 0 1 2.1-3.1A162 162 0 0 0 464 215c.3-92.2-77.5-167-173.7-167-83.9 0-153.9 57.1-170.3 132.9a160.7 160.7 0 0 0-3.7 34.2c0 92.3 74.8 169.1 171 169.1 15.3 0 35.9-4.6 47.2-7.7s22.5-7.2 25.4-8.3a26.4 26.4 0 0 1 9.3-1.7 26 26 0 0 1 10.1 2l56.7 20.1a13.5 13.5 0 0 0 3.9 1 8 8 0 0 0 8-8 13 13 0 0 0-.5-2.7Z' stroke-linecap='round' stroke-miterlimit='10' class='ionicon-fill-none ionicon-stroke-width'/><path d='M66.46 232a146.23 146.23 0 0 0 6.39 152.67c2.31 3.49 3.61 6.19 3.21 8s-11.93 61.87-11.93 61.87a8 8 0 0 0 2.71 7.68A8.17 8.17 0 0 0 72 464a7.3 7.3 0 0 0 2.91-.6l56.21-22a15.7 15.7 0 0 1 12 .2c18.94 7.38 39.88 12 60.83 12A159.2 159.2 0 0 0 284 432.11' stroke-linecap='round' stroke-miterlimit='10' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
 var clipboardOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M336 64h32a48 48 0 0 1 48 48v320a48 48 0 0 1-48 48H144a48 48 0 0 1-48-48V112a48 48 0 0 1 48-48h32' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><rect width='160' height='64' x='176' y='32' rx='26.13' ry='26.13' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
 var codeSlashOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M160 368 32 256l128-112M352 368l128-112-128-112M304 96l-96 320' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
+var homeOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M80 212v236a16 16 0 0 0 16 16h96V328a24 24 0 0 1 24-24h80a24 24 0 0 1 24 24v136h96a16 16 0 0 0 16-16V212' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><path d='M480 256 266.89 52c-5-5.28-16.69-5.34-21.78 0L32 256M400 179V64h-48v69' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
 var moonOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M160 136c0-30.62 4.51-61.61 16-88C99.57 81.27 48 159.32 48 248c0 119.29 96.71 216 216 216 88.68 0 166.73-51.57 200-128-26.39 11.49-57.38 16-88 16-119.29 0-216-96.71-216-216' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
 var peopleOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M402 168c-2.93 40.67-33.1 72-66 72s-63.12-31.32-66-72c-3-42.31 26.37-72 66-72s69 30.46 66 72' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><path d='M336 304c-65.17 0-127.84 32.37-143.54 95.41-2.08 8.34 3.15 16.59 11.72 16.59h263.65c8.57 0 13.77-8.25 11.72-16.59C463.85 335.36 401.18 304 336 304Z' stroke-miterlimit='10' class='ionicon-fill-none ionicon-stroke-width'/><path d='M200 185.94c-2.34 32.48-26.72 58.06-53 58.06s-50.7-25.57-53-58.06C91.61 152.15 115.34 128 147 128s55.39 24.77 53 57.94' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><path d='M206 306c-18.05-8.27-37.93-11.45-59-11.45-52 0-102.1 25.85-114.65 76.2-1.65 6.66 2.53 13.25 9.37 13.25H154' stroke-linecap='round' stroke-miterlimit='10' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
 var personCircleOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M258.9 48C141.92 46.42 46.42 141.92 48 258.9c1.56 112.19 92.91 203.54 205.1 205.1 117 1.6 212.48-93.9 210.88-210.88C462.44 140.91 371.09 49.56 258.9 48m126.42 327.25a4 4 0 0 1-6.14-.32 124.3 124.3 0 0 0-32.35-29.59C321.37 329 289.11 320 256 320s-65.37 9-90.83 25.34a124.2 124.2 0 0 0-32.35 29.58 4 4 0 0 1-6.14.32A175.32 175.32 0 0 1 80 259c-1.63-97.31 78.22-178.76 175.57-179S432 158.81 432 256a175.32 175.32 0 0 1-46.68 119.25'/><path d='M256 144c-19.72 0-37.55 7.39-50.22 20.82s-19 32-17.57 51.93C191.11 256 221.52 288 256 288s64.83-32 67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39 151.44 275.59 144 256 144'/></svg>";
+var refreshOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M320 146s24.36-12-64-12a160 160 0 1 0 160 160' stroke-linecap='round' stroke-miterlimit='10' class='ionicon-fill-none ionicon-stroke-width'/><path d='m256 58 80 80-80 80' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
+var ribbonOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><circle cx='256' cy='160' r='128' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><path d='M143.65 227.82 48 400l86.86-.42a16 16 0 0 1 13.82 7.8L192 480l88.33-194.32' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><path d='M366.54 224 464 400l-86.86-.42a16 16 0 0 0-13.82 7.8L320 480l-64-140.8' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><circle cx='256' cy='160' r='64' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
+var settingsOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M262.29 192.31a64 64 0 1 0 57.4 57.4 64.13 64.13 0 0 0-57.4-57.4M416.39 256a154 154 0 0 1-1.53 20.79l45.21 35.46a10.81 10.81 0 0 1 2.45 13.75l-42.77 74a10.81 10.81 0 0 1-13.14 4.59l-44.9-18.08a16.11 16.11 0 0 0-15.17 1.75A164.5 164.5 0 0 1 325 400.8a15.94 15.94 0 0 0-8.82 12.14l-6.73 47.89a11.08 11.08 0 0 1-10.68 9.17h-85.54a11.11 11.11 0 0 1-10.69-8.87l-6.72-47.82a16.07 16.07 0 0 0-9-12.22 155 155 0 0 1-21.46-12.57 16 16 0 0 0-15.11-1.71l-44.89 18.07a10.81 10.81 0 0 1-13.14-4.58l-42.77-74a10.8 10.8 0 0 1 2.45-13.75l38.21-30a16.05 16.05 0 0 0 6-14.08c-.36-4.17-.58-8.33-.58-12.5s.21-8.27.58-12.35a16 16 0 0 0-6.07-13.94l-38.19-30A10.81 10.81 0 0 1 49.48 186l42.77-74a10.81 10.81 0 0 1 13.14-4.59l44.9 18.08a16.11 16.11 0 0 0 15.17-1.75A164.5 164.5 0 0 1 187 111.2a15.94 15.94 0 0 0 8.82-12.14l6.73-47.89A11.08 11.08 0 0 1 213.23 42h85.54a11.11 11.11 0 0 1 10.69 8.87l6.72 47.82a16.07 16.07 0 0 0 9 12.22 155 155 0 0 1 21.46 12.57 16 16 0 0 0 15.11 1.71l44.89-18.07a10.81 10.81 0 0 1 13.14 4.58l42.77 74a10.8 10.8 0 0 1-2.45 13.75l-38.21 30a16.05 16.05 0 0 0-6.05 14.08c.33 4.14.55 8.3.55 12.47' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
 var sunnyOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M256 48v48M256 416v48M403.08 108.92l-33.94 33.94M142.86 369.14l-33.94 33.94M464 256h-48M96 256H48M403.08 403.08l-33.94-33.94M142.86 142.86l-33.94-33.94' stroke-linecap='round' stroke-miterlimit='10' class='ionicon-fill-none ionicon-stroke-width'/><circle cx='256' cy='256' r='80' stroke-linecap='round' stroke-miterlimit='10' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
 var trophyOutline = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' class='ionicon'><path d='M176 464h160M256 464V336M384 224c0-50.64-.08-134.63-.12-160a16 16 0 0 0-16-16l-223.79.26a16 16 0 0 0-16 15.95c0 30.58-.13 129.17-.13 159.79 0 64.28 83 112 128 112S384 288.28 384 224' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><path d='M128 96H48v16c0 55.22 33.55 112 80 112M384 96h80v16c0 55.22-33.55 112-80 112' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>";
 
@@ -2776,11 +2884,51 @@ var CustomAlertComponent = class _CustomAlertComponent {
         </div>
       </div>
     }
-  `, styles: ["/* angular:styles/component:css;a4809b1a509c8c9a2c51c3230fe1ca5933a523bef632fde8f8857057fc2976df;/Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/src/app/custom-alert/custom-alert.component.ts */\n.alert-overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100vw;\n  height: 100vh;\n  background: rgba(0, 0, 0, 0.7);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  z-index: 9999;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 20px;\n  animation: fadeIn 0.3s ease-out;\n}\n.alert-card {\n  background: rgba(30, 41, 59, 0.8);\n  -webkit-backdrop-filter: blur(16px);\n  backdrop-filter: blur(16px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  border-radius: 24px;\n  padding: 30px;\n  width: 100%;\n  max-width: 400px;\n  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);\n  text-align: center;\n  transform: scale(1);\n  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.alert-icon {\n  font-size: 3rem;\n  margin-bottom: 20px;\n}\n.info .alert-icon {\n  color: #3b82f6;\n}\n.success .alert-icon {\n  color: #10b981;\n}\n.warning .alert-icon {\n  color: #f59e0b;\n}\n.error .alert-icon {\n  color: #ef4444;\n}\n.alert-content h3 {\n  margin: 0 0 10px 0;\n  color: white;\n  font-size: 1.5rem;\n  font-weight: 700;\n}\n.alert-content p {\n  margin: 0 0 25px 0;\n  color: #94a3b8;\n  font-size: 1.1rem;\n  line-height: 1.6;\n}\n.alert-actions {\n  display: flex;\n  gap: 15px;\n  justify-content: center;\n}\nbutton {\n  padding: 12px 30px;\n  border-radius: 14px;\n  font-weight: 600;\n  font-size: 1rem;\n  border: none;\n  cursor: pointer;\n  transition: all 0.2s;\n}\n.btn-confirm {\n  background: #3b82f6;\n  color: white;\n  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);\n}\n.btn-confirm:hover {\n  background: #2563eb;\n  transform: translateY(-2px);\n}\n.btn-cancel {\n  background: rgba(255, 255, 255, 0.05);\n  color: #94a3b8;\n}\n.btn-cancel:hover {\n  background: rgba(255, 255, 255, 0.1);\n  color: white;\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes popIn {\n  from {\n    transform: scale(0.8);\n    opacity: 0;\n  }\n  to {\n    transform: scale(1);\n    opacity: 1;\n  }\n}\n/*# sourceMappingURL=custom-alert.component.css.map */\n"] }]
+  `, styles: ["/* angular:styles/component:css;a4809b1a509c8c9a2c51c3230fe1ca5933a523bef632fde8f8857057fc2976df;/Users/sathishkumarramalingam/projects/JavaIQ/src/app/custom-alert/custom-alert.component.ts */\n.alert-overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100vw;\n  height: 100vh;\n  background: rgba(0, 0, 0, 0.7);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  z-index: 9999;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 20px;\n  animation: fadeIn 0.3s ease-out;\n}\n.alert-card {\n  background: rgba(30, 41, 59, 0.8);\n  -webkit-backdrop-filter: blur(16px);\n  backdrop-filter: blur(16px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  border-radius: 24px;\n  padding: 30px;\n  width: 100%;\n  max-width: 400px;\n  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);\n  text-align: center;\n  transform: scale(1);\n  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.alert-icon {\n  font-size: 3rem;\n  margin-bottom: 20px;\n}\n.info .alert-icon {\n  color: #3b82f6;\n}\n.success .alert-icon {\n  color: #10b981;\n}\n.warning .alert-icon {\n  color: #f59e0b;\n}\n.error .alert-icon {\n  color: #ef4444;\n}\n.alert-content h3 {\n  margin: 0 0 10px 0;\n  color: white;\n  font-size: 1.5rem;\n  font-weight: 700;\n}\n.alert-content p {\n  margin: 0 0 25px 0;\n  color: #94a3b8;\n  font-size: 1.1rem;\n  line-height: 1.6;\n}\n.alert-actions {\n  display: flex;\n  gap: 15px;\n  justify-content: center;\n}\nbutton {\n  padding: 12px 30px;\n  border-radius: 14px;\n  font-weight: 600;\n  font-size: 1rem;\n  border: none;\n  cursor: pointer;\n  transition: all 0.2s;\n}\n.btn-confirm {\n  background: #3b82f6;\n  color: white;\n  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);\n}\n.btn-confirm:hover {\n  background: #2563eb;\n  transform: translateY(-2px);\n}\n.btn-cancel {\n  background: rgba(255, 255, 255, 0.05);\n  color: #94a3b8;\n}\n.btn-cancel:hover {\n  background: rgba(255, 255, 255, 0.1);\n  color: white;\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes popIn {\n  from {\n    transform: scale(0.8);\n    opacity: 0;\n  }\n  to {\n    transform: scale(1);\n    opacity: 1;\n  }\n}\n/*# sourceMappingURL=custom-alert.component.css.map */\n"] }]
   }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(CustomAlertComponent, { className: "CustomAlertComponent", filePath: "src/app/custom-alert/custom-alert.component.ts", lineNumber: 117 });
+})();
+
+// src/app/connectivity.service.ts
+var ConnectivityService = class _ConnectivityService {
+  isOnline = signal(navigator.onLine, ...ngDevMode ? [{ debugName: "isOnline" }] : []);
+  queue = [];
+  constructor() {
+    window.addEventListener("online", () => {
+      this.isOnline.set(true);
+      this.flushQueue();
+    });
+    window.addEventListener("offline", () => this.isOnline.set(false));
+  }
+  /**
+   * Run `op` immediately if online; otherwise enqueue it for when connectivity returns.
+   */
+  async enqueueOp(op) {
+    if (this.isOnline()) {
+      await op().catch((err) => console.warn("[ConnectivityService] Op failed:", err));
+    } else {
+      this.queue.push(op);
+    }
+  }
+  async flushQueue() {
+    const pending = [...this.queue];
+    this.queue = [];
+    for (const op of pending) {
+      await op().catch((err) => console.warn("[ConnectivityService] Flush op failed:", err));
+    }
+  }
+  static \u0275fac = function ConnectivityService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ConnectivityService)();
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ConnectivityService, factory: _ConnectivityService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ConnectivityService, [{
+    type: Injectable,
+    args: [{ providedIn: "root" }]
+  }], () => [], null);
 })();
 
 // src/app/shared/achievement-toast.component.ts
@@ -2870,53 +3018,228 @@ var AchievementToastComponent = class _AchievementToastComponent {
         <button class="ach-close" (click)="dismiss()">\u2715</button>
       </div>
     }
-  `, styles: ["/* angular:styles/component:css;ca28bfc67b5e06a6a42310abe9365aea6d41bf3ec9ad34bc66fe9477dad6602c;/Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/src/app/shared/achievement-toast.component.ts */\n.ach-toast {\n  position: fixed;\n  top: 20px;\n  right: 16px;\n  z-index: 99999;\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  background: #1a2332;\n  border: 1.5px solid rgba(212, 168, 83, 0.4);\n  border-radius: 16px;\n  padding: 12px 16px;\n  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);\n  min-width: 240px;\n  max-width: 320px;\n  animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;\n}\n@keyframes slideIn {\n  from {\n    transform: translateX(120%);\n    opacity: 0;\n  }\n  to {\n    transform: translateX(0);\n    opacity: 1;\n  }\n}\n.ach-icon-wrap {\n  width: 40px;\n  height: 40px;\n  border-radius: 12px;\n  background: rgba(255, 255, 255, 0.06);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n}\n.ach-icon-wrap .bi {\n  font-size: 1.3rem;\n}\n.ach-text {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  flex: 1;\n}\n.ach-label {\n  font-size: 0.62rem;\n  font-weight: 800;\n  color: #d4a853;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n}\n.ach-title {\n  font-size: 0.88rem;\n  font-weight: 700;\n  color: #e2e8f0;\n}\n.ach-close {\n  background: none;\n  border: none;\n  color: #64748b;\n  font-size: 0.8rem;\n  cursor: pointer;\n  padding: 0 0 0 4px;\n  flex-shrink: 0;\n}\n.ach-close:hover {\n  color: #94a3b8;\n}\n/*# sourceMappingURL=achievement-toast.component.css.map */\n"] }]
+  `, styles: ["/* angular:styles/component:css;ca28bfc67b5e06a6a42310abe9365aea6d41bf3ec9ad34bc66fe9477dad6602c;/Users/sathishkumarramalingam/projects/JavaIQ/src/app/shared/achievement-toast.component.ts */\n.ach-toast {\n  position: fixed;\n  top: 20px;\n  right: 16px;\n  z-index: 99999;\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  background: #1a2332;\n  border: 1.5px solid rgba(212, 168, 83, 0.4);\n  border-radius: 16px;\n  padding: 12px 16px;\n  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);\n  min-width: 240px;\n  max-width: 320px;\n  animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;\n}\n@keyframes slideIn {\n  from {\n    transform: translateX(120%);\n    opacity: 0;\n  }\n  to {\n    transform: translateX(0);\n    opacity: 1;\n  }\n}\n.ach-icon-wrap {\n  width: 40px;\n  height: 40px;\n  border-radius: 12px;\n  background: rgba(255, 255, 255, 0.06);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n}\n.ach-icon-wrap .bi {\n  font-size: 1.3rem;\n}\n.ach-text {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  flex: 1;\n}\n.ach-label {\n  font-size: 0.62rem;\n  font-weight: 800;\n  color: #d4a853;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n}\n.ach-title {\n  font-size: 0.88rem;\n  font-weight: 700;\n  color: #e2e8f0;\n}\n.ach-close {\n  background: none;\n  border: none;\n  color: #64748b;\n  font-size: 0.8rem;\n  cursor: pointer;\n  padding: 0 0 0 4px;\n  flex-shrink: 0;\n}\n.ach-close:hover {\n  color: #94a3b8;\n}\n/*# sourceMappingURL=achievement-toast.component.css.map */\n"] }]
   }], () => [], null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AchievementToastComponent, { className: "AchievementToastComponent", filePath: "src/app/shared/achievement-toast.component.ts", lineNumber: 97 });
 })();
 
-// src/app/theme.service.ts
-var ThemeService = class _ThemeService {
-  THEME_KEY = "app-theme";
-  theme = signal(this.getInitialTheme(), ...ngDevMode ? [{ debugName: "theme" }] : []);
+// src/app/shared/whats-new.component.ts
+var _forTrack0 = ($index, $item) => $item.title;
+function WhatsNewComponent_Conditional_0_For_13_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "div", 8)(1, "span", 10);
+    \u0275\u0275text(2);
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(3, "div", 11)(4, "span", 12);
+    \u0275\u0275text(5);
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(6, "span", 13);
+    \u0275\u0275text(7);
+    \u0275\u0275domElementEnd()()();
+  }
+  if (rf & 2) {
+    const h_r3 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(h_r3.emoji);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(h_r3.title);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(h_r3.desc);
+  }
+}
+function WhatsNewComponent_Conditional_0_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275domElementStart(0, "div", 0);
+    \u0275\u0275domListener("click", function WhatsNewComponent_Conditional_0_Template_div_click_0_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.dismiss());
+    });
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(1, "div", 1);
+    \u0275\u0275domElement(2, "div", 2);
+    \u0275\u0275domElementStart(3, "div", 3)(4, "span", 4);
+    \u0275\u0275text(5, "\u2728");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(6, "div")(7, "h2", 5);
+    \u0275\u0275text(8, "What's New in JavaIQ");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(9, "p", 6);
+    \u0275\u0275text(10, "Version 1.3 \xB7 24-week journey complete");
+    \u0275\u0275domElementEnd()()();
+    \u0275\u0275domElementStart(11, "div", 7);
+    \u0275\u0275repeaterCreate(12, WhatsNewComponent_Conditional_0_For_13_Template, 8, 3, "div", 8, _forTrack0);
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(14, "button", 9);
+    \u0275\u0275domListener("click", function WhatsNewComponent_Conditional_0_Template_button_click_14_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.dismiss());
+    });
+    \u0275\u0275text(15, "Got it \u2014 Let's Go!");
+    \u0275\u0275domElementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275advance(12);
+    \u0275\u0275repeater(ctx_r1.highlights);
+  }
+}
+var SEEN_KEY = "whats_new_seen_v1.3";
+var HIGHLIGHTS = [
+  { emoji: "\u{1F3AF}", title: "Mock Interview Mode", desc: "Timed flashcard sessions across any topic with XP rewards." },
+  { emoji: "\u{1F4CA}", title: "Progress Dashboard", desc: "Category mastery bars, 7-day activity grid, and weak areas." },
+  { emoji: "\u{1F501}", title: "Review Queue", desc: "Spaced-repetition flashcards for questions you've missed." },
+  { emoji: "\u{1F4C5}", title: "Adaptive Study Plan", desc: "Goal-based daily tasks that evolve as your streak grows." },
+  { emoji: "\u{1F3C5}", title: "Achievements & Badges", desc: "Unlock 10 milestones and share them with your network." },
+  { emoji: "\u{1F4DC}", title: "Course Certificates", desc: "Print-ready certificates when you complete a category." },
+  { emoji: "\u{1F514}", title: "Smart Reminders", desc: "Daily streak notifications at your chosen time." },
+  { emoji: "\u{1F310}", title: "Offline Resilience", desc: "Writes queue and flush automatically when you're back online." }
+];
+var WhatsNewComponent = class _WhatsNewComponent {
+  highlights = HIGHLIGHTS;
+  visible = signal(false, ...ngDevMode ? [{ debugName: "visible" }] : []);
   constructor() {
-    effect(() => this.applyTheme(this.theme()));
+    if (!localStorage.getItem(SEEN_KEY)) {
+      setTimeout(() => this.visible.set(true), 1200);
+    }
   }
-  toggle() {
-    this.theme.update((t) => t === "light" ? "dark" : "light");
+  dismiss() {
+    localStorage.setItem(SEEN_KEY, "1");
+    this.visible.set(false);
   }
-  getInitialTheme() {
-    const saved = localStorage.getItem(this.THEME_KEY);
-    if (saved === "light" || saved === "dark")
-      return saved;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  }
-  applyTheme(theme) {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem(this.THEME_KEY, theme);
-  }
-  static \u0275fac = function ThemeService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ThemeService)();
+  static \u0275fac = function WhatsNewComponent_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _WhatsNewComponent)();
   };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ThemeService, factory: _ThemeService.\u0275fac, providedIn: "root" });
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _WhatsNewComponent, selectors: [["app-whats-new"]], decls: 1, vars: 1, consts: [[1, "wn-backdrop", 3, "click"], ["role", "dialog", "aria-modal", "true", "aria-label", "What's New", 1, "wn-sheet"], [1, "wn-handle"], [1, "wn-header"], [1, "wn-sparkle"], [1, "wn-title"], [1, "wn-version"], [1, "wn-list"], [1, "wn-item"], [1, "wn-btn", 3, "click"], [1, "wn-emoji"], [1, "wn-item-text"], [1, "wn-item-title"], [1, "wn-item-desc"]], template: function WhatsNewComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      \u0275\u0275conditionalCreate(0, WhatsNewComponent_Conditional_0_Template, 16, 0);
+    }
+    if (rf & 2) {
+      \u0275\u0275conditional(ctx.visible() ? 0 : -1);
+    }
+  }, dependencies: [CommonModule], styles: ["\n\n.wn-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.6);\n  backdrop-filter: blur(4px);\n  -webkit-backdrop-filter: blur(4px);\n  z-index: 9000;\n  animation: _ngcontent-%COMP%_fadein 0.25s ease;\n}\n.wn-sheet[_ngcontent-%COMP%] {\n  position: fixed;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  z-index: 9001;\n  background: #111827;\n  border-radius: 24px 24px 0 0;\n  border-top: 1px solid rgba(255, 255, 255, 0.08);\n  padding: 12px 20px 48px;\n  max-height: 88vh;\n  overflow-y: auto;\n  animation: _ngcontent-%COMP%_slideup 0.35s cubic-bezier(0.4, 0, 0.2, 1);\n}\n@keyframes _ngcontent-%COMP%_fadein {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes _ngcontent-%COMP%_slideup {\n  from {\n    transform: translateY(100%);\n  }\n  to {\n    transform: translateY(0);\n  }\n}\n.wn-handle[_ngcontent-%COMP%] {\n  width: 40px;\n  height: 4px;\n  border-radius: 2px;\n  background: rgba(255, 255, 255, 0.12);\n  margin: 0 auto 20px;\n}\n.wn-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  gap: 14px;\n  margin-bottom: 20px;\n}\n.wn-sparkle[_ngcontent-%COMP%] {\n  font-size: 2rem;\n  flex-shrink: 0;\n  margin-top: 2px;\n}\n.wn-title[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n  font-weight: 900;\n  color: #e2e8f0;\n  letter-spacing: -0.02em;\n  margin: 0 0 4px;\n}\n.wn-version[_ngcontent-%COMP%] {\n  font-size: 0.72rem;\n  color: #64748b;\n  margin: 0;\n}\n.wn-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n  margin-bottom: 28px;\n}\n.wn-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  gap: 14px;\n}\n.wn-emoji[_ngcontent-%COMP%] {\n  font-size: 1.4rem;\n  flex-shrink: 0;\n  width: 32px;\n  text-align: center;\n  margin-top: 1px;\n}\n.wn-item-text[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n.wn-item-title[_ngcontent-%COMP%] {\n  font-size: 0.88rem;\n  font-weight: 700;\n  color: #e2e8f0;\n}\n.wn-item-desc[_ngcontent-%COMP%] {\n  font-size: 0.74rem;\n  color: #64748b;\n  line-height: 1.5;\n}\n.wn-btn[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  padding: 15px;\n  border-radius: 16px;\n  background:\n    linear-gradient(\n      135deg,\n      #6366f1,\n      #8b5cf6);\n  border: none;\n  color: white;\n  font-size: 1rem;\n  font-weight: 700;\n  cursor: pointer;\n  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);\n  transition: all 0.2s;\n}\n.wn-btn[_ngcontent-%COMP%]:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 6px 28px rgba(99, 102, 241, 0.5);\n}\n/*# sourceMappingURL=whats-new.component.css.map */"], changeDetection: 0 });
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ThemeService, [{
-    type: Injectable,
-    args: [{ providedIn: "root" }]
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(WhatsNewComponent, [{
+    type: Component,
+    args: [{ selector: "app-whats-new", changeDetection: ChangeDetectionStrategy.OnPush, standalone: true, imports: [CommonModule], template: `
+    @if (visible()) {
+      <!-- Backdrop -->
+      <div class="wn-backdrop" (click)="dismiss()"></div>
+
+      <!-- Sheet -->
+      <div class="wn-sheet" role="dialog" aria-modal="true" aria-label="What's New">
+        <div class="wn-handle"></div>
+
+        <div class="wn-header">
+          <span class="wn-sparkle">\u2728</span>
+          <div>
+            <h2 class="wn-title">What's New in JavaIQ</h2>
+            <p class="wn-version">Version 1.3 \xB7 24-week journey complete</p>
+          </div>
+        </div>
+
+        <div class="wn-list">
+          @for (h of highlights; track h.title) {
+            <div class="wn-item">
+              <span class="wn-emoji">{{ h.emoji }}</span>
+              <div class="wn-item-text">
+                <span class="wn-item-title">{{ h.title }}</span>
+                <span class="wn-item-desc">{{ h.desc }}</span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <button class="wn-btn" (click)="dismiss()">Got it \u2014 Let's Go!</button>
+      </div>
+    }
+  `, styles: ["/* angular:styles/component:css;4a24e7364f475af083d96b5b2011ba8aacb88f707260a57163c635d482f9b0c0;/Users/sathishkumarramalingam/projects/JavaIQ/src/app/shared/whats-new.component.ts */\n.wn-backdrop {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.6);\n  backdrop-filter: blur(4px);\n  -webkit-backdrop-filter: blur(4px);\n  z-index: 9000;\n  animation: fadein 0.25s ease;\n}\n.wn-sheet {\n  position: fixed;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  z-index: 9001;\n  background: #111827;\n  border-radius: 24px 24px 0 0;\n  border-top: 1px solid rgba(255, 255, 255, 0.08);\n  padding: 12px 20px 48px;\n  max-height: 88vh;\n  overflow-y: auto;\n  animation: slideup 0.35s cubic-bezier(0.4, 0, 0.2, 1);\n}\n@keyframes fadein {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes slideup {\n  from {\n    transform: translateY(100%);\n  }\n  to {\n    transform: translateY(0);\n  }\n}\n.wn-handle {\n  width: 40px;\n  height: 4px;\n  border-radius: 2px;\n  background: rgba(255, 255, 255, 0.12);\n  margin: 0 auto 20px;\n}\n.wn-header {\n  display: flex;\n  align-items: flex-start;\n  gap: 14px;\n  margin-bottom: 20px;\n}\n.wn-sparkle {\n  font-size: 2rem;\n  flex-shrink: 0;\n  margin-top: 2px;\n}\n.wn-title {\n  font-size: 1.2rem;\n  font-weight: 900;\n  color: #e2e8f0;\n  letter-spacing: -0.02em;\n  margin: 0 0 4px;\n}\n.wn-version {\n  font-size: 0.72rem;\n  color: #64748b;\n  margin: 0;\n}\n.wn-list {\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n  margin-bottom: 28px;\n}\n.wn-item {\n  display: flex;\n  align-items: flex-start;\n  gap: 14px;\n}\n.wn-emoji {\n  font-size: 1.4rem;\n  flex-shrink: 0;\n  width: 32px;\n  text-align: center;\n  margin-top: 1px;\n}\n.wn-item-text {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n.wn-item-title {\n  font-size: 0.88rem;\n  font-weight: 700;\n  color: #e2e8f0;\n}\n.wn-item-desc {\n  font-size: 0.74rem;\n  color: #64748b;\n  line-height: 1.5;\n}\n.wn-btn {\n  display: block;\n  width: 100%;\n  padding: 15px;\n  border-radius: 16px;\n  background:\n    linear-gradient(\n      135deg,\n      #6366f1,\n      #8b5cf6);\n  border: none;\n  color: white;\n  font-size: 1rem;\n  font-weight: 700;\n  cursor: pointer;\n  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);\n  transition: all 0.2s;\n}\n.wn-btn:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 6px 28px rgba(99, 102, 241, 0.5);\n}\n/*# sourceMappingURL=whats-new.component.css.map */\n"] }]
   }], () => [], null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(WhatsNewComponent, { className: "WhatsNewComponent", filePath: "src/app/shared/whats-new.component.ts", lineNumber: 123 });
 })();
 
 // src/app/app.component.ts
+function AppComponent_Conditional_142_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 59);
+    \u0275\u0275element(1, "i", 61);
+    \u0275\u0275text(2, " You're offline. Progress will sync when connected. ");
+    \u0275\u0275elementEnd();
+  }
+}
+function AppComponent_Conditional_143_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "nav", 60)(1, "a", 62);
+    \u0275\u0275element(2, "i", 63);
+    \u0275\u0275elementStart(3, "span");
+    \u0275\u0275text(4, "Home");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(5, "a", 64);
+    \u0275\u0275element(6, "i", 65);
+    \u0275\u0275elementStart(7, "span");
+    \u0275\u0275text(8, "Learn");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(9, "a", 66)(10, "div", 67);
+    \u0275\u0275element(11, "i", 68);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(12, "span");
+    \u0275\u0275text(13, "Practice");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(14, "a", 69);
+    \u0275\u0275element(15, "i", 70);
+    \u0275\u0275elementStart(16, "span");
+    \u0275\u0275text(17, "Progress");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(18, "button", 71);
+    \u0275\u0275listener("click", function AppComponent_Conditional_143_Template_button_click_18_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.openMenu());
+    });
+    \u0275\u0275element(19, "i", 72);
+    \u0275\u0275elementStart(20, "span");
+    \u0275\u0275text(21, "More");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275classProp("active", ctx_r1.isTab("/dashboard"));
+    \u0275\u0275advance(4);
+    \u0275\u0275classProp("active", ctx_r1.isTab("/tutorials") || ctx_r1.isTab("/interview-questions") || ctx_r1.isTab("/coding-questions") || ctx_r1.isTab("/leetcode") || ctx_r1.isTab("/experiences"));
+    \u0275\u0275advance(4);
+    \u0275\u0275classProp("active", ctx_r1.isTab("/daily-challenge") || ctx_r1.isTab("/assessments"));
+    \u0275\u0275advance(5);
+    \u0275\u0275classProp("active", ctx_r1.isTab("/progress") || ctx_r1.isTab("/leaderboard") || ctx_r1.isTab("/achievements"));
+  }
+}
 var AppComponent = class _AppComponent {
-  adMobService;
-  themeService;
   title = "JavaIQ";
-  constructor(adMobService, themeService) {
-    this.adMobService = adMobService;
-    this.themeService = themeService;
+  themeService = inject(ThemeService);
+  connectivity = inject(ConnectivityService);
+  adMobService = inject(AdMobService);
+  router = inject(Router);
+  menuCtrl = inject(MenuController);
+  navUrl = toSignal(this.router.events.pipe(filter((e) => e instanceof NavigationEnd), map((e) => e.urlAfterRedirects)), { initialValue: this.router.url });
+  showBottomNav = computed(() => {
+    const url = this.navUrl() ?? "";
+    return !url.startsWith("/onboarding") && !url.startsWith("/challenge/") && !url.startsWith("/certificate");
+  }, ...ngDevMode ? [{ debugName: "showBottomNav" }] : []);
+  isTab(path) {
+    return (this.navUrl() ?? "").startsWith(path);
+  }
+  openMenu() {
+    this.menuCtrl.open("main-menu");
+  }
+  constructor() {
     addIcons({
       bookOutline,
       chatbubblesOutline,
@@ -2926,14 +3249,35 @@ var AppComponent = class _AppComponent {
       peopleOutline,
       moonOutline,
       sunnyOutline,
-      personCircleOutline
+      personCircleOutline,
+      homeOutline,
+      ribbonOutline,
+      bookmarkOutline,
+      settingsOutline,
+      calendarOutline,
+      briefcaseOutline,
+      barChartOutline,
+      refreshOutline
     });
     this.adMobService.showBanner();
+    this.checkFirstLaunch();
+    effect(() => {
+      if (this.showBottomNav()) {
+        document.documentElement.classList.add("has-bnav");
+      } else {
+        document.documentElement.classList.remove("has-bnav");
+      }
+    });
+  }
+  checkFirstLaunch() {
+    if (!localStorage.getItem("onboarding_done")) {
+      this.router.navigate(["/onboarding"], { replaceUrl: true });
+    }
   }
   static \u0275fac = function AppComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(AdMobService), \u0275\u0275directiveInject(ThemeService));
+    return new (__ngFactoryType__ || _AppComponent)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], decls: 88, vars: 3, consts: [["contentId", "main-content", "type", "overlay"], [1, "ion-no-border"], [1, "menu-header"], [1, "header-glow", "header-glow-1"], [1, "header-glow", "header-glow-2"], [1, "header-bg"], [1, "header-inner"], [1, "header-logo"], [1, "profile-preview"], [1, "avatar"], [1, "profile-info"], [1, "user-name"], [1, "user-level"], [1, "menu-content"], [1, "menu-nav"], [1, "nav-label"], ["lines", "none", 1, "menu-list"], ["auto-hide", "false"], ["routerLink", "/tutorials", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["slot", "start", 1, "icon-box"], ["name", "book-outline"], [1, "active-indicator"], ["routerLink", "/interview-questions", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "chatbubbles-outline"], ["routerLink", "/coding-questions", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "code-slash-outline"], ["routerLink", "/leetcode", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "trophy-outline"], ["routerLink", "/assessments", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "clipboard-outline"], ["routerLink", "/experiences", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "people-outline"], [1, "nav-divider"], ["routerLink", "/about", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "person-circle-outline"], [1, "menu-footer"], [1, "theme-row"], [1, "theme-icon", 3, "name"], [1, "theme-label"], ["mode", "ios", 1, "theme-toggle", 3, "ionChange", "checked"], [1, "version"], [1, "footer-brand"], ["id", "main-content"]], template: function AppComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], decls: 147, vars: 5, consts: [["menuId", "main-menu", "contentId", "main-content", "type", "overlay"], [1, "ion-no-border"], [1, "menu-header"], [1, "header-glow", "header-glow-1"], [1, "header-glow", "header-glow-2"], [1, "header-bg"], [1, "header-inner"], [1, "header-logo"], [1, "profile-preview"], [1, "avatar"], [1, "profile-info"], [1, "user-name"], [1, "user-level"], [1, "menu-content"], [1, "menu-nav"], [1, "nav-label"], ["lines", "none", 1, "menu-list"], ["auto-hide", "false"], ["routerLink", "/dashboard", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["slot", "start", 1, "icon-box"], ["name", "home-outline"], [1, "active-indicator"], ["routerLink", "/tutorials", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "book-outline"], ["routerLink", "/interview-questions", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "chatbubbles-outline"], ["routerLink", "/coding-questions", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "code-slash-outline"], ["routerLink", "/leetcode", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "trophy-outline"], ["routerLink", "/assessments", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "clipboard-outline"], ["routerLink", "/experiences", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "people-outline"], ["routerLink", "/study-plan", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "calendar-outline"], ["routerLink", "/mock-interview", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "briefcase-outline"], ["routerLink", "/progress", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "bar-chart-outline"], ["routerLink", "/review", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "refresh-outline"], ["routerLink", "/bookmarks", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "bookmark-outline"], ["routerLink", "/settings", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "settings-outline"], ["routerLink", "/achievements", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "ribbon-outline"], [1, "nav-divider"], ["routerLink", "/about", "routerLinkActive", "selected", "detail", "false", 1, "nav-item"], ["name", "person-circle-outline"], [1, "menu-footer"], [1, "theme-row"], [1, "theme-icon", 3, "name"], [1, "theme-label"], ["mode", "ios", 1, "theme-toggle", 3, "ionChange", "checked"], [1, "version"], [1, "footer-brand"], ["id", "main-content"], [1, "offline-banner"], ["role", "tablist", "aria-label", "Main navigation", 1, "bottom-nav"], [1, "bi", "bi-wifi-off"], ["routerLink", "/dashboard", "role", "tab", "aria-label", "Home", 1, "bnav-tab"], [1, "fa-solid", "fa-house"], ["routerLink", "/tutorials", "role", "tab", "aria-label", "Learn", 1, "bnav-tab"], [1, "fa-solid", "fa-book-open"], ["routerLink", "/daily-challenge", "role", "tab", "aria-label", "Practice", 1, "bnav-tab", "bnav-center"], [1, "bnav-center-pill"], [1, "fa-solid", "fa-bolt"], ["routerLink", "/progress", "role", "tab", "aria-label", "Progress", 1, "bnav-tab"], [1, "fa-solid", "fa-chart-simple"], ["role", "tab", "aria-label", "More options", 1, "bnav-tab", 3, "click"], [1, "fa-solid", "fa-bars"]], template: function AppComponent_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "ion-app")(1, "ion-menu", 0)(2, "ion-header", 1)(3, "div", 2);
       \u0275\u0275element(4, "div", 3)(5, "div", 4)(6, "div", 5);
@@ -2956,7 +3300,7 @@ var AppComponent = class _AppComponent {
       \u0275\u0275element(26, "ion-icon", 20);
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(27, "ion-label");
-      \u0275\u0275text(28, "Tutorials");
+      \u0275\u0275text(28, "Dashboard");
       \u0275\u0275elementEnd();
       \u0275\u0275element(29, "div", 21);
       \u0275\u0275elementEnd()();
@@ -2964,7 +3308,7 @@ var AppComponent = class _AppComponent {
       \u0275\u0275element(33, "ion-icon", 23);
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(34, "ion-label");
-      \u0275\u0275text(35, "Interview Questions");
+      \u0275\u0275text(35, "Tutorials");
       \u0275\u0275elementEnd();
       \u0275\u0275element(36, "div", 21);
       \u0275\u0275elementEnd()();
@@ -2972,7 +3316,7 @@ var AppComponent = class _AppComponent {
       \u0275\u0275element(40, "ion-icon", 25);
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(41, "ion-label");
-      \u0275\u0275text(42, "Coding Questions");
+      \u0275\u0275text(42, "Interview Questions");
       \u0275\u0275elementEnd();
       \u0275\u0275element(43, "div", 21);
       \u0275\u0275elementEnd()();
@@ -2980,7 +3324,7 @@ var AppComponent = class _AppComponent {
       \u0275\u0275element(47, "ion-icon", 27);
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(48, "ion-label");
-      \u0275\u0275text(49, "LeetCode");
+      \u0275\u0275text(49, "Coding Questions");
       \u0275\u0275elementEnd();
       \u0275\u0275element(50, "div", 21);
       \u0275\u0275elementEnd()();
@@ -2988,7 +3332,7 @@ var AppComponent = class _AppComponent {
       \u0275\u0275element(54, "ion-icon", 29);
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(55, "ion-label");
-      \u0275\u0275text(56, "Assessments");
+      \u0275\u0275text(56, "LeetCode");
       \u0275\u0275elementEnd();
       \u0275\u0275element(57, "div", 21);
       \u0275\u0275elementEnd()();
@@ -2996,50 +3340,121 @@ var AppComponent = class _AppComponent {
       \u0275\u0275element(61, "ion-icon", 31);
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(62, "ion-label");
-      \u0275\u0275text(63, "Interview Stories");
+      \u0275\u0275text(63, "Assessments");
       \u0275\u0275elementEnd();
       \u0275\u0275element(64, "div", 21);
       \u0275\u0275elementEnd()();
-      \u0275\u0275element(65, "div", 32);
-      \u0275\u0275elementStart(66, "ion-menu-toggle", 17)(67, "ion-item", 33)(68, "div", 19);
-      \u0275\u0275element(69, "ion-icon", 34);
+      \u0275\u0275elementStart(65, "ion-menu-toggle", 17)(66, "ion-item", 32)(67, "div", 19);
+      \u0275\u0275element(68, "ion-icon", 33);
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(70, "ion-label");
-      \u0275\u0275text(71, "About Developer");
+      \u0275\u0275elementStart(69, "ion-label");
+      \u0275\u0275text(70, "Interview Stories");
       \u0275\u0275elementEnd();
-      \u0275\u0275element(72, "div", 21);
+      \u0275\u0275element(71, "div", 21);
+      \u0275\u0275elementEnd()();
+      \u0275\u0275elementStart(72, "ion-menu-toggle", 17)(73, "ion-item", 34)(74, "div", 19);
+      \u0275\u0275element(75, "ion-icon", 35);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(76, "ion-label");
+      \u0275\u0275text(77, "Study Plan");
+      \u0275\u0275elementEnd();
+      \u0275\u0275element(78, "div", 21);
+      \u0275\u0275elementEnd()();
+      \u0275\u0275elementStart(79, "ion-menu-toggle", 17)(80, "ion-item", 36)(81, "div", 19);
+      \u0275\u0275element(82, "ion-icon", 37);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(83, "ion-label");
+      \u0275\u0275text(84, "Mock Interview");
+      \u0275\u0275elementEnd();
+      \u0275\u0275element(85, "div", 21);
+      \u0275\u0275elementEnd()();
+      \u0275\u0275elementStart(86, "ion-menu-toggle", 17)(87, "ion-item", 38)(88, "div", 19);
+      \u0275\u0275element(89, "ion-icon", 39);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(90, "ion-label");
+      \u0275\u0275text(91, "My Progress");
+      \u0275\u0275elementEnd();
+      \u0275\u0275element(92, "div", 21);
+      \u0275\u0275elementEnd()();
+      \u0275\u0275elementStart(93, "ion-menu-toggle", 17)(94, "ion-item", 40)(95, "div", 19);
+      \u0275\u0275element(96, "ion-icon", 41);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(97, "ion-label");
+      \u0275\u0275text(98, "Review Queue");
+      \u0275\u0275elementEnd();
+      \u0275\u0275element(99, "div", 21);
+      \u0275\u0275elementEnd()();
+      \u0275\u0275elementStart(100, "ion-menu-toggle", 17)(101, "ion-item", 42)(102, "div", 19);
+      \u0275\u0275element(103, "ion-icon", 43);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(104, "ion-label");
+      \u0275\u0275text(105, "Saved");
+      \u0275\u0275elementEnd();
+      \u0275\u0275element(106, "div", 21);
+      \u0275\u0275elementEnd()();
+      \u0275\u0275elementStart(107, "ion-menu-toggle", 17)(108, "ion-item", 44)(109, "div", 19);
+      \u0275\u0275element(110, "ion-icon", 45);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(111, "ion-label");
+      \u0275\u0275text(112, "Settings");
+      \u0275\u0275elementEnd();
+      \u0275\u0275element(113, "div", 21);
+      \u0275\u0275elementEnd()();
+      \u0275\u0275elementStart(114, "ion-menu-toggle", 17)(115, "ion-item", 46)(116, "div", 19);
+      \u0275\u0275element(117, "ion-icon", 47);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(118, "ion-label");
+      \u0275\u0275text(119, "Achievements");
+      \u0275\u0275elementEnd();
+      \u0275\u0275element(120, "div", 21);
+      \u0275\u0275elementEnd()();
+      \u0275\u0275element(121, "div", 48);
+      \u0275\u0275elementStart(122, "ion-menu-toggle", 17)(123, "ion-item", 49)(124, "div", 19);
+      \u0275\u0275element(125, "ion-icon", 50);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(126, "ion-label");
+      \u0275\u0275text(127, "About Developer");
+      \u0275\u0275elementEnd();
+      \u0275\u0275element(128, "div", 21);
       \u0275\u0275elementEnd()()()()();
-      \u0275\u0275elementStart(73, "ion-footer", 1)(74, "div", 35)(75, "div", 36);
-      \u0275\u0275element(76, "ion-icon", 37);
-      \u0275\u0275elementStart(77, "span", 38);
-      \u0275\u0275text(78);
+      \u0275\u0275elementStart(129, "ion-footer", 1)(130, "div", 51)(131, "div", 52);
+      \u0275\u0275element(132, "ion-icon", 53);
+      \u0275\u0275elementStart(133, "span", 54);
+      \u0275\u0275text(134);
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(79, "ion-toggle", 39);
-      \u0275\u0275listener("ionChange", function AppComponent_Template_ion_toggle_ionChange_79_listener() {
+      \u0275\u0275elementStart(135, "ion-toggle", 55);
+      \u0275\u0275listener("ionChange", function AppComponent_Template_ion_toggle_ionChange_135_listener() {
         return ctx.themeService.toggle();
       });
       \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(80, "span", 40);
-      \u0275\u0275text(81, "v1.2.0");
+      \u0275\u0275elementStart(136, "span", 56);
+      \u0275\u0275text(137, "v1.4.0");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(82, "span", 41);
-      \u0275\u0275text(83, "Built with \u2764\uFE0F for Java developers");
+      \u0275\u0275elementStart(138, "span", 57);
+      \u0275\u0275text(139, "Built with \u2764\uFE0F for Java developers");
       \u0275\u0275elementEnd()()()();
-      \u0275\u0275elementStart(84, "div", 42);
-      \u0275\u0275element(85, "ion-router-outlet");
+      \u0275\u0275elementStart(140, "div", 58);
+      \u0275\u0275element(141, "ion-router-outlet");
       \u0275\u0275elementEnd();
-      \u0275\u0275element(86, "app-custom-alert")(87, "app-achievement-toast");
+      \u0275\u0275conditionalCreate(142, AppComponent_Conditional_142_Template, 3, 0, "div", 59);
+      \u0275\u0275conditionalCreate(143, AppComponent_Conditional_143_Template, 22, 8, "nav", 60);
+      \u0275\u0275element(144, "app-custom-alert")(145, "app-achievement-toast")(146, "app-whats-new");
       \u0275\u0275elementEnd();
     }
     if (rf & 2) {
-      \u0275\u0275advance(76);
+      \u0275\u0275advance(132);
       \u0275\u0275property("name", ctx.themeService.theme() === "dark" ? "moon-outline" : "sunny-outline");
       \u0275\u0275advance(2);
       \u0275\u0275textInterpolate(ctx.themeService.theme() === "dark" ? "Dark Mode" : "Light Mode");
       \u0275\u0275advance();
       \u0275\u0275property("checked", ctx.themeService.theme() === "dark");
+      \u0275\u0275advance(7);
+      \u0275\u0275conditional(!ctx.connectivity.isOnline() ? 142 : -1);
+      \u0275\u0275advance();
+      \u0275\u0275conditional(ctx.showBottomNav() ? 143 : -1);
     }
   }, dependencies: [
+    CommonModule,
     RouterLink,
     RouterLinkActive,
     IonApp,
@@ -3055,13 +3470,15 @@ var AppComponent = class _AppComponent {
     IonFooter,
     IonToggle,
     CustomAlertComponent,
-    AchievementToastComponent
-  ], styles: ['@import "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap";\n\n\n\n#main-content[_ngcontent-%COMP%] {\n  height: 100%;\n}\nion-menu[_ngcontent-%COMP%]::part(container) {\n  background: #0b1120;\n  border-right: 1px solid rgba(255, 255, 255, 0.06);\n}\nion-menu[_ngcontent-%COMP%]::part(backdrop) {\n  background: rgba(0, 0, 0, 0.7);\n  backdrop-filter: blur(4px);\n  -webkit-backdrop-filter: blur(4px);\n}\n.menu-header[_ngcontent-%COMP%] {\n  position: relative;\n  padding: 56px 20px 24px;\n  overflow: hidden;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.06);\n}\n.header-bg[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  background:\n    linear-gradient(\n      145deg,\n      #0b1120 0%,\n      #161b22 100%);\n  z-index: 0;\n}\n.header-glow[_ngcontent-%COMP%] {\n  position: absolute;\n  border-radius: 50%;\n  pointer-events: none;\n  filter: blur(40px);\n  z-index: 0;\n}\n.header-glow-1[_ngcontent-%COMP%] {\n  top: -40px;\n  right: -20px;\n  width: 150px;\n  height: 150px;\n  background:\n    radial-gradient(\n      circle,\n      rgba(139, 92, 246, 0.15) 0%,\n      transparent 70%);\n}\n.header-glow-2[_ngcontent-%COMP%] {\n  bottom: -20px;\n  left: -20px;\n  width: 120px;\n  height: 120px;\n  background:\n    radial-gradient(\n      circle,\n      rgba(16, 185, 129, 0.12) 0%,\n      transparent 70%);\n}\n.header-inner[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 1;\n}\n.header-logo[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 1.8rem;\n  font-weight: 900;\n  background:\n    linear-gradient(\n      135deg,\n      #8b5cf6 0%,\n      #a78bfa 50%,\n      #c4b5fd 100%);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  margin: 0 0 20px;\n  letter-spacing: -0.04em;\n}\n.profile-preview[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 12px;\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid rgba(255, 255, 255, 0.06);\n  border-radius: 16px;\n  transition: all 0.2s ease;\n}\n.profile-preview[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, 0.06);\n  border-color: rgba(255, 255, 255, 0.1);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 40px;\n  height: 40px;\n  border-radius: 12px;\n  background: rgba(139, 92, 246, 0.15);\n  border: 1px solid rgba(139, 92, 246, 0.3);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.2rem;\n}\n.profile-info[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n.user-name[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 0.95rem;\n  font-weight: 700;\n  color: #e2e8f0;\n}\n.user-level[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 0.65rem;\n  font-weight: 500;\n  color: #94a3b8;\n}\n.menu-content[_ngcontent-%COMP%] {\n  --background: #0b1120;\n}\n.menu-nav[_ngcontent-%COMP%] {\n  padding: 24px 16px;\n}\n.nav-label[_ngcontent-%COMP%] {\n  display: block;\n  font-family: "Inter", sans-serif;\n  font-size: 0.65rem;\n  font-weight: 800;\n  letter-spacing: 0.15em;\n  color: #64748b;\n  margin-bottom: 16px;\n  padding-left: 12px;\n}\n.menu-list[_ngcontent-%COMP%] {\n  background: transparent;\n}\n.nav-divider[_ngcontent-%COMP%] {\n  height: 1px;\n  background: rgba(255, 255, 255, 0.06);\n  margin: 8px 12px;\n}\n.nav-item[_ngcontent-%COMP%] {\n  --background: transparent;\n  --padding-start: 12px;\n  --inner-padding-end: 12px;\n  --border-radius: 12px;\n  --color: #94a3b8;\n  margin-bottom: 6px;\n  font-family: "Inter", sans-serif;\n  font-weight: 600;\n  font-size: 0.9rem;\n  transition: all 0.2s;\n  position: relative;\n}\n.nav-item[_ngcontent-%COMP%]::part(native):hover {\n  background: rgba(255, 255, 255, 0.04);\n  color: #e2e8f0;\n}\n.icon-box[_ngcontent-%COMP%] {\n  width: 32px;\n  height: 32px;\n  border-radius: 8px;\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid rgba(255, 255, 255, 0.06);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-right: 12px;\n  transition: all 0.2s;\n}\nion-icon[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #64748b;\n  transition: all 0.2s;\n}\n.nav-item[_ngcontent-%COMP%]::part(native):hover   ion-icon[_ngcontent-%COMP%] {\n  color: #a78bfa;\n}\n.nav-item.selected[_ngcontent-%COMP%] {\n  --color: #e2e8f0;\n  --background: rgba(139,92,246,0.1);\n}\n.nav-item.selected[_ngcontent-%COMP%]   .icon-box[_ngcontent-%COMP%] {\n  background: rgba(139, 92, 246, 0.2);\n  border-color: rgba(139, 92, 246, 0.4);\n}\n.nav-item.selected[_ngcontent-%COMP%]   ion-icon[_ngcontent-%COMP%] {\n  color: #c4b5fd;\n}\n.active-indicator[_ngcontent-%COMP%] {\n  width: 3px;\n  height: 20px;\n  background: #8b5cf6;\n  border-radius: 4px;\n  position: absolute;\n  right: 0;\n  opacity: 0;\n  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);\n  transform: scaleY(0);\n}\n.nav-item.selected[_ngcontent-%COMP%]   .active-indicator[_ngcontent-%COMP%] {\n  opacity: 1;\n  right: 10px;\n  transform: scaleY(1);\n}\n.menu-footer[_ngcontent-%COMP%] {\n  padding: 20px;\n  background: #0b1120;\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  border-top: 1px solid rgba(255, 255, 255, 0.06);\n  align-items: center;\n  text-align: center;\n}\n.theme-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  width: 100%;\n  padding: 10px 0 14px;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.06);\n  margin-bottom: 10px;\n}\n.theme-icon[_ngcontent-%COMP%] {\n  font-size: 1rem;\n  color: #94a3b8;\n  flex-shrink: 0;\n}\n.theme-label[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 0.8rem;\n  font-weight: 600;\n  color: #94a3b8;\n  flex: 1;\n}\n.theme-toggle[_ngcontent-%COMP%] {\n  --background: #334155;\n  --background-checked: #8b5cf6;\n  --handle-background: #fff;\n  --handle-background-checked: #fff;\n  --border-radius: 12px;\n  --handle-border-radius: 10px;\n  --handle-spacing: 2px;\n  --handle-width: 18px;\n  --handle-height: 18px;\n  height: 22px;\n  min-height: unset;\n}\n.version[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 0.6rem;\n  font-weight: 700;\n  color: #475569;\n}\n.footer-brand[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 0.65rem;\n  font-weight: 600;\n  color: #64748b;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .menu-content[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .menu-content[_ngcontent-%COMP%] {\n  --background: #ffffff;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .menu-header[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .menu-header[_ngcontent-%COMP%] {\n  border-bottom-color: #D6DDD2;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .header-bg[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .header-bg[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      145deg,\n      #ffffff 0%,\n      #F5F7F2 100%);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .header-glow-1[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .header-glow-1[_ngcontent-%COMP%] {\n  background:\n    radial-gradient(\n      circle,\n      rgba(27, 67, 50, 0.06) 0%,\n      transparent 70%);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .header-glow-2[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .header-glow-2[_ngcontent-%COMP%] {\n  background:\n    radial-gradient(\n      circle,\n      rgba(64, 145, 108, 0.05) 0%,\n      transparent 70%);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .header-logo[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .header-logo[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      #1B4332 0%,\n      #2D6A4F 50%,\n      #40916C 100%);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .profile-preview[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .profile-preview[_ngcontent-%COMP%] {\n  background: rgba(27, 67, 50, 0.04);\n  border-color: #D6DDD2;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .profile-preview[_ngcontent-%COMP%]:hover, html:not(.dark)   [_nghost-%COMP%]   .profile-preview[_ngcontent-%COMP%]:hover {\n  background: rgba(27, 67, 50, 0.08);\n  border-color: #B7CCBB;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .avatar[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .avatar[_ngcontent-%COMP%] {\n  background: rgba(27, 67, 50, 0.08);\n  border-color: rgba(27, 67, 50, 0.2);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .user-name[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .user-name[_ngcontent-%COMP%] {\n  color: #1B1B1B;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .user-level[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .user-level[_ngcontent-%COMP%] {\n  color: #52665A;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-label[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-label[_ngcontent-%COMP%] {\n  color: #8A9B8F;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-divider[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-divider[_ngcontent-%COMP%] {\n  background: #E8EDE5;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%] {\n  --color: #52665A;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%]::part(native):hover, html:not(.dark)   [_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%]::part(native):hover {\n  background: rgba(27, 67, 50, 0.06);\n  color: #1B1B1B;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%]::part(native):hover   ion-icon[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%]::part(native):hover   ion-icon[_ngcontent-%COMP%] {\n  color: #1B4332;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .icon-box[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .icon-box[_ngcontent-%COMP%] {\n  background: rgba(27, 67, 50, 0.05);\n  border-color: #D6DDD2;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .icon-box[_ngcontent-%COMP%]   ion-icon[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .icon-box[_ngcontent-%COMP%]   ion-icon[_ngcontent-%COMP%] {\n  color: #8A9B8F;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%] {\n  --color: #1B4332;\n  --background: rgba(27,67,50,0.08);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%]   .icon-box[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%]   .icon-box[_ngcontent-%COMP%] {\n  background: rgba(27, 67, 50, 0.12);\n  border-color: rgba(27, 67, 50, 0.25);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%]   .icon-box[_ngcontent-%COMP%]   ion-icon[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%]   .icon-box[_ngcontent-%COMP%]   ion-icon[_ngcontent-%COMP%] {\n  color: #1B4332;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .active-indicator[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .active-indicator[_ngcontent-%COMP%] {\n  background: #1B4332;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .menu-footer[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .menu-footer[_ngcontent-%COMP%] {\n  background: #F5F7F2;\n  border-top-color: #D6DDD2;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .theme-row[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .theme-row[_ngcontent-%COMP%] {\n  border-bottom-color: #D6DDD2;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .theme-icon[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .theme-icon[_ngcontent-%COMP%] {\n  color: #1B4332;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .theme-label[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .theme-label[_ngcontent-%COMP%] {\n  color: #1B1B1B;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .theme-toggle[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .theme-toggle[_ngcontent-%COMP%] {\n  --background: #D6DDD2;\n  --background-checked: #1B4332;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .version[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .version[_ngcontent-%COMP%] {\n  color: #8A9B8F;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .footer-brand[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .footer-brand[_ngcontent-%COMP%] {\n  color: #52665A;\n}\n/*# sourceMappingURL=app.component.css.map */'] });
+    AchievementToastComponent,
+    WhatsNewComponent
+  ], styles: ['@import "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap";\n\n\n\n#main-content[_ngcontent-%COMP%] {\n  height: 100%;\n}\nion-menu[_ngcontent-%COMP%]::part(container) {\n  background: #0b1120;\n  border-right: 1px solid rgba(255, 255, 255, 0.06);\n}\nion-menu[_ngcontent-%COMP%]::part(backdrop) {\n  background: rgba(0, 0, 0, 0.7);\n  backdrop-filter: blur(4px);\n  -webkit-backdrop-filter: blur(4px);\n}\n.menu-header[_ngcontent-%COMP%] {\n  position: relative;\n  padding: 56px 20px 24px;\n  overflow: hidden;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.06);\n}\n.header-bg[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  background:\n    linear-gradient(\n      145deg,\n      #0b1120 0%,\n      #161b22 100%);\n  z-index: 0;\n}\n.header-glow[_ngcontent-%COMP%] {\n  position: absolute;\n  border-radius: 50%;\n  pointer-events: none;\n  filter: blur(40px);\n  z-index: 0;\n}\n.header-glow-1[_ngcontent-%COMP%] {\n  top: -40px;\n  right: -20px;\n  width: 150px;\n  height: 150px;\n  background:\n    radial-gradient(\n      circle,\n      rgba(139, 92, 246, 0.15) 0%,\n      transparent 70%);\n}\n.header-glow-2[_ngcontent-%COMP%] {\n  bottom: -20px;\n  left: -20px;\n  width: 120px;\n  height: 120px;\n  background:\n    radial-gradient(\n      circle,\n      rgba(16, 185, 129, 0.12) 0%,\n      transparent 70%);\n}\n.header-inner[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 1;\n}\n.header-logo[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 1.8rem;\n  font-weight: 900;\n  background:\n    linear-gradient(\n      135deg,\n      #8b5cf6 0%,\n      #a78bfa 50%,\n      #c4b5fd 100%);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  margin: 0 0 20px;\n  letter-spacing: -0.04em;\n}\n.profile-preview[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 12px;\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid rgba(255, 255, 255, 0.06);\n  border-radius: 16px;\n  transition: all 0.2s ease;\n}\n.profile-preview[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, 0.06);\n  border-color: rgba(255, 255, 255, 0.1);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 40px;\n  height: 40px;\n  border-radius: 12px;\n  background: rgba(139, 92, 246, 0.15);\n  border: 1px solid rgba(139, 92, 246, 0.3);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.2rem;\n}\n.profile-info[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n.user-name[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 0.95rem;\n  font-weight: 700;\n  color: #e2e8f0;\n}\n.user-level[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 0.75rem;\n  font-weight: 500;\n  color: #94a3b8;\n}\n.menu-content[_ngcontent-%COMP%] {\n  --background: #0b1120;\n}\n.menu-nav[_ngcontent-%COMP%] {\n  padding: 24px 16px;\n}\n.nav-label[_ngcontent-%COMP%] {\n  display: block;\n  font-family: "Inter", sans-serif;\n  font-size: 0.75rem;\n  font-weight: 800;\n  letter-spacing: 0.12em;\n  color: #64748b;\n  margin-bottom: 16px;\n  padding-left: 12px;\n}\n.menu-list[_ngcontent-%COMP%] {\n  background: transparent;\n}\n.nav-divider[_ngcontent-%COMP%] {\n  height: 1px;\n  background: rgba(255, 255, 255, 0.06);\n  margin: 8px 12px;\n}\n.nav-item[_ngcontent-%COMP%] {\n  --background: transparent;\n  --padding-start: 12px;\n  --inner-padding-end: 12px;\n  --border-radius: 12px;\n  --color: #94a3b8;\n  margin-bottom: 6px;\n  font-family: "Inter", sans-serif;\n  font-weight: 600;\n  font-size: 0.9rem;\n  transition: all 0.2s;\n  position: relative;\n}\n.nav-item[_ngcontent-%COMP%]::part(native):hover {\n  background: rgba(255, 255, 255, 0.04);\n  color: #e2e8f0;\n}\n.icon-box[_ngcontent-%COMP%] {\n  width: 32px;\n  height: 32px;\n  border-radius: 8px;\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid rgba(255, 255, 255, 0.06);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-right: 12px;\n  transition: all 0.2s;\n}\nion-icon[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #64748b;\n  transition: all 0.2s;\n}\n.nav-item[_ngcontent-%COMP%]::part(native):hover   ion-icon[_ngcontent-%COMP%] {\n  color: #a78bfa;\n}\n.nav-item.selected[_ngcontent-%COMP%] {\n  --color: #e2e8f0;\n  --background: rgba(139,92,246,0.1);\n}\n.nav-item.selected[_ngcontent-%COMP%]   .icon-box[_ngcontent-%COMP%] {\n  background: rgba(139, 92, 246, 0.2);\n  border-color: rgba(139, 92, 246, 0.4);\n}\n.nav-item.selected[_ngcontent-%COMP%]   ion-icon[_ngcontent-%COMP%] {\n  color: #c4b5fd;\n}\n.active-indicator[_ngcontent-%COMP%] {\n  width: 3px;\n  height: 20px;\n  background: #8b5cf6;\n  border-radius: 4px;\n  position: absolute;\n  right: 0;\n  opacity: 0;\n  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);\n  transform: scaleY(0);\n}\n.nav-item.selected[_ngcontent-%COMP%]   .active-indicator[_ngcontent-%COMP%] {\n  opacity: 1;\n  right: 10px;\n  transform: scaleY(1);\n}\n.menu-footer[_ngcontent-%COMP%] {\n  padding: 20px;\n  background: #0b1120;\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  border-top: 1px solid rgba(255, 255, 255, 0.06);\n  align-items: center;\n  text-align: center;\n}\n.theme-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  width: 100%;\n  padding: 10px 0 14px;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.06);\n  margin-bottom: 10px;\n}\n.theme-icon[_ngcontent-%COMP%] {\n  font-size: 1rem;\n  color: #94a3b8;\n  flex-shrink: 0;\n}\n.theme-label[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 0.8rem;\n  font-weight: 600;\n  color: #94a3b8;\n  flex: 1;\n}\n.theme-toggle[_ngcontent-%COMP%] {\n  --background: #334155;\n  --background-checked: #8b5cf6;\n  --handle-background: #fff;\n  --handle-background-checked: #fff;\n  --border-radius: 12px;\n  --handle-border-radius: 10px;\n  --handle-spacing: 2px;\n  --handle-width: 18px;\n  --handle-height: 18px;\n  height: 22px;\n  min-height: unset;\n}\n.version[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: #475569;\n}\n.footer-brand[_ngcontent-%COMP%] {\n  font-family: "Inter", sans-serif;\n  font-size: 0.75rem;\n  font-weight: 600;\n  color: #64748b;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .menu-content[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .menu-content[_ngcontent-%COMP%] {\n  --background: #ffffff;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .menu-header[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .menu-header[_ngcontent-%COMP%] {\n  border-bottom-color: #D6DDD2;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .header-bg[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .header-bg[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      145deg,\n      #ffffff 0%,\n      #F5F7F2 100%);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .header-glow-1[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .header-glow-1[_ngcontent-%COMP%] {\n  background:\n    radial-gradient(\n      circle,\n      rgba(27, 67, 50, 0.06) 0%,\n      transparent 70%);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .header-glow-2[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .header-glow-2[_ngcontent-%COMP%] {\n  background:\n    radial-gradient(\n      circle,\n      rgba(64, 145, 108, 0.05) 0%,\n      transparent 70%);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .header-logo[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .header-logo[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      #1B4332 0%,\n      #2D6A4F 50%,\n      #40916C 100%);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .profile-preview[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .profile-preview[_ngcontent-%COMP%] {\n  background: rgba(27, 67, 50, 0.04);\n  border-color: #D6DDD2;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .profile-preview[_ngcontent-%COMP%]:hover, html:not(.dark)   [_nghost-%COMP%]   .profile-preview[_ngcontent-%COMP%]:hover {\n  background: rgba(27, 67, 50, 0.08);\n  border-color: #B7CCBB;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .avatar[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .avatar[_ngcontent-%COMP%] {\n  background: rgba(27, 67, 50, 0.08);\n  border-color: rgba(27, 67, 50, 0.2);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .user-name[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .user-name[_ngcontent-%COMP%] {\n  color: #1B1B1B;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .user-level[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .user-level[_ngcontent-%COMP%] {\n  color: #52665A;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-label[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-label[_ngcontent-%COMP%] {\n  color: #8A9B8F;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-divider[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-divider[_ngcontent-%COMP%] {\n  background: #E8EDE5;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%] {\n  --color: #52665A;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%]::part(native):hover, html:not(.dark)   [_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%]::part(native):hover {\n  background: rgba(27, 67, 50, 0.06);\n  color: #1B1B1B;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%]::part(native):hover   ion-icon[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-item[_ngcontent-%COMP%]::part(native):hover   ion-icon[_ngcontent-%COMP%] {\n  color: #1B4332;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .icon-box[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .icon-box[_ngcontent-%COMP%] {\n  background: rgba(27, 67, 50, 0.05);\n  border-color: #D6DDD2;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .icon-box[_ngcontent-%COMP%]   ion-icon[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .icon-box[_ngcontent-%COMP%]   ion-icon[_ngcontent-%COMP%] {\n  color: #8A9B8F;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%] {\n  --color: #1B4332;\n  --background: rgba(27,67,50,0.08);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%]   .icon-box[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%]   .icon-box[_ngcontent-%COMP%] {\n  background: rgba(27, 67, 50, 0.12);\n  border-color: rgba(27, 67, 50, 0.25);\n}\nhtml:not(.dark)[_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%]   .icon-box[_ngcontent-%COMP%]   ion-icon[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .nav-item.selected[_ngcontent-%COMP%]   .icon-box[_ngcontent-%COMP%]   ion-icon[_ngcontent-%COMP%] {\n  color: #1B4332;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .active-indicator[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .active-indicator[_ngcontent-%COMP%] {\n  background: #1B4332;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .menu-footer[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .menu-footer[_ngcontent-%COMP%] {\n  background: #F5F7F2;\n  border-top-color: #D6DDD2;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .theme-row[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .theme-row[_ngcontent-%COMP%] {\n  border-bottom-color: #D6DDD2;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .theme-icon[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .theme-icon[_ngcontent-%COMP%] {\n  color: #1B4332;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .theme-label[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .theme-label[_ngcontent-%COMP%] {\n  color: #1B1B1B;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .theme-toggle[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .theme-toggle[_ngcontent-%COMP%] {\n  --background: #D6DDD2;\n  --background-checked: #1B4332;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .version[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .version[_ngcontent-%COMP%] {\n  color: #8A9B8F;\n}\nhtml:not(.dark)[_nghost-%COMP%]   .footer-brand[_ngcontent-%COMP%], html:not(.dark)   [_nghost-%COMP%]   .footer-brand[_ngcontent-%COMP%] {\n  color: #52665A;\n}\n.offline-banner[_ngcontent-%COMP%] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 99999;\n  background: #b45309;\n  color: #fff;\n  font-size: 0.875rem;\n  font-weight: 600;\n  text-align: center;\n  padding: 8px 16px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  letter-spacing: 0.01em;\n  animation: _ngcontent-%COMP%_slideDown 0.3s ease-out;\n}\n@keyframes _ngcontent-%COMP%_slideDown {\n  from {\n    transform: translateY(-100%);\n  }\n  to {\n    transform: translateY(0);\n  }\n}\n.bottom-nav[_ngcontent-%COMP%] {\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  z-index: 200;\n  display: flex;\n  align-items: stretch;\n  height: calc(60px + env(safe-area-inset-bottom, 0px));\n  padding-bottom: env(safe-area-inset-bottom, 0px);\n  background: #ffffff;\n  border-top: 1px solid #D6DDD2;\n  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);\n}\n.bnav-tab[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: 3px;\n  text-decoration: none;\n  color: #94A3B8;\n  background: none;\n  border: none;\n  cursor: pointer;\n  font-family: "Inter", sans-serif;\n  transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);\n  padding: 0;\n  position: relative;\n}\n.bnav-tab[_ngcontent-%COMP%]   i[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n  line-height: 1;\n  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.bnav-tab[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  font-weight: 600;\n  letter-spacing: 0.01em;\n  line-height: 1;\n}\n.bnav-tab.active[_ngcontent-%COMP%] {\n  color: #1B4332;\n}\n.bnav-tab.active[_ngcontent-%COMP%]   i[_ngcontent-%COMP%] {\n  transform: scale(1.12);\n}\n.bnav-tab.active[_ngcontent-%COMP%]::after {\n  content: "";\n  position: absolute;\n  top: 0;\n  left: 50%;\n  transform: translateX(-50%);\n  width: 32px;\n  height: 2px;\n  background: #1B4332;\n  border-radius: 0 0 4px 4px;\n}\n.bnav-center[_ngcontent-%COMP%] {\n  position: relative;\n}\n.bnav-center-pill[_ngcontent-%COMP%] {\n  width: 44px;\n  height: 32px;\n  border-radius: 12px;\n  background:\n    linear-gradient(\n      135deg,\n      #1B4332,\n      #2D6A4F);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.35);\n  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;\n}\n.bnav-center-pill[_ngcontent-%COMP%]   i[_ngcontent-%COMP%] {\n  font-size: 1rem;\n  color: #ffffff !important;\n}\n.bnav-center.active[_ngcontent-%COMP%]   .bnav-center-pill[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      #2D6A4F,\n      #40916C);\n  box-shadow: 0 6px 16px rgba(27, 67, 50, 0.45);\n  transform: scale(1.05);\n}\n.bnav-center[_ngcontent-%COMP%]::after {\n  display: none;\n}\nhtml.dark[_nghost-%COMP%]   .bottom-nav[_ngcontent-%COMP%], html.dark   [_nghost-%COMP%]   .bottom-nav[_ngcontent-%COMP%] {\n  background: #0D1A10;\n  border-top-color: rgba(255, 255, 255, 0.07);\n  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);\n}\nhtml.dark[_nghost-%COMP%]   .bnav-tab[_ngcontent-%COMP%], html.dark   [_nghost-%COMP%]   .bnav-tab[_ngcontent-%COMP%] {\n  color: #4A6B55;\n}\nhtml.dark[_nghost-%COMP%]   .bnav-tab.active[_ngcontent-%COMP%], html.dark   [_nghost-%COMP%]   .bnav-tab.active[_ngcontent-%COMP%] {\n  color: #52B788;\n}\nhtml.dark[_nghost-%COMP%]   .bnav-tab.active[_ngcontent-%COMP%]::after, html.dark   [_nghost-%COMP%]   .bnav-tab.active[_ngcontent-%COMP%]::after {\n  background: #52B788;\n}\n/*# sourceMappingURL=app.component.css.map */'] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AppComponent, [{
     type: Component,
     args: [{ selector: "app-root", standalone: true, imports: [
+      CommonModule,
       RouterLink,
       RouterLinkActive,
       IonApp,
@@ -3077,10 +3494,11 @@ var AppComponent = class _AppComponent {
       IonFooter,
       IonToggle,
       CustomAlertComponent,
-      AchievementToastComponent
+      AchievementToastComponent,
+      WhatsNewComponent
     ], template: `
     <ion-app>
-      <ion-menu contentId="main-content" type="overlay">
+      <ion-menu menuId="main-menu" contentId="main-content" type="overlay">
         <ion-header class="ion-no-border">
           <div class="menu-header">
             <div class="header-glow header-glow-1"></div>
@@ -3103,6 +3521,14 @@ var AppComponent = class _AppComponent {
           <div class="menu-nav">
             <span class="nav-label">LEARNING PATHS</span>
             <ion-list lines="none" class="menu-list">
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/dashboard" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="home-outline"></ion-icon></div>
+                  <ion-label>Dashboard</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/tutorials" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="book-outline"></ion-icon></div>
@@ -3151,6 +3577,62 @@ var AppComponent = class _AppComponent {
                 </ion-item>
               </ion-menu-toggle>
 
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/study-plan" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="calendar-outline"></ion-icon></div>
+                  <ion-label>Study Plan</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/mock-interview" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="briefcase-outline"></ion-icon></div>
+                  <ion-label>Mock Interview</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/progress" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="bar-chart-outline"></ion-icon></div>
+                  <ion-label>My Progress</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/review" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="refresh-outline"></ion-icon></div>
+                  <ion-label>Review Queue</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/bookmarks" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="bookmark-outline"></ion-icon></div>
+                  <ion-label>Saved</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/settings" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="settings-outline"></ion-icon></div>
+                  <ion-label>Settings</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/achievements" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="ribbon-outline"></ion-icon></div>
+                  <ion-label>Achievements</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
               <div class="nav-divider"></div>
 
               <ion-menu-toggle auto-hide="false">
@@ -3176,7 +3658,7 @@ var AppComponent = class _AppComponent {
                 class="theme-toggle">
               </ion-toggle>
             </div>
-            <span class="version">v1.2.0</span>
+            <span class="version">v1.4.0</span>
             <span class="footer-brand">Built with \u2764\uFE0F for Java developers</span>
           </div>
         </ion-footer>
@@ -3185,15 +3667,59 @@ var AppComponent = class _AppComponent {
       <div id="main-content">
         <ion-router-outlet></ion-router-outlet>
       </div>
-      
+
+      <!-- Offline Banner -->
+      @if (!connectivity.isOnline()) {
+        <div class="offline-banner">
+          <i class="bi bi-wifi-off"></i>
+          You're offline. Progress will sync when connected.
+        </div>
+      }
+
+      <!-- Bottom Navigation Bar -->
+      @if (showBottomNav()) {
+        <nav class="bottom-nav" role="tablist" aria-label="Main navigation">
+          <a class="bnav-tab" [class.active]="isTab('/dashboard')"
+             routerLink="/dashboard" role="tab" aria-label="Home">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+          </a>
+          <a class="bnav-tab"
+             [class.active]="isTab('/tutorials') || isTab('/interview-questions') || isTab('/coding-questions') || isTab('/leetcode') || isTab('/experiences')"
+             routerLink="/tutorials" role="tab" aria-label="Learn">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Learn</span>
+          </a>
+          <a class="bnav-tab bnav-center"
+             [class.active]="isTab('/daily-challenge') || isTab('/assessments')"
+             routerLink="/daily-challenge" role="tab" aria-label="Practice">
+            <div class="bnav-center-pill">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <span>Practice</span>
+          </a>
+          <a class="bnav-tab"
+             [class.active]="isTab('/progress') || isTab('/leaderboard') || isTab('/achievements')"
+             routerLink="/progress" role="tab" aria-label="Progress">
+            <i class="fa-solid fa-chart-simple"></i>
+            <span>Progress</span>
+          </a>
+          <button class="bnav-tab" (click)="openMenu()" role="tab" aria-label="More options">
+            <i class="fa-solid fa-bars"></i>
+            <span>More</span>
+          </button>
+        </nav>
+      }
+
       <app-custom-alert></app-custom-alert>
       <app-achievement-toast></app-achievement-toast>
+      <app-whats-new></app-whats-new>
     </ion-app>
-  `, styles: ['@import "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap";\n\n/* angular:styles/component:css;3af8597d79e65be28c4eee6ec90293c63f26ec4c048c2a1d655494b30eea1a28;/Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/src/app/app.component.ts */\n#main-content {\n  height: 100%;\n}\nion-menu::part(container) {\n  background: #0b1120;\n  border-right: 1px solid rgba(255, 255, 255, 0.06);\n}\nion-menu::part(backdrop) {\n  background: rgba(0, 0, 0, 0.7);\n  backdrop-filter: blur(4px);\n  -webkit-backdrop-filter: blur(4px);\n}\n.menu-header {\n  position: relative;\n  padding: 56px 20px 24px;\n  overflow: hidden;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.06);\n}\n.header-bg {\n  position: absolute;\n  inset: 0;\n  background:\n    linear-gradient(\n      145deg,\n      #0b1120 0%,\n      #161b22 100%);\n  z-index: 0;\n}\n.header-glow {\n  position: absolute;\n  border-radius: 50%;\n  pointer-events: none;\n  filter: blur(40px);\n  z-index: 0;\n}\n.header-glow-1 {\n  top: -40px;\n  right: -20px;\n  width: 150px;\n  height: 150px;\n  background:\n    radial-gradient(\n      circle,\n      rgba(139, 92, 246, 0.15) 0%,\n      transparent 70%);\n}\n.header-glow-2 {\n  bottom: -20px;\n  left: -20px;\n  width: 120px;\n  height: 120px;\n  background:\n    radial-gradient(\n      circle,\n      rgba(16, 185, 129, 0.12) 0%,\n      transparent 70%);\n}\n.header-inner {\n  position: relative;\n  z-index: 1;\n}\n.header-logo {\n  font-family: "Inter", sans-serif;\n  font-size: 1.8rem;\n  font-weight: 900;\n  background:\n    linear-gradient(\n      135deg,\n      #8b5cf6 0%,\n      #a78bfa 50%,\n      #c4b5fd 100%);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  margin: 0 0 20px;\n  letter-spacing: -0.04em;\n}\n.profile-preview {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 12px;\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid rgba(255, 255, 255, 0.06);\n  border-radius: 16px;\n  transition: all 0.2s ease;\n}\n.profile-preview:hover {\n  background: rgba(255, 255, 255, 0.06);\n  border-color: rgba(255, 255, 255, 0.1);\n}\n.avatar {\n  width: 40px;\n  height: 40px;\n  border-radius: 12px;\n  background: rgba(139, 92, 246, 0.15);\n  border: 1px solid rgba(139, 92, 246, 0.3);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.2rem;\n}\n.profile-info {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n.user-name {\n  font-family: "Inter", sans-serif;\n  font-size: 0.95rem;\n  font-weight: 700;\n  color: #e2e8f0;\n}\n.user-level {\n  font-family: "Inter", sans-serif;\n  font-size: 0.65rem;\n  font-weight: 500;\n  color: #94a3b8;\n}\n.menu-content {\n  --background: #0b1120;\n}\n.menu-nav {\n  padding: 24px 16px;\n}\n.nav-label {\n  display: block;\n  font-family: "Inter", sans-serif;\n  font-size: 0.65rem;\n  font-weight: 800;\n  letter-spacing: 0.15em;\n  color: #64748b;\n  margin-bottom: 16px;\n  padding-left: 12px;\n}\n.menu-list {\n  background: transparent;\n}\n.nav-divider {\n  height: 1px;\n  background: rgba(255, 255, 255, 0.06);\n  margin: 8px 12px;\n}\n.nav-item {\n  --background: transparent;\n  --padding-start: 12px;\n  --inner-padding-end: 12px;\n  --border-radius: 12px;\n  --color: #94a3b8;\n  margin-bottom: 6px;\n  font-family: "Inter", sans-serif;\n  font-weight: 600;\n  font-size: 0.9rem;\n  transition: all 0.2s;\n  position: relative;\n}\n.nav-item::part(native):hover {\n  background: rgba(255, 255, 255, 0.04);\n  color: #e2e8f0;\n}\n.icon-box {\n  width: 32px;\n  height: 32px;\n  border-radius: 8px;\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid rgba(255, 255, 255, 0.06);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-right: 12px;\n  transition: all 0.2s;\n}\nion-icon {\n  font-size: 16px;\n  color: #64748b;\n  transition: all 0.2s;\n}\n.nav-item::part(native):hover ion-icon {\n  color: #a78bfa;\n}\n.nav-item.selected {\n  --color: #e2e8f0;\n  --background: rgba(139,92,246,0.1);\n}\n.nav-item.selected .icon-box {\n  background: rgba(139, 92, 246, 0.2);\n  border-color: rgba(139, 92, 246, 0.4);\n}\n.nav-item.selected ion-icon {\n  color: #c4b5fd;\n}\n.active-indicator {\n  width: 3px;\n  height: 20px;\n  background: #8b5cf6;\n  border-radius: 4px;\n  position: absolute;\n  right: 0;\n  opacity: 0;\n  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);\n  transform: scaleY(0);\n}\n.nav-item.selected .active-indicator {\n  opacity: 1;\n  right: 10px;\n  transform: scaleY(1);\n}\n.menu-footer {\n  padding: 20px;\n  background: #0b1120;\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  border-top: 1px solid rgba(255, 255, 255, 0.06);\n  align-items: center;\n  text-align: center;\n}\n.theme-row {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  width: 100%;\n  padding: 10px 0 14px;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.06);\n  margin-bottom: 10px;\n}\n.theme-icon {\n  font-size: 1rem;\n  color: #94a3b8;\n  flex-shrink: 0;\n}\n.theme-label {\n  font-family: "Inter", sans-serif;\n  font-size: 0.8rem;\n  font-weight: 600;\n  color: #94a3b8;\n  flex: 1;\n}\n.theme-toggle {\n  --background: #334155;\n  --background-checked: #8b5cf6;\n  --handle-background: #fff;\n  --handle-background-checked: #fff;\n  --border-radius: 12px;\n  --handle-border-radius: 10px;\n  --handle-spacing: 2px;\n  --handle-width: 18px;\n  --handle-height: 18px;\n  height: 22px;\n  min-height: unset;\n}\n.version {\n  font-family: "Inter", sans-serif;\n  font-size: 0.6rem;\n  font-weight: 700;\n  color: #475569;\n}\n.footer-brand {\n  font-family: "Inter", sans-serif;\n  font-size: 0.65rem;\n  font-weight: 600;\n  color: #64748b;\n}\n:host-context(html:not(.dark)) .menu-content {\n  --background: #ffffff;\n}\n:host-context(html:not(.dark)) .menu-header {\n  border-bottom-color: #D6DDD2;\n}\n:host-context(html:not(.dark)) .header-bg {\n  background:\n    linear-gradient(\n      145deg,\n      #ffffff 0%,\n      #F5F7F2 100%);\n}\n:host-context(html:not(.dark)) .header-glow-1 {\n  background:\n    radial-gradient(\n      circle,\n      rgba(27, 67, 50, 0.06) 0%,\n      transparent 70%);\n}\n:host-context(html:not(.dark)) .header-glow-2 {\n  background:\n    radial-gradient(\n      circle,\n      rgba(64, 145, 108, 0.05) 0%,\n      transparent 70%);\n}\n:host-context(html:not(.dark)) .header-logo {\n  background:\n    linear-gradient(\n      135deg,\n      #1B4332 0%,\n      #2D6A4F 50%,\n      #40916C 100%);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n}\n:host-context(html:not(.dark)) .profile-preview {\n  background: rgba(27, 67, 50, 0.04);\n  border-color: #D6DDD2;\n}\n:host-context(html:not(.dark)) .profile-preview:hover {\n  background: rgba(27, 67, 50, 0.08);\n  border-color: #B7CCBB;\n}\n:host-context(html:not(.dark)) .avatar {\n  background: rgba(27, 67, 50, 0.08);\n  border-color: rgba(27, 67, 50, 0.2);\n}\n:host-context(html:not(.dark)) .user-name {\n  color: #1B1B1B;\n}\n:host-context(html:not(.dark)) .user-level {\n  color: #52665A;\n}\n:host-context(html:not(.dark)) .nav-label {\n  color: #8A9B8F;\n}\n:host-context(html:not(.dark)) .nav-divider {\n  background: #E8EDE5;\n}\n:host-context(html:not(.dark)) .nav-item {\n  --color: #52665A;\n}\n:host-context(html:not(.dark)) .nav-item::part(native):hover {\n  background: rgba(27, 67, 50, 0.06);\n  color: #1B1B1B;\n}\n:host-context(html:not(.dark)) .nav-item::part(native):hover ion-icon {\n  color: #1B4332;\n}\n:host-context(html:not(.dark)) .icon-box {\n  background: rgba(27, 67, 50, 0.05);\n  border-color: #D6DDD2;\n}\n:host-context(html:not(.dark)) .icon-box ion-icon {\n  color: #8A9B8F;\n}\n:host-context(html:not(.dark)) .nav-item.selected {\n  --color: #1B4332;\n  --background: rgba(27,67,50,0.08);\n}\n:host-context(html:not(.dark)) .nav-item.selected .icon-box {\n  background: rgba(27, 67, 50, 0.12);\n  border-color: rgba(27, 67, 50, 0.25);\n}\n:host-context(html:not(.dark)) .nav-item.selected .icon-box ion-icon {\n  color: #1B4332;\n}\n:host-context(html:not(.dark)) .active-indicator {\n  background: #1B4332;\n}\n:host-context(html:not(.dark)) .menu-footer {\n  background: #F5F7F2;\n  border-top-color: #D6DDD2;\n}\n:host-context(html:not(.dark)) .theme-row {\n  border-bottom-color: #D6DDD2;\n}\n:host-context(html:not(.dark)) .theme-icon {\n  color: #1B4332;\n}\n:host-context(html:not(.dark)) .theme-label {\n  color: #1B1B1B;\n}\n:host-context(html:not(.dark)) .theme-toggle {\n  --background: #D6DDD2;\n  --background-checked: #1B4332;\n}\n:host-context(html:not(.dark)) .version {\n  color: #8A9B8F;\n}\n:host-context(html:not(.dark)) .footer-brand {\n  color: #52665A;\n}\n/*# sourceMappingURL=app.component.css.map */\n'] }]
-  }], () => [{ type: AdMobService }, { type: ThemeService }], null);
+  `, styles: ['@import "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap";\n\n/* angular:styles/component:css;52345defb90bf4a6f074282c75072cf0061426bfca6f6ae23c7b3cf8ef485708;/Users/sathishkumarramalingam/projects/JavaIQ/src/app/app.component.ts */\n#main-content {\n  height: 100%;\n}\nion-menu::part(container) {\n  background: #0b1120;\n  border-right: 1px solid rgba(255, 255, 255, 0.06);\n}\nion-menu::part(backdrop) {\n  background: rgba(0, 0, 0, 0.7);\n  backdrop-filter: blur(4px);\n  -webkit-backdrop-filter: blur(4px);\n}\n.menu-header {\n  position: relative;\n  padding: 56px 20px 24px;\n  overflow: hidden;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.06);\n}\n.header-bg {\n  position: absolute;\n  inset: 0;\n  background:\n    linear-gradient(\n      145deg,\n      #0b1120 0%,\n      #161b22 100%);\n  z-index: 0;\n}\n.header-glow {\n  position: absolute;\n  border-radius: 50%;\n  pointer-events: none;\n  filter: blur(40px);\n  z-index: 0;\n}\n.header-glow-1 {\n  top: -40px;\n  right: -20px;\n  width: 150px;\n  height: 150px;\n  background:\n    radial-gradient(\n      circle,\n      rgba(139, 92, 246, 0.15) 0%,\n      transparent 70%);\n}\n.header-glow-2 {\n  bottom: -20px;\n  left: -20px;\n  width: 120px;\n  height: 120px;\n  background:\n    radial-gradient(\n      circle,\n      rgba(16, 185, 129, 0.12) 0%,\n      transparent 70%);\n}\n.header-inner {\n  position: relative;\n  z-index: 1;\n}\n.header-logo {\n  font-family: "Inter", sans-serif;\n  font-size: 1.8rem;\n  font-weight: 900;\n  background:\n    linear-gradient(\n      135deg,\n      #8b5cf6 0%,\n      #a78bfa 50%,\n      #c4b5fd 100%);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  margin: 0 0 20px;\n  letter-spacing: -0.04em;\n}\n.profile-preview {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 12px;\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid rgba(255, 255, 255, 0.06);\n  border-radius: 16px;\n  transition: all 0.2s ease;\n}\n.profile-preview:hover {\n  background: rgba(255, 255, 255, 0.06);\n  border-color: rgba(255, 255, 255, 0.1);\n}\n.avatar {\n  width: 40px;\n  height: 40px;\n  border-radius: 12px;\n  background: rgba(139, 92, 246, 0.15);\n  border: 1px solid rgba(139, 92, 246, 0.3);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.2rem;\n}\n.profile-info {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n.user-name {\n  font-family: "Inter", sans-serif;\n  font-size: 0.95rem;\n  font-weight: 700;\n  color: #e2e8f0;\n}\n.user-level {\n  font-family: "Inter", sans-serif;\n  font-size: 0.75rem;\n  font-weight: 500;\n  color: #94a3b8;\n}\n.menu-content {\n  --background: #0b1120;\n}\n.menu-nav {\n  padding: 24px 16px;\n}\n.nav-label {\n  display: block;\n  font-family: "Inter", sans-serif;\n  font-size: 0.75rem;\n  font-weight: 800;\n  letter-spacing: 0.12em;\n  color: #64748b;\n  margin-bottom: 16px;\n  padding-left: 12px;\n}\n.menu-list {\n  background: transparent;\n}\n.nav-divider {\n  height: 1px;\n  background: rgba(255, 255, 255, 0.06);\n  margin: 8px 12px;\n}\n.nav-item {\n  --background: transparent;\n  --padding-start: 12px;\n  --inner-padding-end: 12px;\n  --border-radius: 12px;\n  --color: #94a3b8;\n  margin-bottom: 6px;\n  font-family: "Inter", sans-serif;\n  font-weight: 600;\n  font-size: 0.9rem;\n  transition: all 0.2s;\n  position: relative;\n}\n.nav-item::part(native):hover {\n  background: rgba(255, 255, 255, 0.04);\n  color: #e2e8f0;\n}\n.icon-box {\n  width: 32px;\n  height: 32px;\n  border-radius: 8px;\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid rgba(255, 255, 255, 0.06);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-right: 12px;\n  transition: all 0.2s;\n}\nion-icon {\n  font-size: 16px;\n  color: #64748b;\n  transition: all 0.2s;\n}\n.nav-item::part(native):hover ion-icon {\n  color: #a78bfa;\n}\n.nav-item.selected {\n  --color: #e2e8f0;\n  --background: rgba(139,92,246,0.1);\n}\n.nav-item.selected .icon-box {\n  background: rgba(139, 92, 246, 0.2);\n  border-color: rgba(139, 92, 246, 0.4);\n}\n.nav-item.selected ion-icon {\n  color: #c4b5fd;\n}\n.active-indicator {\n  width: 3px;\n  height: 20px;\n  background: #8b5cf6;\n  border-radius: 4px;\n  position: absolute;\n  right: 0;\n  opacity: 0;\n  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);\n  transform: scaleY(0);\n}\n.nav-item.selected .active-indicator {\n  opacity: 1;\n  right: 10px;\n  transform: scaleY(1);\n}\n.menu-footer {\n  padding: 20px;\n  background: #0b1120;\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  border-top: 1px solid rgba(255, 255, 255, 0.06);\n  align-items: center;\n  text-align: center;\n}\n.theme-row {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  width: 100%;\n  padding: 10px 0 14px;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.06);\n  margin-bottom: 10px;\n}\n.theme-icon {\n  font-size: 1rem;\n  color: #94a3b8;\n  flex-shrink: 0;\n}\n.theme-label {\n  font-family: "Inter", sans-serif;\n  font-size: 0.8rem;\n  font-weight: 600;\n  color: #94a3b8;\n  flex: 1;\n}\n.theme-toggle {\n  --background: #334155;\n  --background-checked: #8b5cf6;\n  --handle-background: #fff;\n  --handle-background-checked: #fff;\n  --border-radius: 12px;\n  --handle-border-radius: 10px;\n  --handle-spacing: 2px;\n  --handle-width: 18px;\n  --handle-height: 18px;\n  height: 22px;\n  min-height: unset;\n}\n.version {\n  font-family: "Inter", sans-serif;\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: #475569;\n}\n.footer-brand {\n  font-family: "Inter", sans-serif;\n  font-size: 0.75rem;\n  font-weight: 600;\n  color: #64748b;\n}\n:host-context(html:not(.dark)) .menu-content {\n  --background: #ffffff;\n}\n:host-context(html:not(.dark)) .menu-header {\n  border-bottom-color: #D6DDD2;\n}\n:host-context(html:not(.dark)) .header-bg {\n  background:\n    linear-gradient(\n      145deg,\n      #ffffff 0%,\n      #F5F7F2 100%);\n}\n:host-context(html:not(.dark)) .header-glow-1 {\n  background:\n    radial-gradient(\n      circle,\n      rgba(27, 67, 50, 0.06) 0%,\n      transparent 70%);\n}\n:host-context(html:not(.dark)) .header-glow-2 {\n  background:\n    radial-gradient(\n      circle,\n      rgba(64, 145, 108, 0.05) 0%,\n      transparent 70%);\n}\n:host-context(html:not(.dark)) .header-logo {\n  background:\n    linear-gradient(\n      135deg,\n      #1B4332 0%,\n      #2D6A4F 50%,\n      #40916C 100%);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n}\n:host-context(html:not(.dark)) .profile-preview {\n  background: rgba(27, 67, 50, 0.04);\n  border-color: #D6DDD2;\n}\n:host-context(html:not(.dark)) .profile-preview:hover {\n  background: rgba(27, 67, 50, 0.08);\n  border-color: #B7CCBB;\n}\n:host-context(html:not(.dark)) .avatar {\n  background: rgba(27, 67, 50, 0.08);\n  border-color: rgba(27, 67, 50, 0.2);\n}\n:host-context(html:not(.dark)) .user-name {\n  color: #1B1B1B;\n}\n:host-context(html:not(.dark)) .user-level {\n  color: #52665A;\n}\n:host-context(html:not(.dark)) .nav-label {\n  color: #8A9B8F;\n}\n:host-context(html:not(.dark)) .nav-divider {\n  background: #E8EDE5;\n}\n:host-context(html:not(.dark)) .nav-item {\n  --color: #52665A;\n}\n:host-context(html:not(.dark)) .nav-item::part(native):hover {\n  background: rgba(27, 67, 50, 0.06);\n  color: #1B1B1B;\n}\n:host-context(html:not(.dark)) .nav-item::part(native):hover ion-icon {\n  color: #1B4332;\n}\n:host-context(html:not(.dark)) .icon-box {\n  background: rgba(27, 67, 50, 0.05);\n  border-color: #D6DDD2;\n}\n:host-context(html:not(.dark)) .icon-box ion-icon {\n  color: #8A9B8F;\n}\n:host-context(html:not(.dark)) .nav-item.selected {\n  --color: #1B4332;\n  --background: rgba(27,67,50,0.08);\n}\n:host-context(html:not(.dark)) .nav-item.selected .icon-box {\n  background: rgba(27, 67, 50, 0.12);\n  border-color: rgba(27, 67, 50, 0.25);\n}\n:host-context(html:not(.dark)) .nav-item.selected .icon-box ion-icon {\n  color: #1B4332;\n}\n:host-context(html:not(.dark)) .active-indicator {\n  background: #1B4332;\n}\n:host-context(html:not(.dark)) .menu-footer {\n  background: #F5F7F2;\n  border-top-color: #D6DDD2;\n}\n:host-context(html:not(.dark)) .theme-row {\n  border-bottom-color: #D6DDD2;\n}\n:host-context(html:not(.dark)) .theme-icon {\n  color: #1B4332;\n}\n:host-context(html:not(.dark)) .theme-label {\n  color: #1B1B1B;\n}\n:host-context(html:not(.dark)) .theme-toggle {\n  --background: #D6DDD2;\n  --background-checked: #1B4332;\n}\n:host-context(html:not(.dark)) .version {\n  color: #8A9B8F;\n}\n:host-context(html:not(.dark)) .footer-brand {\n  color: #52665A;\n}\n.offline-banner {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 99999;\n  background: #b45309;\n  color: #fff;\n  font-size: 0.875rem;\n  font-weight: 600;\n  text-align: center;\n  padding: 8px 16px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  letter-spacing: 0.01em;\n  animation: slideDown 0.3s ease-out;\n}\n@keyframes slideDown {\n  from {\n    transform: translateY(-100%);\n  }\n  to {\n    transform: translateY(0);\n  }\n}\n.bottom-nav {\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  z-index: 200;\n  display: flex;\n  align-items: stretch;\n  height: calc(60px + env(safe-area-inset-bottom, 0px));\n  padding-bottom: env(safe-area-inset-bottom, 0px);\n  background: #ffffff;\n  border-top: 1px solid #D6DDD2;\n  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);\n}\n.bnav-tab {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: 3px;\n  text-decoration: none;\n  color: #94A3B8;\n  background: none;\n  border: none;\n  cursor: pointer;\n  font-family: "Inter", sans-serif;\n  transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);\n  padding: 0;\n  position: relative;\n}\n.bnav-tab i {\n  font-size: 1.2rem;\n  line-height: 1;\n  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.bnav-tab span {\n  font-size: 0.65rem;\n  font-weight: 600;\n  letter-spacing: 0.01em;\n  line-height: 1;\n}\n.bnav-tab.active {\n  color: #1B4332;\n}\n.bnav-tab.active i {\n  transform: scale(1.12);\n}\n.bnav-tab.active::after {\n  content: "";\n  position: absolute;\n  top: 0;\n  left: 50%;\n  transform: translateX(-50%);\n  width: 32px;\n  height: 2px;\n  background: #1B4332;\n  border-radius: 0 0 4px 4px;\n}\n.bnav-center {\n  position: relative;\n}\n.bnav-center-pill {\n  width: 44px;\n  height: 32px;\n  border-radius: 12px;\n  background:\n    linear-gradient(\n      135deg,\n      #1B4332,\n      #2D6A4F);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.35);\n  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;\n}\n.bnav-center-pill i {\n  font-size: 1rem;\n  color: #ffffff !important;\n}\n.bnav-center.active .bnav-center-pill {\n  background:\n    linear-gradient(\n      135deg,\n      #2D6A4F,\n      #40916C);\n  box-shadow: 0 6px 16px rgba(27, 67, 50, 0.45);\n  transform: scale(1.05);\n}\n.bnav-center::after {\n  display: none;\n}\n:host-context(html.dark) .bottom-nav {\n  background: #0D1A10;\n  border-top-color: rgba(255, 255, 255, 0.07);\n  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);\n}\n:host-context(html.dark) .bnav-tab {\n  color: #4A6B55;\n}\n:host-context(html.dark) .bnav-tab.active {\n  color: #52B788;\n}\n:host-context(html.dark) .bnav-tab.active::after {\n  background: #52B788;\n}\n/*# sourceMappingURL=app.component.css.map */\n'] }]
+  }], () => [], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.component.ts", lineNumber: 456 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.component.ts", lineNumber: 715 });
 })();
 
 // src/main.ts

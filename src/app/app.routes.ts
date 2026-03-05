@@ -78,6 +78,22 @@ export const routes: Routes = [
     loadComponent: () => import('./daily-challenge/daily-challenge.component').then(m => m.DailyChallengeComponent)
   },
   {
+    path: 'study-plan',
+    loadComponent: () => import('./features/study-plan/study-plan.component').then(m => m.StudyPlanComponent)
+  },
+  {
+    path: 'mock-interview',
+    loadComponent: () => import('./features/mock-interview/mock-interview.component').then(m => m.MockInterviewComponent)
+  },
+  {
+    path: 'progress',
+    loadComponent: () => import('./features/progress/progress.component').then(m => m.ProgressComponent)
+  },
+  {
+    path: 'review',
+    loadComponent: () => import('./features/review/review.component').then(m => m.ReviewComponent)
+  },
+  {
     path: 'bookmarks',
     loadComponent: () => import('./features/bookmarks/bookmarks-list.component').then(m => m.BookmarksListComponent)
   },

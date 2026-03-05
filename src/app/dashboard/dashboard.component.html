@@ -2,208 +2,233 @@
 
 <!-- ────────── Header — outside ion-content so it stays fixed while page scrolls ────────── -->
 <header class="dash-header">
-    <div class="header-left">
-      <ion-menu-button class="menu-btn" color="light"></ion-menu-button>
-      <div class="wordmark">
-        Java<span class="wm-accent">IQ</span>
-        <span class="wm-pro">PRO</span>
-      </div>
+  <div class="header-left">
+    <ion-menu-button class="menu-btn" color="light"></ion-menu-button>
+    <div class="wordmark">
+      Java<span class="wm-accent">IQ</span>
+      <span class="wm-pro">PRO</span>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <button class="icon-btn search-btn" (click)="openSearch()" title="Search">🔍</button>
+
+    <div class="streak-badge" [class.streak-on]="gameService.streak() > 0">
+      🔥 <span>{{ gameService.streak() }}</span>
     </div>
 
-    <div class="header-right">
-      <button class="icon-btn trophy-btn" (click)="goToLeaderboard()" title="Leaderboard">🏆</button>
+    @if (authService.user()) {
+    <img [src]="authService.user()?.photoURL" class="avatar" (click)="logout()" title="Sign out">
+    } @else {
+    <button class="btn-signin" (click)="login()">Sign In</button>
+    }
+  </div>
+</header>
 
-      <div class="streak-badge" [class.streak-on]="gameService.streak() > 0">
-        🔥 <span>{{ gameService.streak() }}</span>
-      </div>
+<!-- ────────── Scrollable body ────────── -->
+<ion-content>
+  <main class="dash-main">
 
-      <div class="level-badge">
-        ⚡ <span>Lv {{ gameService.level() }}</span>
-      </div>
-
-      @if (authService.user()) {
-        <img [src]="authService.user()?.photoURL" class="avatar" (click)="logout()" title="Sign out">
-      } @else {
-        <button class="btn-signin" (click)="login()">Sign In</button>
-      }
-    </div>
-  </header>
-        @if (gameService.streakShields() > 0) {
-          <div class="stat-group" title="Streak Shields">
-            <div class="stat-icon shield"><i class="bi bi-shield-fill"></i></div>
-            <span class="stat-value">{{ gameService.streakShields() }}</span>
-          </div>
-        }
-
-        <div class="profile-trigger">
-          @if (authService.user()) {
-            <img [src]="authService.user()?.photoURL" class="avatar-img" (click)="logout()">
-          } @else {
-            <button class="btn-login-sm" (click)="login()">Sign In</button>
-          }
-        </div>
-      </div>
-    </header>
-
-  <!-- ────────── Scrollable body ────────── -->
-  <ion-content>
-    <main class="dash-main">
-
-      <!-- ────────── Hero Banner ────────── -->
-      <section class="hero-banner">
-        <div class="hero-inner">
-          <div class="hero-greeting">
-            <span class="hero-wave">👋</span>
-            <div>
-              <h2 class="hero-name">
-                Welcome back,&nbsp;<span class="name-accent">{{ authService.user()?.displayName?.split(' ')?.[0] || 'Learner' }}</span>
-              </h2>
-              <p class="hero-sub">Keep building your Java mastery</p>
-            </div>
-          </div>
-
-          <div class="xp-section">
-            <div class="xp-row">
-              <span class="xp-lv">Level {{ gameService.level() }}</span>
-              <span class="xp-val">{{ gameService.xp() | number:'1.0-0' }} XP</span>
-            </div>
-            <div class="xp-track">
-              <div class="xp-fill" [style.width.%]="gameService.levelProgress()"></div>
-            </div>
-            <span class="xp-hint">{{ gameService.xpToNextLevel() | number:'1.0-0' }} XP to next level</span>
+    <!-- ────────── Hero Banner ────────── -->
+    <section class="hero-banner">
+      <div class="hero-inner">
+        <div class="hero-greeting">
+          <span class="hero-wave">👋</span>
+          <div>
+            <h2 class="hero-name">
+              {{ greeting() }},&nbsp;<span class="name-accent">{{ authService.user()?.displayName?.split(' ')?.[0] ||
+                'Learner' }}</span>
+            </h2>
+            <p class="hero-sub">Keep building your Java mastery</p>
           </div>
         </div>
-      </section>
 
-      <!-- ────────── Daily Widgets ────────── -->
-      <section class="widgets-section">
+        <div class="xp-section">
+          <div class="xp-row">
+            <span class="xp-lv">Level {{ gameService.level() }}</span>
+            <span class="xp-val">{{ gameService.xp() | number:'1.0-0' }} XP</span>
+          </div>
+          <div class="xp-track">
+            <div class="xp-fill" [style.width.%]="gameService.levelProgress()"></div>
+          </div>
+          <span class="xp-hint">{{ gameService.xpToNextLevel() | number:'1.0-0' }} XP to next level</span>
+        </div>
+      </div>
+    </section>
 
-        <!-- Achievements shortcut -->
-        <button class="ach-row-btn" (click)="goToAchievements()">
-          <span class="ach-medal">🏅</span>
-          <span class="ach-text">Achievements</span>
-          <span class="ach-chip">{{ unlockedAchievements() }} / {{ achService.achievements().length }}</span>
-          <span class="ach-caret">›</span>
+    <!-- ────────── Stats Strip ────────── -->
+    <section class="stats-strip">
+      <div class="stat-item">
+        <span class="stat-val">{{ gameService.xp() | number:'1.0-0' }}</span>
+        <span class="stat-lbl">Total XP</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-val">{{ gameService.streak() }}</span>
+        <span class="stat-lbl">Day Streak</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-val">{{ overallPct() }}%</span>
+        <span class="stat-lbl">Progress</span>
+      </div>
+    </section>
+
+    <!-- ────────── Today's Focus ────────── -->
+    @if (todayFocusCard(); as focus) {
+    <section class="tf-section">
+      <div class="tf-card" [style.--tf-color]="focus.color" [style.--tf-bg]="focus.bg"
+        (click)="focusAction(focus.action)">
+        <div class="tf-icon"><i [class]="'bi ' + focus.icon"></i></div>
+        <div class="tf-text">
+          <span class="tf-tag">TODAY'S FOCUS</span>
+          <span class="tf-label">{{ focus.label }}</span>
+          <span class="tf-desc">{{ focus.desc }}</span>
+        </div>
+        <i class="bi bi-chevron-right tf-arrow"></i>
+      </div>
+    </section>
+    } @else {
+    <section class="tf-section">
+      <div class="tf-card tf-done">
+        <div class="tf-icon"><i class="bi bi-check-circle-fill"></i></div>
+        <div class="tf-text">
+          <span class="tf-tag">TODAY'S FOCUS</span>
+          <span class="tf-label">All done for today!</span>
+          <span class="tf-desc">Great work · Come back tomorrow</span>
+        </div>
+      </div>
+    </section>
+    }
+
+    <!-- ────────── Quick Actions ────────── -->
+    <section class="qa-section">
+      <div class="qa-row">
+        <button class="qa-tile" (click)="goToMockInterview()">
+          <i class="bi bi-briefcase-fill qa-icon" style="color:#818cf8"></i>
+          <span class="qa-label">Mock<br>Interview</span>
         </button>
-
-        <!-- Streak + Daily Goal side-by-side -->
-        <div class="two-col">
-          <div class="col-half"><app-streak-card /></div>
-          <div class="col-half"><app-daily-goal-card /></div>
-        </div>
-
-        <!-- Question of the Day -->
-        <app-qotd-card />
-
-        <!-- Continue Learning -->
-        <app-continue-learning-card />
-
-      </section>
+        <button class="qa-tile" (click)="goToStudyPlan()">
+          <i class="bi bi-calendar-check-fill qa-icon" style="color:#52b788"></i>
+          <span class="qa-label">Study<br>Plan</span>
+        </button>
+        <button class="qa-tile" (click)="goToProgress()">
+          <i class="bi bi-bar-chart-fill qa-icon" style="color:#10b981"></i>
+          <span class="qa-label">My<br>Progress</span>
+        </button>
+        <button class="qa-tile" (click)="goToBookmarks()">
+          <i class="bi bi-bookmark-fill qa-icon" style="color:#f59e0b"></i>
+          <span class="qa-label">Saved</span>
+        </button>
+        <button class="qa-tile" (click)="goToLeaderboard()">
+          <i class="bi bi-trophy-fill qa-icon" style="color:#f87171"></i>
+          <span class="qa-label">Leader-<br>board</span>
+        </button>
       </div>
     </section>
 
-    <!-- Daily Challenge Card -->
-    <section class="daily-challenge-section">
-      <div class="dc-card" [class.dc-done]="dcService.isCompletedToday()" (click)="!dcService.isCompletedToday() && goToDailyChallenge()">
-        <div class="dc-card-left">
-          <div class="dc-icon-wrap">
-            <i class="bi bi-lightning-charge-fill"></i>
-          </div>
-          <div class="dc-card-text">
-            <span class="dc-label">Daily Challenge</span>
-            <span class="dc-sub">
-              @if (dcService.isCompletedToday()) {
-                Completed · Resets in {{ dcCountdown() }}
-              } @else {
-                5 Questions · <strong>+50 XP</strong> · 2× Bonus
-              }
-            </span>
-          </div>
-        </div>
-        <div class="dc-card-right">
-          @if (dcService.isCompletedToday()) {
-            <span class="dc-done-badge"><i class="bi bi-check-lg"></i> Done</span>
-          } @else {
-            @if (gameService.dailyChallengeStreak() > 0) {
-              <span class="dc-streak-badge"><i class="bi bi-fire"></i> {{ gameService.dailyChallengeStreak() }}</span>
+    <!-- ────────── Learning Path ────────── -->
+    <section class="learning-section">
+      <div class="section-head">
+        <h3 class="section-title">Learning Path</h3>
+        <span class="section-sub">Master Java step by step</span>
+      </div>
+
+      <div class="module-list">
+        <div class="timeline-line"></div>
+
+        @for (cat of visibleCategories(); track cat.name; let i = $index) {
+        <div class="module-item" [class.is-locked]="isLocked(cat.name)"
+          [class.is-active]="!isLocked(cat.name) && getCategoryStars(cat.name) < 3"
+          [class.is-done]="getCategoryStars(cat.name) === 3" (click)="navigateToCategory(cat.name)">
+
+          <!-- Timeline dot -->
+          <div class="tm-dot">
+            @if (isLocked(cat.name)) {
+            <span class="dot dot-locked">🔒</span>
+            } @else if (getCategoryStars(cat.name) === 3) {
+            <span class="dot dot-done">✓</span>
+            } @else {
+            <span class="dot dot-active"><span class="pulse"></span></span>
             }
-            <i class="bi bi-chevron-right dc-arrow"></i>
-          }
+          </div>
+
+          <!-- Card  (pass real index for locked-unlock msg) -->
+          <div class="module-card" [style.--cat-clr]="cat.color">
+            <div class="mc-header">
+              <div class="mc-icon"
+                [style.background]="isLocked(cat.name) ? 'rgba(148,163,184,0.12)' : (cat.color + '22')">
+                <span class="mc-emoji" [style.filter]="isLocked(cat.name) ? 'grayscale(1) opacity(0.45)' : 'none'">{{
+                  cat.emoji }}</span>
+              </div>
+              <div class="mc-info">
+                <h4 class="mc-name">{{ cat.name }}</h4>
+                <span class="mc-meta">{{ getQuestionCount(cat.name) }} Topics</span>
+              </div>
+              <span class="mc-arrow">›</span>
+            </div>
+
+            @if (!isLocked(cat.name)) {
+            <div class="mc-body">
+              <div class="mc-prof-row">
+                <span class="mc-prof-label">PROFICIENCY</span>
+                <div class="mc-stars">
+                  @for (s of [1,2,3]; track s) {
+                  <span [style.color]="getCategoryStars(cat.name) >= s ? '#f59e0b' : '#cbd5e1'">★</span>
+                  }
+                </div>
+              </div>
+              <div class="mc-prog-row">
+                <div class="mc-bar-track">
+                  <div class="mc-bar-fill" [style.width.%]="getCategoryProgress(cat.name)"
+                    [style.background]="cat.color"></div>
+                </div>
+                <span class="mc-pct">{{ getCategoryProgress(cat.name) }}%</span>
+              </div>
+            </div>
+            } @else {
+            <div class="mc-locked">
+              Complete <strong>{{ categories[i - 1]?.name }}</strong> to unlock
+            </div>
+            }
+          </div>
+
         </div>
+        }
       </div>
+
+      <button class="view-all-btn" (click)="showAllModules.set(!showAllModules())">
+        {{ showAllModules() ? 'Show less' : 'View all ' + categories.length + ' modules' }}
+        <i class="bi" [class.bi-chevron-down]="!showAllModules()" [class.bi-chevron-up]="showAllModules()"></i>
+      </button>
     </section>
 
-      <!-- ────────── Learning Path ────────── -->
-      <section class="learning-section">
-        <div class="section-head">
-          <h3 class="section-title">Learning Path</h3>
-          <span class="section-sub">Master Java step by step</span>
-        </div>
+    <!-- ────────── Daily Widgets ────────── -->
+    <section class="widgets-section">
 
-        <div class="module-list">
-          <div class="timeline-line"></div>
+      <!-- Achievements shortcut -->
+      <button class="ach-row-btn" (click)="goToAchievements()">
+        <span class="ach-medal">🏅</span>
+        <span class="ach-text">Achievements</span>
+        <span class="ach-chip">{{ unlockedAchievements() }} / {{ achService.achievements().length }}</span>
+        <span class="ach-caret">›</span>
+      </button>
 
-          @for (cat of categories; track cat.name; let i = $index) {
-            <div class="module-item"
-                 [class.is-locked]="isLocked(cat.name)"
-                 [class.is-active]="!isLocked(cat.name) && getCategoryStars(cat.name) < 3"
-                 [class.is-done]="getCategoryStars(cat.name) === 3"
-                 (click)="navigateToCategory(cat.name)">
+      <!-- Streak + Daily Goal side-by-side -->
+      <div class="two-col">
+        <div class="col-half"><app-streak-card /></div>
+        <div class="col-half"><app-daily-goal-card /></div>
+      </div>
 
-              <!-- Timeline dot -->
-              <div class="tm-dot">
-                @if (isLocked(cat.name)) {
-                  <span class="dot dot-locked">🔒</span>
-                } @else if (getCategoryStars(cat.name) === 3) {
-                  <span class="dot dot-done">✓</span>
-                } @else {
-                  <span class="dot dot-active"><span class="pulse"></span></span>
-                }
-              </div>
+      <!-- Question of the Day -->
+      <app-qotd-card />
 
-              <!-- Card -->
-              <div class="module-card" [style.--cat-clr]="cat.color">
-                <div class="mc-header">
-                  <div class="mc-icon" [style.background]="isLocked(cat.name) ? 'rgba(148,163,184,0.12)' : (cat.color + '22')">
-                    <span class="mc-emoji" [style.filter]="isLocked(cat.name) ? 'grayscale(1) opacity(0.45)' : 'none'">{{ cat.emoji }}</span>
-                  </div>
-                  <div class="mc-info">
-                    <h4 class="mc-name">{{ cat.name }}</h4>
-                    <span class="mc-meta">{{ getQuestionCount(cat.name) }} Topics</span>
-                  </div>
-                  <span class="mc-arrow">›</span>
-                </div>
+      <!-- Continue Learning -->
+      <app-continue-learning-card />
 
-                @if (!isLocked(cat.name)) {
-                  <div class="mc-body">
-                    <div class="mc-prof-row">
-                      <span class="mc-prof-label">PROFICIENCY</span>
-                      <div class="mc-stars">
-                        @for (s of [1,2,3]; track s) {
-                          <span [style.color]="getCategoryStars(cat.name) >= s ? '#f59e0b' : '#cbd5e1'">★</span>
-                        }
-                      </div>
-                    </div>
-                    <div class="mc-prog-row">
-                      <div class="mc-bar-track">
-                        <div class="mc-bar-fill"
-                             [style.width.%]="getCategoryProgress(cat.name)"
-                             [style.background]="cat.color"></div>
-                      </div>
-                      <span class="mc-pct">{{ getCategoryProgress(cat.name) }}%</span>
-                    </div>
-                  </div>
-                } @else {
-                  <div class="mc-locked">
-                    Complete <strong>{{ categories[i - 1]?.name }}</strong> to unlock
-                  </div>
-                }
-              </div>
+    </section>
 
-            </div>
-          }
-        </div>
-      </section>
+  </main>
+</ion-content>
 
-    </main>
-  </ion-content>
+<app-search-modal></app-search-modal>

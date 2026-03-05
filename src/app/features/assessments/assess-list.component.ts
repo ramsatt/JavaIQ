@@ -372,15 +372,13 @@ interface Assessment {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: var(--accent, #8b5cf6);
-      opacity: 0;
-      transition: opacity 0.2s, transform 0.2s;
-      transform: translateX(-4px);
+      opacity: 1;
+      flex-shrink: 0;
     }
-    .assess-card:hover .start-hint { opacity: 1; transform: translateX(0); }
-    .start-hint i { font-size: 0.55rem; }
+    .start-hint i { font-size: 0.75rem; }
 
     /* ── Info Card ── */
     .info-card {

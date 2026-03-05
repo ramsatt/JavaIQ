@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "sources": ["angular:styles/component:css;6830c70c378b84086505ec109bd559823a7a63f7de55c0b544ee112f987175b0;/Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/src/app/shared/code-block.component.ts"],
+  "sources": ["angular:styles/component:css;6830c70c378b84086505ec109bd559823a7a63f7de55c0b544ee112f987175b0;/Users/sathishkumarramalingam/projects/JavaIQ/src/app/shared/code-block.component.ts"],
   "sourcesContent": ["\n    .code-wrapper {\n      background: #1e293b;\n      color: #e2e8f0;\n      padding: 18px 20px;\n      border-radius: 14px;\n      overflow-x: auto;\n      margin: 16px 0;\n      font-family: 'JetBrains Mono', 'Fira Code', monospace;\n      font-size: 0.78rem;\n      line-height: 1.7;\n      border: 1px solid #334155;\n      box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);\n    }\n    pre { margin: 0; }\n    code { white-space: pre; }\n  "],
   "mappings": ";AACI,CAAC;AACC,cAAY;AACZ,SAAO;AACP,WAAS,KAAK;AACd,iBAAe;AACf,cAAY;AACZ,UAAQ,KAAK;AACb;AAAA,IAAa,gBAAgB;AAAA,IAAE,WAAW;AAAA,IAAE;AAC5C,aAAW;AACX,eAAa;AACb,UAAQ,IAAI,MAAM;AAClB,cAAY,MAAM,EAAE,IAAI,IAAI,KAAK,CAAC,EAAC,CAAC,EAAC,CAAC,EAAC;AACzC;AACA;AAAM,UAAQ;AAAG;AACjB;AAAO,eAAa;AAAK;",
   "names": []

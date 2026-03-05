@@ -1,3 +1,6 @@
+/* Design Tokens — single source of truth */
+@import './styles/tokens.css';
+
 /* Tailwind CSS v4 */
 @import "tailwindcss";
 
@@ -658,4 +661,35 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 html:not(.dark) ion-menu::part(container) {
   background: #ffffff;
   border-right: 1px solid #D6DDD2;
+}
+
+/* ==========================================
+   Bottom Nav — Global Content Offset
+   ========================================== */
+:root {
+  --bottom-nav-height: 60px;
+}
+
+/* When bottom nav is visible, push ion-content up */
+html.has-bnav ion-content {
+  --padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+}
+
+/* ==========================================
+   Accessibility — Focus Visible Ring
+   ========================================== */
+:focus-visible {
+  outline: 2px solid #40916C;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ==========================================
+   Minimum Font Size Guard
+   ========================================== */
+.overline,
+.caption,
+[class*="-tag"],
+[class*="-label"] {
+  font-size: max(0.75rem, 1em);
 }
