@@ -90,9 +90,17 @@ export const routes: Routes = [
     loadComponent: () => import('./features/about/about.component').then(m => m.AboutComponent)
   },
   {
+    path: 'achievements',
+    loadComponent: () => import('./features/achievements/achievement-gallery.component').then(m => m.AchievementGalleryComponent)
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+  },
+  {
     path: '',
-    redirectTo: 'tutorials',
+    redirectTo: 'dashboard',
     pathMatch: 'full'
   },
-  { path: '**', redirectTo: 'tutorials' }
+  { path: '**', redirectTo: 'dashboard' }
 ];

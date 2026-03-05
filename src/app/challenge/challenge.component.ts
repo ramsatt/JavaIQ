@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService, Question } from '../data.service';
 import { GamificationService } from '../gamification.service';
+import { DailyEngagementService } from '../services/daily-engagement.service';
+import { AchievementService } from '../services/achievement.service';
 
 @Component({
   selector: 'app-challenge',
@@ -12,10 +14,15 @@ import { GamificationService } from '../gamification.service';
   styleUrls: ['./challenge.component.css']
 })
 export class ChallengeComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private dataService = inject(DataService);
-  public gameService = inject(GamificationService);
+  private route        = inject(ActivatedRoute);
+  private router       = inject(Router);
+  private dataService  = inject(DataService);
+  public  gameService  = inject(GamificationService);
+  private dailySvc     = inject(DailyEngagementService);
+  private achSvc       = inject(AchievementService);
+
+  /** Total ms taken across all answers, for speed-demon check */
+  private totalAnswerTimeMs = 0;
 
   // Game State
   challengeName = '';
@@ -63,6 +70,7 @@ export class ChallengeComponent implements OnInit {
     this.comboXp = 0;
     this.speedXp = 0;
     this.isGameFinished = false;
+    this.totalAnswerTimeMs = 0;
 
     // Load Questions
     const count = 10; 
@@ -117,13 +125,15 @@ export class ChallengeComponent implements OnInit {
   }
 
   submitResult(isCorrect: boolean) {
+    const timeTaken = Date.now() - this.startTime;
+    this.totalAnswerTimeMs += timeTaken;
+
     if (isCorrect) {
       this.score++;
       this.combo++;
       if (this.combo > this.maxCombo) this.maxCombo = this.combo;
-      
+
       // Calculate XP
-      const timeTaken = Date.now() - this.startTime;
       const isSpeedy = timeTaken < 5000;
       
       let xp = 10; // Base
@@ -175,17 +185,21 @@ export class ChallengeComponent implements OnInit {
 
   finishGame() {
     this.isGameFinished = true;
-    
+
     // Calculate Stars
     const percentage = this.score / this.questions.length;
     if (percentage >= 1) this.starsEarned = 3;
     else if (percentage >= 0.7) this.starsEarned = 2;
     else if (percentage >= 0.4) this.starsEarned = 1;
     else this.starsEarned = 0;
-    
-    // Save to DataService maybe? 
-    // DataService calculates stars based on *Total Progress*, not quiz performance.
-    // So this star rating is just for the specific session result screen.
+
+    // ── Daily engagement + Achievement hooks ────────────────────────────────
+    this.dailySvc.markChallengeComplete();
+    this.achSvc.checkChallengeAchievements(
+      this.maxCombo,
+      this.totalAnswerTimeMs,
+      this.questions.length
+    );
   }
 
   quitGame() {

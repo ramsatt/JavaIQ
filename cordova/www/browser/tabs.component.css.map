@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;e44a7573edf7198042f44fd8ba22d1f7380a8112fa285d2400871d0c46793954;/Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/src/app/tabs/tabs.component.ts"],
+  "sourcesContent": ["\n    ion-tab-bar {\n      --background: var(--ion-tab-bar-background, #ffffff);\n      border-top: 1px solid var(--ion-tab-bar-border-color, #D6DDD2);\n      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);\n      height: 64px;\n    }\n\n    ion-tab-button {\n      --color: var(--color-text-muted, #8A9B8F);\n      --color-selected: var(--ion-color-primary, #1B4332);\n      font-size: 0.6rem;\n      font-weight: 600;\n      letter-spacing: 0.03em;\n    }\n\n    ion-tab-button::part(native) {\n      padding-top: 8px;\n      padding-bottom: 6px;\n    }\n\n    ion-icon {\n      font-size: 1.25rem;\n      margin-bottom: 3px;\n    }\n  "],
+  "mappings": ";AACI;AACE,gBAAc,IAAI,wBAAwB,EAAE;AAC5C,cAAY,IAAI,MAAM,IAAI,0BAA0B,EAAE;AACtD,cAAY,EAAE,KAAK,KAAK,KAAK,CAAC,EAAE,CAAC,EAAE,CAAC,EAAE;AACtC,UAAQ;AACV;AAEA;AACE,WAAS,IAAI,kBAAkB,EAAE;AACjC,oBAAkB,IAAI,mBAAmB,EAAE;AAC3C,aAAW;AACX,eAAa;AACb,kBAAgB;AAClB;AAEA,cAAc,OAAO;AACnB,eAAa;AACb,kBAAgB;AAClB;AAEA;AACE,aAAW;AACX,iBAAe;AACjB;",
+  "names": []
+}

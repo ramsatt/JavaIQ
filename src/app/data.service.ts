@@ -204,6 +204,14 @@ export class DataService {
     return Math.round((this.getCourseCompletedCount(courseSlug) / totalTopics) * 100);
   }
 
+  /** Returns all interview questions in a stable, deterministic order (no sort).
+   *  Used for daily QOTD selection so the picked question does not shift as
+   *  the user answers questions throughout the day.
+   */
+  getAllQuestionsStable(): Question[] {
+    return Object.values(QUESTION_MAP).flat();
+  }
+
   getQuestions(category: string = 'All'): Question[] {
     let filtered: Question[] = [];
 

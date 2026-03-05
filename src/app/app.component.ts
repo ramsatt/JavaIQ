@@ -11,12 +11,15 @@ import {
   bookOutline, chatbubblesOutline, codeSlashOutline,
   trophyOutline, clipboardOutline, peopleOutline,
   moonOutline, sunnyOutline, personCircleOutline,
+  homeOutline, ribbonOutline
+  moonOutline, sunnyOutline, personCircleOutline,
   bookmarkOutline, settingsOutline
 } from 'ionicons/icons';
 import { AdMobService } from './admob.service';
 import { CustomAlertComponent } from './custom-alert/custom-alert.component';
 import { ThemeService } from './theme.service';
 import { ConnectivityService } from './connectivity.service';
+import { AchievementToastComponent } from './shared/achievement-toast.component';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +27,8 @@ import { ConnectivityService } from './connectivity.service';
   imports: [
     CommonModule, RouterLink, RouterLinkActive, IonApp, IonRouterOutlet, IonMenu,
     IonHeader, IonContent, IonList, IonItem,
-    IonIcon, IonLabel, IonMenuToggle, IonFooter, IonToggle, CustomAlertComponent
+    IonIcon, IonLabel, IonMenuToggle, IonFooter, IonToggle,
+    CustomAlertComponent, AchievementToastComponent
   ],
   template: `
     <ion-app>
@@ -51,6 +55,14 @@ import { ConnectivityService } from './connectivity.service';
           <div class="menu-nav">
             <span class="nav-label">LEARNING PATHS</span>
             <ion-list lines="none" class="menu-list">
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/dashboard" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="home-outline"></ion-icon></div>
+                  <ion-label>Dashboard</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/tutorials" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="book-outline"></ion-icon></div>
@@ -115,6 +127,14 @@ import { ConnectivityService } from './connectivity.service';
                 </ion-item>
               </ion-menu-toggle>
 
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/achievements" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="ribbon-outline"></ion-icon></div>
+                  <ion-label>Achievements</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
               <div class="nav-divider"></div>
 
               <ion-menu-toggle auto-hide="false">
@@ -159,6 +179,7 @@ import { ConnectivityService } from './connectivity.service';
       }
 
       <app-custom-alert></app-custom-alert>
+      <app-achievement-toast></app-achievement-toast>
     </ion-app>
   `,
   styles: [`
@@ -173,7 +194,7 @@ import { ConnectivityService } from './connectivity.service';
       background: #0b1120;
       border-right: 1px solid rgba(255,255,255,0.06);
     }
-    
+
     ion-menu::part(backdrop) {
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(4px);
@@ -241,7 +262,7 @@ import { ConnectivityService } from './connectivity.service';
       background: rgba(255,255,255,0.06);
       border-color: rgba(255,255,255,0.1);
     }
-    
+
     .avatar {
       width: 40px;
       height: 40px;
@@ -258,7 +279,7 @@ import { ConnectivityService } from './connectivity.service';
     .user-level { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 500; color: #94a3b8; }
 
     /* Navigation items */
-    .menu-content { 
+    .menu-content {
       --background: #0b1120;
     }
     .menu-nav { padding: 24px 16px; }
@@ -278,7 +299,7 @@ import { ConnectivityService } from './connectivity.service';
       background: rgba(255,255,255,0.06);
       margin: 8px 12px;
     }
-    
+
     .nav-item {
       --background: transparent;
       --padding-start: 12px;
@@ -317,12 +338,12 @@ import { ConnectivityService } from './connectivity.service';
       --color: #e2e8f0;
       --background: rgba(139,92,246,0.1);
     }
-    .nav-item.selected .icon-box { 
-      background: rgba(139,92,246,0.2); 
+    .nav-item.selected .icon-box {
+      background: rgba(139,92,246,0.2);
       border-color: rgba(139,92,246,0.4);
     }
     .nav-item.selected ion-icon { color: #c4b5fd; }
-    
+
     .active-indicator {
       width: 3px;
       height: 20px;
@@ -334,9 +355,9 @@ import { ConnectivityService } from './connectivity.service';
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       transform: scaleY(0);
     }
-    .nav-item.selected .active-indicator { 
-      opacity: 1; 
-      right: 10px; 
+    .nav-item.selected .active-indicator {
+      opacity: 1;
+      right: 10px;
       transform: scaleY(1);
     }
 
@@ -514,6 +535,9 @@ export class AppComponent {
     addIcons({
       bookOutline, chatbubblesOutline, codeSlashOutline,
       trophyOutline, clipboardOutline, peopleOutline,
+      moonOutline, sunnyOutline, personCircleOutline,
+      homeOutline, ribbonOutline
+
       moonOutline, sunnyOutline, personCircleOutline,
       bookmarkOutline, settingsOutline
     });
