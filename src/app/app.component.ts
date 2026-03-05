@@ -9,11 +9,13 @@ import { addIcons } from 'ionicons';
 import {
   bookOutline, chatbubblesOutline, codeSlashOutline,
   trophyOutline, clipboardOutline, peopleOutline,
-  moonOutline, sunnyOutline, personCircleOutline
+  moonOutline, sunnyOutline, personCircleOutline,
+  homeOutline, ribbonOutline
 } from 'ionicons/icons';
 import { AdMobService } from './admob.service';
 import { CustomAlertComponent } from './custom-alert/custom-alert.component';
 import { ThemeService } from './theme.service';
+import { AchievementToastComponent } from './shared/achievement-toast.component';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +23,8 @@ import { ThemeService } from './theme.service';
   imports: [
     RouterLink, RouterLinkActive, IonApp, IonRouterOutlet, IonMenu,
     IonHeader, IonContent, IonList, IonItem,
-    IonIcon, IonLabel, IonMenuToggle, IonFooter, IonToggle, CustomAlertComponent
+    IonIcon, IonLabel, IonMenuToggle, IonFooter, IonToggle,
+    CustomAlertComponent, AchievementToastComponent
   ],
   template: `
     <ion-app>
@@ -48,6 +51,14 @@ import { ThemeService } from './theme.service';
           <div class="menu-nav">
             <span class="nav-label">LEARNING PATHS</span>
             <ion-list lines="none" class="menu-list">
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/dashboard" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="home-outline"></ion-icon></div>
+                  <ion-label>Dashboard</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/tutorials" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="book-outline"></ion-icon></div>
@@ -96,6 +107,14 @@ import { ThemeService } from './theme.service';
                 </ion-item>
               </ion-menu-toggle>
 
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/achievements" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="ribbon-outline"></ion-icon></div>
+                  <ion-label>Achievements</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+
               <div class="nav-divider"></div>
 
               <ion-menu-toggle auto-hide="false">
@@ -132,6 +151,7 @@ import { ThemeService } from './theme.service';
       </div>
       
       <app-custom-alert></app-custom-alert>
+      <app-achievement-toast></app-achievement-toast>
     </ion-app>
   `,
   styles: [`
@@ -460,7 +480,9 @@ export class AppComponent {
     addIcons({
       bookOutline, chatbubblesOutline, codeSlashOutline,
       trophyOutline, clipboardOutline, peopleOutline,
-      moonOutline, sunnyOutline, personCircleOutline
+      moonOutline, sunnyOutline, personCircleOutline,
+      homeOutline, ribbonOutline
+
     });
     this.adMobService.showBanner();
   }

@@ -1,13 +1,15 @@
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { Firestore, doc, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
+import { NotificationService } from './services/notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GamificationService {
-  private firestore = inject(Firestore);
-  private authService = inject(AuthService);
+  private firestore        = inject(Firestore);
+  private authService      = inject(AuthService);
+  private notifService     = inject(NotificationService);
 
   // --- Signals for State ---
   xp = signal<number>(0);
@@ -94,6 +96,9 @@ export class GamificationService {
     }
 
     this.lastActiveDate.set(today);
+
+    // Schedule tomorrow's reminder (lazy permission request on first meaningful activity)
+    this.notifService.requestPermissionAndSchedule(this.streak());
   }
 
   // --- Persistence ---

@@ -46,7 +46,14 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:ramsatt.com)",
       "Bash(curl -s \"https://api.github.com/users/ramsatt\")",
-      "Bash(curl -s \"https://api.github.com/users/ramsatt/repos?sort=updated&per_page=10\")"
+      "Bash(curl -s \"https://api.github.com/users/ramsatt/repos?sort=updated&per_page=10\")",
+      "Bash(xargs ls -la)",
+      "Bash(npm install @capacitor/local-notifications)",
+      "Bash(npm install @capacitor/local-notifications --legacy-peer-deps)",
+      "Bash(npx ng build --configuration development)",
+      "Bash(npx cap sync)",
+      "Bash(LANG=en_US.UTF-8 npx cap sync ios)",
+      "Bash(grep -i \"deployment\\\\|platform\\\\|ios\" /Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/node_modules/@capacitor/local-notifications/*.podspec)"
     ]
   }
 }

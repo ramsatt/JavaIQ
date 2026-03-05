@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons } from '@ionic/angular/standalone';
 import { AssessService } from './assess.service';
 import { AuthService } from '../../auth.service';
 import { CertificateComponent } from '../../shared/certificate.component';
+import { AchievementService } from '../../services/achievement.service';
 
 @Component({
   selector: 'app-assess-result',
@@ -325,14 +326,23 @@ import { CertificateComponent } from '../../shared/certificate.component';
   `
 })
 export class AssessResultComponent {
-  private router = inject(Router);
-  private svc    = inject(AssessService);
-  private auth   = inject(AuthService);
+  private router   = inject(Router);
+  private svc      = inject(AssessService);
+  private auth     = inject(AuthService);
+  private achSvc   = inject(AchievementService);
 
   readonly letters  = ['A', 'B', 'C', 'D'];
   readonly result   = this.svc.result;
   readonly showCert = signal(false);
   readonly userName = computed(() => this.auth.user()?.displayName ?? 'Java Developer');
+
+  constructor() {
+    // Check achievements whenever a result lands
+    effect(() => {
+      const r = this.result();
+      if (r) this.achSvc.checkAssessmentAchievements(r.score);
+    });
+  }
 
   scoreColor(score: number): string {
     if (score >= 70) return '#10b981';
