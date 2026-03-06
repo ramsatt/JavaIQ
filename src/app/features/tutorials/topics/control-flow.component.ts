@@ -145,7 +145,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
             <div class="tip-num">2</div>
             <div>
               <h4 class="tip-title">Guard Clauses Reduce Nesting</h4>
-              <p class="tip-desc">Instead of deep <code>if (valid) { if (ready) { ... } }</code> nesting, return early: <code>if (!valid) return; if (!ready) return; // main logic</code>. Easier to read and test.</p>
+              <p class="tip-desc">Instead of deep <code>if (valid) &#123; if (ready) &#123; ... &#125; &#125;</code> nesting, return early: <code>if (!valid) return; if (!ready) return; // main logic</code>. Easier to read and test.</p>
             </div>
           </div>
           <div class="tip-card">

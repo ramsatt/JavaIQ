@@ -648,7 +648,7 @@ export class TutorialListComponent {
       slug: 'core-java', title: 'Core Java',
       description: 'OOP, Collections, Streams, Generics, and modern Java features like Records and Sealed Classes.',
       faIcon: 'fa-solid fa-mug-hot', accentColor: '#f59e0b', iconBg: 'rgba(245,158,11,0.12)',
-      chapterCount: 25, difficulty: 'beginner', estimatedTime: '13 hours'
+      chapterCount: 28, difficulty: 'beginner', estimatedTime: '15 hours'
     },
     {
       slug: 'spring-framework', title: 'Spring Framework',

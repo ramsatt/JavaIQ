@@ -53,7 +53,13 @@
       "Bash(npx ng build --configuration development)",
       "Bash(npx cap sync)",
       "Bash(LANG=en_US.UTF-8 npx cap sync ios)",
-      "Bash(grep -i \"deployment\\\\|platform\\\\|ios\" /Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/node_modules/@capacitor/local-notifications/*.podspec)"
+      "Bash(grep -i \"deployment\\\\|platform\\\\|ios\" /Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/node_modules/@capacitor/local-notifications/*.podspec)",
+      "Bash(npx ng build --configuration=development)",
+      "Bash(grep -rn \"from ''../tutorial-layout.component''\" /Users/sathishkumarramalingam/projects/JavaIQ/src/)",
+      "Bash(grep -n \"from.*CommonModule\\\\|standalone: true\\\\|from ''../tutorial-layout\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/topics/control-flow.component.ts)",
+      "Bash(grep -n \"= \\\\`\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/topics/control-flow.component.ts)",
+      "Bash(grep -v \"//\\\\|import\\\\|css\\\\|class\\\\|\\\\`\\\\|}\\\\|style\\\\|@\\\\|=\\\\|:\\\\|''\")",
+      "Bash(npm view @capacitor/local-notifications versions --json)"
     ]
   }
 }

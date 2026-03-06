@@ -2,11 +2,14 @@ import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { IconComponent } from '../../../shared/icon.component';
 import { CodeBlockComponent } from '../../../shared/code-block.component';
 import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.component';
+import { InterviewTipsComponent, InterviewTip } from '../../../shared/interview-tips.component';
+import { CommonPitfallsComponent, Pitfall } from '../../../shared/common-pitfalls.component';
+import { TopicNavComponent } from '../../../shared/topic-nav.component';
 
 @Component({
   selector: 'app-topic-collections-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent, CodeBlockComponent, TutorialLayoutComponent],
+  imports: [IconComponent, CodeBlockComponent, TutorialLayoutComponent, InterviewTipsComponent, CommonPitfallsComponent, TopicNavComponent],
   template: `
     <app-tutorial-layout
       title="Collections: Map & Set"
@@ -99,6 +102,34 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
           <div class="use-case teal"><div class="use-num teal-bg">3</div><div><h4 class="use-title">Word Frequency Counter</h4><p class="use-desc"><code>map.merge(word, 1, Integer::sum)</code> — one line to count word occurrences in large text files or log analysis.</p></div></div>
         </div>
       </section>
+
+      <!-- Which Map/Set to Use -->
+      <section class="section">
+        <h2 class="section-heading">
+          <app-icon name="git-branch" [size]="28" css="icon-purple" /> Which Map / Set Should You Use?
+        </h2>
+        <div class="decision-table">
+          @for (row of decisionRows; track row.type) {
+            <div class="dt-row">
+              <div class="dt-type"><code>{{ row.type }}</code></div>
+              <div class="dt-order">{{ row.order }}</div>
+              <div class="dt-perf">{{ row.perf }}</div>
+              <div class="dt-use">{{ row.use }}</div>
+            </div>
+          }
+        </div>
+        <div class="compute-section">
+          <h3 class="sub-heading">Advanced compute / merge patterns</h3>
+          <app-code-block [code]="codeCompute" />
+        </div>
+      </section>
+
+      <app-common-pitfalls [pitfalls]="pitfalls" />
+      <app-interview-tips [tips]="interviewTips" />
+
+      <app-topic-nav
+        [prev]="{ courseSlug: 'core-java', slug: 'collections-list', title: 'Collections: List' }"
+        [next]="{ courseSlug: 'core-java', slug: 'generics', title: 'Generics' }" />
     </app-tutorial-layout>
   `,
   styles: `
@@ -148,6 +179,17 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     .use-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0 0 4px; }
     .use-desc { font-size: 0.78rem; line-height: 1.55; margin: 0; color: #334155; }
     .use-desc code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
+
+    .decision-table { display: flex; flex-direction: column; gap: 4px; margin-bottom: 24px; }
+    .dt-row { display: grid; grid-template-columns: 160px 140px 140px 1fr; gap: 12px; align-items: center; padding: 10px 14px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 0.78rem; }
+    .dt-row:nth-child(odd) { background: #fafbfc; }
+    @media (max-width: 600px) { .dt-row { grid-template-columns: 1fr 1fr; } }
+    .dt-type code { background: #faf5ff; color: #9333ea; padding: 2px 7px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; font-weight: 700; }
+    .dt-order { color: #475569; }
+    .dt-perf { font-family: 'JetBrains Mono', monospace; color: #059669; font-weight: 600; font-size: 0.72rem; }
+    .dt-use { color: #334155; line-height: 1.4; }
+    .sub-heading { font-size: 1rem; font-weight: 700; color: #0f172a; margin: 0 0 12px; }
+    .compute-section { margin-top: 8px; }
   `
 })
 export class CollectionsMapComponent {
@@ -224,6 +266,113 @@ map.merge(word, 1, Integer::sum);
 
 // putIfAbsent
 map.putIfAbsent("key", defaultVal);`;
+
+  decisionRows = [
+    { type: 'HashMap',        order: 'No order',        perf: 'O(1) get/put',    use: 'General purpose, cache, lookup table' },
+    { type: 'LinkedHashMap',  order: 'Insertion order',  perf: 'O(1) get/put',    use: 'LRU cache, preserving insert order' },
+    { type: 'TreeMap',        order: 'Sorted by key',    perf: 'O(log n)',         use: 'Range queries, sorted output, NavigableMap' },
+    { type: 'EnumMap',        order: 'Enum order',       perf: 'O(1) array-based', use: 'Maps with enum keys — fastest option' },
+    { type: 'HashSet',        order: 'No order',         perf: 'O(1) add/has',     use: 'Deduplication, membership test' },
+    { type: 'LinkedHashSet',  order: 'Insertion order',  perf: 'O(1) add/has',     use: 'Unique elements, insertion order preserved' },
+    { type: 'TreeSet',        order: 'Sorted',           perf: 'O(log n)',         use: 'Sorted unique elements, range queries' },
+  ];
+
+  codeCompute = `// computeIfAbsent — group items by category
+Map<String, List<String>> grouped = new HashMap<>();
+items.forEach(item ->
+    grouped.computeIfAbsent(item.category(),
+        k -> new ArrayList<>()).add(item.name()));
+
+// compute — update existing or insert new
+map.compute("visits", (k, v) ->
+    v == null ? 1 : v + 1);
+
+// merge — combine two values
+// word frequency count
+words.forEach(w -> freq.merge(w, 1, Integer::sum));
+
+// replaceAll — transform all values in-place
+prices.replaceAll((item, price) ->
+    Math.round(price * 1.1 * 100.0) / 100.0);`;
+
+  pitfalls: Pitfall[] = [
+    {
+      title: 'Using mutable objects as Map keys',
+      wrong: `List<String> key = new ArrayList<>();
+map.put(key, "value");
+key.add("oops"); // hashCode changes!
+map.get(key);    // returns null — key is lost!`,
+      correct: `// Use immutable objects as keys
+record Point(int x, int y) {} // record is immutable
+Map<Point, String> map = new HashMap<>();
+map.put(new Point(1, 2), "value"); // safe`,
+      explanation: 'HashMap uses hashCode() to find the bucket. If a key\'s hashCode changes after insertion (due to mutation), the entry becomes unreachable. Always use immutable objects (String, Integer, records) as map keys.'
+    },
+    {
+      title: 'Iterating and modifying a Map simultaneously',
+      wrong: `for (String key : map.keySet()) {
+    if (shouldRemove(key)) {
+        map.remove(key); // ConcurrentModificationException!
+    }
+}`,
+      correct: `// Use removeIf via entrySet iterator
+map.entrySet().removeIf(e ->
+    shouldRemove(e.getKey()));
+
+// Or collect keys first, then remove
+map.keySet().stream()
+   .filter(this::shouldRemove)
+   .toList()
+   .forEach(map::remove);`,
+      explanation: 'Modifying a collection while iterating it throws ConcurrentModificationException. Use Iterator.remove(), entrySet().removeIf(), or collect keys first and remove after.'
+    },
+    {
+      title: 'Forgetting equals/hashCode for custom key types',
+      wrong: `class User { String id; }
+Map<User, String> map = new HashMap<>();
+map.put(new User("u1"), "Alice");
+map.get(new User("u1")); // null — different instances!`,
+      correct: `record User(String id) {} // auto-generates equals+hashCode
+
+// Or manually override both:
+class User {
+    String id;
+    @Override public int hashCode() { return id.hashCode(); }
+    @Override public boolean equals(Object o) {
+        return o instanceof User u && id.equals(u.id);
+    }
+}`,
+      explanation: 'HashMap uses both hashCode() (to find bucket) and equals() (to find entry within bucket). If you don\'t override both consistently, lookups will fail for equal-value instances.'
+    }
+  ];
+
+  interviewTips: InterviewTip[] = [
+    {
+      question: 'How does HashMap work internally?',
+      insight: 'HashMap uses an array of buckets (default 16). On put(k,v): compute k.hashCode(), apply a spread function, mod by capacity to get bucket index, then store as a linked list node. On get: same hash → same bucket → walk the list using equals(). Java 8+ converts linked lists to red-black trees when a bucket exceeds 8 entries, giving O(log n) worst case instead of O(n).',
+      difficulty: 'Hard'
+    },
+    {
+      question: 'What is the difference between HashMap and ConcurrentHashMap?',
+      insight: 'HashMap is not thread-safe — concurrent writes corrupt the internal state (can even cause infinite loops in Java 7 resize). ConcurrentHashMap uses segment-level locking (Java 7) or CAS + synchronized on individual buckets (Java 8+), allowing concurrent reads and fine-grained writes without locking the whole map.',
+      difficulty: 'Hard'
+    },
+    {
+      question: 'When would you use TreeMap over HashMap?',
+      insight: 'Use TreeMap when you need: (1) sorted key iteration, (2) range queries — floorKey(), ceilingKey(), subMap(), headMap(), tailMap(), (3) NavigableMap operations. Cost: O(log n) vs O(1) for HashMap. Example: implementing a leaderboard with rank queries.',
+      difficulty: 'Medium'
+    },
+    {
+      question: 'What happens if two objects have the same hashCode?',
+      insight: 'They go into the same bucket — this is a collision. HashMap handles collisions via chaining (linked list / tree). Performance degrades: too many collisions turn O(1) into O(n) (list) or O(log n) (tree, Java 8+). The load factor (default 0.75) triggers resizing to reduce collisions.',
+      difficulty: 'Medium'
+    },
+    {
+      question: 'What is the contract between equals() and hashCode()?',
+      insight: 'The contract: if a.equals(b) is true, then a.hashCode() == b.hashCode() MUST be true. The reverse is NOT required — two unequal objects can share a hashCode (collision). Violating this breaks HashMap/HashSet — equal objects would land in different buckets and lookups would fail.',
+      difficulty: 'Easy'
+    }
+  ];
 
   private sleep(ms: number): Promise<void> { return new Promise(r => setTimeout(r, ms)); }
 

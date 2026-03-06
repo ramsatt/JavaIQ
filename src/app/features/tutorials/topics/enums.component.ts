@@ -150,7 +150,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
             <div class="tip-num">1</div>
             <div>
               <h4 class="tip-title">enum vs static final int Constants</h4>
-              <p class="tip-desc"><code>static final int STATUS_ACTIVE = 1</code> is error-prone — any <code>int</code> can be passed. An <code>enum Status { ACTIVE }</code> forces valid values at compile time. Enums win every time.</p>
+              <p class="tip-desc"><code>static final int STATUS_ACTIVE = 1</code> is error-prone — any <code>int</code> can be passed. An <code>enum Status &#123; ACTIVE &#125;</code> forces valid values at compile time. Enums win every time.</p>
             </div>
           </div>
           <div class="tip-card">

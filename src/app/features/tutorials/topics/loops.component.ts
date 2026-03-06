@@ -158,7 +158,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
             <div class="tip-num">3</div>
             <div>
               <h4 class="tip-title">Infinite Loops Are Sometimes Intentional</h4>
-              <p class="tip-desc"><code>while (true) { ... break; }</code> and <code>for (;;) { ... }</code> are valid patterns for servers, event loops, and game loops — as long as there's a clear exit condition.</p>
+              <p class="tip-desc"><code>while (true) &#123; ... break; &#125;</code> and <code>for (;;) &#123; ... &#125;</code> are valid patterns for servers, event loops, and game loops — as long as there's a clear exit condition.</p>
             </div>
           </div>
         </div>

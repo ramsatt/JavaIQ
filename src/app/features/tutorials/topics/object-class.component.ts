@@ -1,13 +1,11 @@
 import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TutorialLayoutComponent } from '../tutorial-layout.component';
+import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.component';
 import { CodeBlockComponent } from '../../../shared/code-block.component';
 import { IconComponent } from '../../../shared/icon.component';
 
 @Component({
   selector: 'app-topic-object-class',
-  standalone: true,
-  imports: [CommonModule, TutorialLayoutComponent, CodeBlockComponent, IconComponent],
+  imports: [TutorialLayoutComponent, CodeBlockComponent, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-tutorial-layout
@@ -25,10 +23,12 @@ import { IconComponent } from '../../../shared/icon.component';
         </p>
 
         <div class="methods-grid">
-          <div class="method-card highlight" *ngFor="let m of keyMethods">
-            <div class="method-sig">{{ m.signature }}</div>
-            <div class="method-desc">{{ m.description }}</div>
-          </div>
+          @for (m of keyMethods; track m.signature) {
+            <div class="method-card highlight">
+              <div class="method-sig">{{ m.signature }}</div>
+              <div class="method-desc">{{ m.description }}</div>
+            </div>
+          }
         </div>
 
         <app-code-block [code]="objectHierarchyCode" language="java" />
@@ -113,24 +113,29 @@ import { IconComponent } from '../../../shared/icon.component';
           </div>
 
           <div class="buckets-container">
-            <div class="bucket" *ngFor="let bucket of buckets(); let i = index">
-              <div class="bucket-label">Bucket {{ i }}</div>
-              <div class="bucket-items">
-                <div class="bucket-item" *ngFor="let p of bucket" [title]="'Point(' + p.x + ',' + p.y + ')'">
-                  ({{ p.x }},{{ p.y }})
+            @for (bucket of buckets(); track $index; let i = $index) {
+              <div class="bucket">
+                <div class="bucket-label">Bucket {{ i }}</div>
+                <div class="bucket-items">
+                  @for (p of bucket; track $index) {
+                    <div class="bucket-item" [title]="'Point(' + p.x + ',' + p.y + ')'">
+                      ({{ p.x }},{{ p.y }})
+                    </div>
+                  }
+                  @if (bucket.length === 0) {
+                    <div class="bucket-empty">—</div>
+                  }
                 </div>
-                <div class="bucket-empty" *ngIf="bucket.length === 0">—</div>
               </div>
-            </div>
+            }
           </div>
 
           <div class="viz-status" [class.error]="setSize() < addedPoints().length">
-            <ng-container *ngIf="correctImpl()">
+            @if (correctImpl()) {
               All {{ addedPoints().length }} unique points stored in {{ setSize() }} bucket slot(s). Deduplication works correctly.
-            </ng-container>
-            <ng-container *ngIf="!correctImpl()">
+            } @else {
               <app-icon name="alert-triangle" [size]="14" /> WARNING: {{ addedPoints().length }} adds → {{ setSize() }} entries! Duplicates not detected because hashCode() always returns 0 for all objects — equals() is never called across buckets.
-            </ng-container>
+            }
           </div>
         </div>
 
@@ -162,12 +167,14 @@ import { IconComponent } from '../../../shared/icon.component';
         </p>
 
         <div class="alternatives-grid">
-          <div class="alt-card" *ngFor="let alt of alternatives">
-            <div class="alt-icon" [ngStyle]="{'background': alt.color}">{{ alt.icon }}</div>
-            <h4>{{ alt.name }}</h4>
-            <p>{{ alt.desc }}</p>
-            <div class="alt-verdict" [class]="alt.verdictClass">{{ alt.verdict }}</div>
-          </div>
+          @for (alt of alternatives; track alt.name) {
+            <div class="alt-card">
+              <div class="alt-icon" [style.background]="alt.color">{{ alt.icon }}</div>
+              <h4>{{ alt.name }}</h4>
+              <p>{{ alt.desc }}</p>
+              <div class="alt-verdict" [class]="alt.verdictClass">{{ alt.verdict }}</div>
+            </div>
+          }
         </div>
 
         <app-code-block [code]="recordCode" language="java" />
@@ -187,11 +194,13 @@ import { IconComponent } from '../../../shared/icon.component';
             <span>Lombok @Data</span>
             <span>Java Record (17+)</span>
           </div>
-          <div class="table-row" *ngFor="let row of comparisonRows">
-            <span>{{ row.feature }}</span>
-            <span [innerHTML]="row.lombok"></span>
-            <span [innerHTML]="row.record"></span>
-          </div>
+          @for (row of comparisonRows; track row.feature) {
+            <div class="table-row">
+              <span>{{ row.feature }}</span>
+              <span [innerHTML]="row.lombok"></span>
+              <span [innerHTML]="row.record"></span>
+            </div>
+          }
         </div>
 
         <app-code-block [code]="lombokCode" language="java" />

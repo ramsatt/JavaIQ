@@ -597,7 +597,7 @@ import { WhatsNewComponent } from './shared/whats-new.component';
     /* ── Bottom Navigation Bar ── */
     .bottom-nav {
       position: fixed;
-      bottom: 0;
+      bottom: var(--admob-banner-height, 0px);
       left: 0;
       right: 0;
       z-index: 200;
@@ -755,6 +755,14 @@ export class AppComponent {
     });
     this.adMobService.showBanner();
     this.checkFirstLaunch();
+
+    // Scroll to top on every navigation
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe(() => {
+      window.scrollTo({ top: 0 });
+      (document.querySelector('ion-content') as any)?.scrollToTop(0);
+    });
 
     // Sync html.has-bnav class so global CSS padding can activate
     effect(() => {

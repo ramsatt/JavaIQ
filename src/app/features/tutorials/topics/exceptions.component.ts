@@ -2,11 +2,14 @@ import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { IconComponent } from '../../../shared/icon.component';
 import { CodeBlockComponent } from '../../../shared/code-block.component';
 import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.component';
+import { InterviewTipsComponent, InterviewTip } from '../../../shared/interview-tips.component';
+import { CommonPitfallsComponent, Pitfall } from '../../../shared/common-pitfalls.component';
+import { TopicNavComponent } from '../../../shared/topic-nav.component';
 
 @Component({
   selector: 'app-topic-exceptions',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent, CodeBlockComponent, TutorialLayoutComponent],
+  imports: [IconComponent, CodeBlockComponent, TutorialLayoutComponent, InterviewTipsComponent, CommonPitfallsComponent, TopicNavComponent],
   template: `
     <app-tutorial-layout
       title="Exception Handling"
@@ -125,6 +128,76 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
           </div>
         </div>
       </section>
+
+      <!-- Exception Anti-Patterns -->
+      <section class="section">
+        <h2 class="section-heading">
+          <app-icon name="alert-triangle" [size]="28" css="icon-rose" /> Exception Anti-Patterns
+        </h2>
+        <div class="antipattern-grid">
+          <div class="antipattern-card">
+            <div class="ap-badge bad">BAD</div>
+            <h4 class="ap-title">Swallowing Exceptions</h4>
+            <app-code-block [code]="codeSwallow" />
+            <p class="ap-desc">Empty catch blocks hide bugs. Always log or rethrow.</p>
+          </div>
+          <div class="antipattern-card">
+            <div class="ap-badge bad">BAD</div>
+            <h4 class="ap-title">Catching Throwable/Exception</h4>
+            <app-code-block [code]="codeCatchAll" />
+            <p class="ap-desc">Catches <code>OutOfMemoryError</code> and other Errors you can't recover from.</p>
+          </div>
+          <div class="antipattern-card">
+            <div class="ap-badge bad">BAD</div>
+            <h4 class="ap-title">Using Exceptions for Flow Control</h4>
+            <app-code-block [code]="codeFlowControl" />
+            <p class="ap-desc">Exceptions are expensive to construct. Use <code>containsKey()</code> instead.</p>
+          </div>
+          <div class="antipattern-card">
+            <div class="ap-badge bad">BAD</div>
+            <h4 class="ap-title">Losing the Stack Trace</h4>
+            <app-code-block [code]="codeLostTrace" />
+            <p class="ap-desc">Always wrap the original cause: <code>throw new MyException("msg", e)</code>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Checked vs Unchecked Decision -->
+      <section class="section">
+        <h2 class="section-heading">
+          <app-icon name="git-branch" [size]="28" css="icon-indigo" /> Checked vs Unchecked — Decision Guide
+        </h2>
+        <div class="decision-grid">
+          <div class="decision-card checked">
+            <div class="dc-header">Checked Exception</div>
+            <ul class="dc-list">
+              <li>Caller <strong>can reasonably recover</strong></li>
+              <li>External resource failure (file, DB, network)</li>
+              <li>Part of a public API contract</li>
+              <li>Examples: <code>IOException</code>, <code>SQLException</code></li>
+            </ul>
+          </div>
+          <div class="decision-card unchecked">
+            <div class="dc-header">Unchecked Exception</div>
+            <ul class="dc-list">
+              <li>Programming error / invalid state</li>
+              <li>Caller <strong>cannot meaningfully recover</strong></li>
+              <li>Internal implementation detail</li>
+              <li>Examples: <code>IllegalArgumentException</code>, <code>IllegalStateException</code></li>
+            </ul>
+          </div>
+        </div>
+        <div class="info-box">
+          <strong>Modern advice (Effective Java, Item 71):</strong> Prefer unchecked exceptions for most custom exceptions. Checked exceptions add API clutter and are often wrapped anyway.
+        </div>
+      </section>
+
+      <app-common-pitfalls [pitfalls]="pitfalls" />
+      <app-interview-tips [tips]="interviewTips" />
+
+      <app-topic-nav
+        [prev]="{ courseSlug: 'core-java', slug: 'strings', title: 'Strings & StringBuilder' }"
+        [next]="{ courseSlug: 'core-java', slug: 'collections-list', title: 'Collections: List' }" />
     </app-tutorial-layout>
   `,
   styles: `
@@ -184,6 +257,24 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     .use-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0 0 4px; }
     .use-desc { font-size: 0.78rem; line-height: 1.55; margin: 0; color: #334155; }
     .use-desc code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
+
+    .antipattern-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .antipattern-card { background: #fff; border: 1px solid #fecdd3; border-radius: 14px; padding: 20px; }
+    .ap-badge { display: inline-block; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; padding: 3px 9px; border-radius: 20px; margin-bottom: 10px; }
+    .ap-badge.bad { background: #fff1f2; color: #be123c; }
+    .ap-title { font-size: 0.9rem; font-weight: 700; color: #0f172a; margin: 0 0 10px; }
+    .ap-desc { font-size: 0.76rem; color: #64748b; line-height: 1.55; margin: 8px 0 0; }
+    .ap-desc code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e11d48; }
+
+    .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    @media (max-width: 600px) { .decision-grid { grid-template-columns: 1fr; } }
+    .decision-card { border-radius: 14px; padding: 20px; }
+    .decision-card.checked { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .decision-card.unchecked { background: #fff7ed; border: 1px solid #fed7aa; }
+    .dc-header { font-size: 0.85rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .dc-list { margin: 0; padding-left: 18px; font-size: 0.78rem; color: #334155; line-height: 1.7; }
+    .dc-list code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
+    .info-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 18px; font-size: 0.8rem; color: #166534; line-height: 1.6; }
   `
 })
 export class ExceptionsComponent {
@@ -260,6 +351,112 @@ try (var br = new BufferedReader(
         bw.write(line);
     }
 } // br and bw are auto-closed here`;
+
+  codeSwallow = `try {
+    riskyOperation();
+} catch (Exception e) {
+    // ❌ Never do this — bug is silently hidden!
+}`;
+
+  codeCatchAll = `try {
+    process();
+} catch (Throwable t) {
+    // ❌ Also catches OutOfMemoryError!
+    log.error("Failed", t);
+}`;
+
+  codeFlowControl = `// ❌ Expensive and unreadable
+try {
+    value = map.get(key);
+} catch (NullPointerException e) {
+    value = defaultValue;
+}
+// ✅ Use: map.getOrDefault(key, defaultValue)`;
+
+  codeLostTrace = `try {
+    connect();
+} catch (SQLException e) {
+    // ❌ Original stack trace is lost!
+    throw new ServiceException(e.getMessage());
+    // ✅ Should be: throw new ServiceException("msg", e);
+}`;
+
+  pitfalls: Pitfall[] = [
+    {
+      title: 'Empty catch block',
+      wrong: `try {
+    parse(input);
+} catch (ParseException e) {
+    // silently ignored
+}`,
+      correct: `try {
+    parse(input);
+} catch (ParseException e) {
+    log.warn("Parse failed for: {}", input, e);
+    throw new IllegalArgumentException("Bad input", e);
+}`,
+      explanation: 'Empty catch blocks hide bugs. At minimum, log the exception with its stack trace. Better: rethrow as a domain exception with the original cause attached.'
+    },
+    {
+      title: 'Not using try-with-resources',
+      wrong: `FileReader fr = null;
+try {
+    fr = new FileReader("data.txt");
+    // ... use fr
+} catch (IOException e) {
+    log.error(e);
+} finally {
+    if (fr != null) fr.close(); // could throw!
+}`,
+      correct: `try (var fr = new FileReader("data.txt")) {
+    // fr is auto-closed even if exception occurs
+    // Suppressed exceptions are preserved too
+}`,
+      explanation: 'Manual finally-close can swallow exceptions thrown in the try block. try-with-resources correctly handles suppressed exceptions and eliminates boilerplate.'
+    },
+    {
+      title: 'Checked exception in lambda',
+      wrong: `// ❌ Won't compile — IOException is checked
+list.forEach(path -> Files.readString(path));`,
+      correct: `// ✅ Wrap in unchecked or use a helper
+list.forEach(path -> {
+    try {
+        process(Files.readString(path));
+    } catch (IOException e) {
+        throw new UncheckedIOException(e);
+    }
+});`,
+      explanation: 'Functional interfaces (Function, Consumer, etc.) don\'t declare checked exceptions. Wrap checked exceptions in their unchecked counterparts (UncheckedIOException, RuntimeException) before using in streams/lambdas.'
+    }
+  ];
+
+  interviewTips: InterviewTip[] = [
+    {
+      question: 'What is the difference between checked and unchecked exceptions?',
+      insight: 'Checked exceptions extend Exception (not RuntimeException) and must be declared in the method signature or caught. The compiler enforces this. Unchecked exceptions extend RuntimeException and don\'t require declaration. Use checked for recoverable external failures (I/O, DB), unchecked for programming errors (null, illegal args).',
+      difficulty: 'Easy'
+    },
+    {
+      question: 'Does finally always execute?',
+      insight: 'Almost always yes — even if catch rethrows. Exceptions: (1) System.exit() is called, (2) JVM crashes, (3) the thread is killed. Also note: if finally itself throws an exception, the original exception from try/catch is lost.',
+      difficulty: 'Medium'
+    },
+    {
+      question: 'What is exception chaining and why is it important?',
+      insight: 'Exception chaining preserves the original cause when wrapping exceptions: throw new ServiceException("msg", originalException). Without chaining, the root cause stack trace is lost, making debugging in production very difficult. Always pass the caught exception as the cause parameter.',
+      difficulty: 'Medium'
+    },
+    {
+      question: 'When should you create a custom exception?',
+      insight: 'Create custom exceptions when: (1) you need to carry domain-specific data (e.g., account balance, error codes), (2) you want a clear API contract that callers can catch specifically, (3) you\'re crossing layer boundaries. Extend RuntimeException for most cases (Effective Java recommends unchecked). Add fields for domain data, always provide a constructor that accepts a cause.',
+      difficulty: 'Medium'
+    },
+    {
+      question: 'How does try-with-resources handle suppressed exceptions?',
+      insight: 'If both the try body throws and the auto-close throws, Java attaches the close exception as a suppressed exception on the primary one. Retrieve with e.getSuppressed(). This is superior to manual finally blocks, which would silently discard the original exception when close() also throws.',
+      difficulty: 'Hard'
+    }
+  ];
 
   private sleep(ms: number): Promise<void> {
     return new Promise(r => setTimeout(r, ms));

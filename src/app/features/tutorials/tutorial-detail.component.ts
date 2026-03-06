@@ -681,6 +681,9 @@ export class TutorialDetailComponent {
         { slug: 'generics', title: 'Generics', description: 'Type parameters, bounded types, wildcards', iconName: 'box', duration: '30 min' },
         { slug: 'streams', title: 'Streams API', description: 'filter, map, collect, reduce, parallel streams', iconName: 'zap', duration: '40 min' },
         { slug: 'lambdas', title: 'Lambda Expressions', description: 'Functional interfaces, method references, closures', iconName: 'code', duration: '30 min' },
+        { slug: 'functional-interfaces', title: 'Built-in Functional Interfaces', description: 'Predicate, Function, Consumer, Supplier, composition methods', iconName: 'zap', duration: '35 min' },
+        { slug: 'method-references', title: 'Method References', description: 'Four kinds of method references, constructor refs, Comparator chains', iconName: 'code', duration: '25 min' },
+        { slug: 'optional', title: 'Optional', description: 'Eliminate NullPointerException — creation, map, flatMap, filter, anti-patterns', iconName: 'shield', duration: '30 min' },
         { slug: 'records-sealed', title: 'Records & Sealed Classes', description: 'Java 16+ records, sealed hierarchies, pattern matching', iconName: 'shield', duration: '25 min' },
         { slug: 'io-files', title: 'Java I/O & Files', description: 'Streams, readers, writers, NIO, file operations', iconName: 'terminal', duration: '30 min' }
       ]
