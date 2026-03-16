@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
-  adMobTesting: true,
+  adMobTesting: false,
+  appVersion: '1.5.0',
   firebaseConfig: {
     apiKey: "AIzaSyAhhnYTEfU724e-FgAr9pVwpPQ259AzhZQ",
     authDomain: "javaiq.firebaseapp.com",

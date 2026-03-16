@@ -384,16 +384,16 @@ function grade(pct: number): { letter: string; color: string } {
       display: flex; align-items: center; justify-content: center; gap: 10px;
       padding: 16px;
       border-radius: 16px;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      background: linear-gradient(135deg, #1B4332, #40916C);
       border: none;
       color: white;
       font-size: 1rem; font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+      box-shadow: 0 4px 20px rgba(27,67,50,0.4);
       transition: all 0.2s;
       margin-top: 8px;
     }
-    .mi-start-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(99,102,241,0.45); }
+    .mi-start-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(27,67,50,0.5); }
 
     /* ── SESSION ── */
     .mi-session-page { gap: 16px; padding-top: 48px; }
@@ -415,7 +415,7 @@ function grade(pct: number): { letter: string; color: string } {
     }
     .mi-prog-fill {
       height: 100%; border-radius: 2px;
-      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      background: linear-gradient(90deg, #1B4332, #40916C);
       transition: width 0.4s ease;
     }
 
@@ -616,9 +616,9 @@ function grade(pct: number): { letter: string; color: string } {
     }
     .mi-action-share:hover { background: rgba(99,102,241,0.2); }
     .mi-action-retry {
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      background: linear-gradient(135deg, #1B4332, #40916C);
       color: white;
-      box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+      box-shadow: 0 4px 16px rgba(27,67,50,0.4);
     }
     .mi-action-retry:hover { transform: translateY(-1px); }
     .mi-dashboard-btn {

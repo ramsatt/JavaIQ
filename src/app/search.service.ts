@@ -98,9 +98,22 @@ export class SearchService {
   search(query: string): SearchResult[] {
     if (!query.trim()) return [];
     const q = query.toLowerCase();
-    return this.index
-      .filter(r => r.title.toLowerCase().includes(q) || r.subtitle.toLowerCase().includes(q))
-      .slice(0, 30);
+    const matched = this.index.filter(
+      r => r.title.toLowerCase().includes(q) || r.subtitle.toLowerCase().includes(q)
+    );
+
+    // Cap per type (6 each) so one category never floods all results
+    const PER_TYPE_LIMIT = 6;
+    const seen = new Map<string, number>();
+    const results: SearchResult[] = [];
+    for (const r of matched) {
+      const count = seen.get(r.type) ?? 0;
+      if (count < PER_TYPE_LIMIT) {
+        results.push(r);
+        seen.set(r.type, count + 1);
+      }
+    }
+    return results;
   }
 
   getRecentSearches(): string[] {

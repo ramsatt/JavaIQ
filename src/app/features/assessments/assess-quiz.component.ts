@@ -367,8 +367,9 @@ const META: Record<string, { faIcon: string; iconColor: string; iconBg: string; 
       color: #e2e8f0;
     }
     .opt-selected {
-      background: rgba(from var(--ac, #8b5cf6) r g b / 0.12) !important;
+      background: rgba(255,255,255,0.07) !important;
       border-color: var(--ac, #8b5cf6) !important;
+      border-width: 2px !important;
       color: #e2e8f0 !important;
     }
     .opt-letter {
@@ -385,7 +386,11 @@ const META: Record<string, { faIcon: string; iconColor: string; iconBg: string; 
     .opt-selected .opt-letter {
       background: var(--ac, #8b5cf6);
       border-color: var(--ac, #8b5cf6);
-      color: white;
+      color: #ffffff;
+    }
+    .opt-selected .opt-text {
+      color: #e2e8f0;
+      font-weight: 600;
     }
     .opt-text { flex: 1; line-height: 1.4; }
     .opt-check { font-size: 0.85rem; color: var(--ac, #8b5cf6); flex-shrink: 0; }

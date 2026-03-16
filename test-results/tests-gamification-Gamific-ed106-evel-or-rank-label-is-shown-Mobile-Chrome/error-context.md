@@ -1,0 +1,234 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - banner [ref=e6]:
+        - banner [ref=e8]:
+          - generic [ref=e9]:
+            - button "menu" [ref=e11] [cursor=pointer]:
+              - generic [ref=e13]:
+                - img:
+                  - generic:
+                    - img
+            - generic [ref=e14]:
+              - text: Java
+              - generic [ref=e15]: IQ
+              - generic [ref=e16]: PRO
+          - generic [ref=e17]:
+            - button "🔍" [ref=e18] [cursor=pointer]
+            - generic [ref=e19]:
+              - text: 🔥
+              - generic [ref=e20]: "0"
+            - button "Sign In" [ref=e21] [cursor=pointer]
+      - main [ref=e22]:
+        - main [ref=e25]:
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - generic [ref=e29]: 👋
+              - generic [ref=e30]:
+                - heading "Good afternoon, Learner" [level=2] [ref=e31]
+                - paragraph [ref=e32]: Keep building your Java mastery
+            - generic [ref=e33]:
+              - generic [ref=e34]:
+                - generic [ref=e35]: Level 4
+                - generic [ref=e36]: 1,000 XP
+              - generic [ref=e39]: 600 XP to next level
+          - generic [ref=e40]:
+            - generic [ref=e41]:
+              - generic [ref=e42]: 1,000
+              - generic [ref=e43]: Total XP
+            - generic [ref=e45]:
+              - generic [ref=e46]: "0"
+              - generic [ref=e47]: Day Streak
+            - generic [ref=e49]:
+              - generic [ref=e50]: 0%
+              - generic [ref=e51]: Progress
+          - generic [ref=e53] [cursor=pointer]:
+            - generic [ref=e55]: 
+            - generic [ref=e56]:
+              - generic [ref=e57]: TODAY'S FOCUS
+              - generic [ref=e58]: Daily Challenge
+              - generic [ref=e59]: 5 Questions · +50 XP · 2× Bonus
+            - generic [ref=e60]: 
+          - generic [ref=e62]:
+            - button " Mock Interview" [ref=e63] [cursor=pointer]:
+              - generic [ref=e64]: 
+              - generic [ref=e65]:
+                - text: Mock
+                - text: Interview
+            - button " Study Plan" [ref=e66] [cursor=pointer]:
+              - generic [ref=e67]: 
+              - generic [ref=e68]:
+                - text: Study
+                - text: Plan
+            - button " My Progress" [ref=e69] [cursor=pointer]:
+              - generic [ref=e70]: 
+              - generic [ref=e71]:
+                - text: My
+                - text: Progress
+            - button " Saved" [ref=e72] [cursor=pointer]:
+              - generic [ref=e73]: 
+              - generic [ref=e74]: Saved
+            - button " Leaderboard" [ref=e75] [cursor=pointer]:
+              - generic [ref=e76]: 
+              - generic [ref=e77]: Leaderboard
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - heading "Learning Path" [level=3] [ref=e80]
+              - text: Master Java step by step
+            - generic [ref=e81]:
+              - generic [ref=e87] [cursor=pointer]:
+                - generic [ref=e88]:
+                  - generic [ref=e90]: ☕
+                  - generic [ref=e91]:
+                    - heading "Core Java" [level=4] [ref=e92]
+                    - text: 51 Topics
+                  - generic [ref=e93]: ›
+                - generic [ref=e94]:
+                  - generic [ref=e95]:
+                    - generic [ref=e96]: PROFICIENCY
+                    - generic [ref=e97]: ★★★
+                  - generic [ref=e100]: 0%
+              - generic [ref=e101] [cursor=pointer]:
+                - generic [ref=e103]: 🔒
+                - generic [ref=e104]:
+                  - generic [ref=e105]:
+                    - generic [ref=e107]: 🌿
+                    - generic [ref=e108]:
+                      - heading "Spring Boot" [level=4] [ref=e109]
+                      - text: 52 Topics
+                    - generic [ref=e110]: ›
+                  - generic [ref=e111]:
+                    - text: Complete
+                    - strong [ref=e112]: Core Java
+                    - text: to unlock
+              - generic [ref=e113] [cursor=pointer]:
+                - generic [ref=e115]: 🔒
+                - generic [ref=e116]:
+                  - generic [ref=e117]:
+                    - generic [ref=e119]: 🔗
+                    - generic [ref=e120]:
+                      - heading "Microservices" [level=4] [ref=e121]
+                      - text: 35 Topics
+                    - generic [ref=e122]: ›
+                  - generic [ref=e123]:
+                    - text: Complete
+                    - strong [ref=e124]: Spring Boot
+                    - text: to unlock
+            - button "View all 8 modules " [ref=e125] [cursor=pointer]:
+              - text: View all 8 modules
+              - generic [ref=e126]: 
+          - generic [ref=e127]:
+            - button "🏅 Achievements 0 / 11 ›" [ref=e128] [cursor=pointer]:
+              - generic [ref=e129]: 🏅
+              - generic [ref=e130]: Achievements
+              - generic [ref=e131]: 0 / 11
+              - generic [ref=e132]: ›
+            - generic [ref=e133]:
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - generic [ref=e138]:
+                    - generic [ref=e139]: 🔥
+                    - generic [ref=e140]:
+                      - generic [ref=e141]: "0"
+                      - generic [ref=e142]: Days
+                  - generic [ref=e143]:
+                    - generic [ref=e144]:
+                      - generic [ref=e145]: ⚡
+                      - generic [ref=e146]: Level 4
+                    - generic [ref=e147]: 1000 XP
+                - generic [ref=e148]:
+                  - generic [ref=e149]:
+                    - generic [ref=e150]: 7-Day Warrior
+                    - generic [ref=e151]: 7 days to go
+                  - generic [ref=e153]: 100 XP bonus ahead
+              - generic [ref=e156]:
+                - generic [ref=e157]:
+                  - generic [ref=e158]: 🎯 Today's Goal
+                  - generic [ref=e159]: 0 / 3 done
+                - generic [ref=e160]:
+                  - generic [ref=e163]: Complete 1 challenge
+                  - generic [ref=e166]: Read 2 tutorial topics
+                  - generic [ref=e169]: Answer today's question
+            - generic [ref=e172]:
+              - generic [ref=e173]:
+                - generic [ref=e175]: 📅 Question of the Day
+                - generic [ref=e176]: Core Java
+              - paragraph [ref=e177]: What is the difference between JDK, JRE, and JVM?
+              - button "💡 Reveal Answer & Earn 15 XP" [ref=e178] [cursor=pointer]
+            - 'button "▶ Continue Learning 0% Complete Core Java Masterclass Next: JVM Architecture Resume →" [ref=e180] [cursor=pointer]':
+              - generic [ref=e181]:
+                - generic [ref=e182]: ▶ Continue Learning
+                - generic [ref=e183]: 0% Complete
+              - paragraph [ref=e184]: Core Java Masterclass
+              - paragraph [ref=e185]: "Next: JVM Architecture"
+              - generic [ref=e187]: Resume →
+    - tablist "Main navigation" [ref=e188]:
+      - tab "Home" [ref=e189] [cursor=pointer]:
+        - generic [ref=e190]: 
+        - generic [ref=e191]: Home
+      - tab "Learn" [ref=e192] [cursor=pointer]:
+        - generic [ref=e193]: 
+        - generic [ref=e194]: Learn
+      - tab "Practice" [ref=e195] [cursor=pointer]:
+        - generic [ref=e197]: 
+        - generic [ref=e198]: Practice
+      - tab "Progress" [ref=e199] [cursor=pointer]:
+        - generic [ref=e200]: 
+        - generic [ref=e201]: Progress
+      - tab "More options" [ref=e202] [cursor=pointer]:
+        - generic [ref=e203]: 
+        - generic [ref=e204]: More
+    - dialog "What's New" [ref=e206]:
+      - generic [ref=e208]:
+        - generic [ref=e209]: ✨
+        - generic [ref=e210]:
+          - heading "What's New in JavaIQ" [level=2] [ref=e211]
+          - paragraph [ref=e212]: Version 1.3 · 24-week journey complete
+      - generic [ref=e213]:
+        - generic [ref=e214]:
+          - generic [ref=e215]: 🎯
+          - generic [ref=e216]:
+            - generic [ref=e217]: Mock Interview Mode
+            - generic [ref=e218]: Timed flashcard sessions across any topic with XP rewards.
+        - generic [ref=e219]:
+          - generic [ref=e220]: 📊
+          - generic [ref=e221]:
+            - generic [ref=e222]: Progress Dashboard
+            - generic [ref=e223]: Category mastery bars, 7-day activity grid, and weak areas.
+        - generic [ref=e224]:
+          - generic [ref=e225]: 🔁
+          - generic [ref=e226]:
+            - generic [ref=e227]: Review Queue
+            - generic [ref=e228]: Spaced-repetition flashcards for questions you've missed.
+        - generic [ref=e229]:
+          - generic [ref=e230]: 📅
+          - generic [ref=e231]:
+            - generic [ref=e232]: Adaptive Study Plan
+            - generic [ref=e233]: Goal-based daily tasks that evolve as your streak grows.
+        - generic [ref=e234]:
+          - generic [ref=e235]: 🏅
+          - generic [ref=e236]:
+            - generic [ref=e237]: Achievements & Badges
+            - generic [ref=e238]: Unlock 10 milestones and share them with your network.
+        - generic [ref=e239]:
+          - generic [ref=e240]: 📜
+          - generic [ref=e241]:
+            - generic [ref=e242]: Course Certificates
+            - generic [ref=e243]: Print-ready certificates when you complete a category.
+        - generic [ref=e244]:
+          - generic [ref=e245]: 🔔
+          - generic [ref=e246]:
+            - generic [ref=e247]: Smart Reminders
+            - generic [ref=e248]: Daily streak notifications at your chosen time.
+        - generic [ref=e249]:
+          - generic [ref=e250]: 🌐
+          - generic [ref=e251]:
+            - generic [ref=e252]: Offline Resilience
+            - generic [ref=e253]: Writes queue and flush automatically when you're back online.
+      - button "Got it — Let's Go!" [ref=e254] [cursor=pointer]
+  - iframe [ref=e255]:
+    
+```

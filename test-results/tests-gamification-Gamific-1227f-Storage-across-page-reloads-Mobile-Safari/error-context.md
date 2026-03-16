@@ -1,0 +1,186 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - banner [ref=e6]:
+        - banner [ref=e8]:
+          - generic [ref=e9]:
+            - button "menu" [ref=e11] [cursor=pointer]:
+              - generic [ref=e13]:
+                - img:
+                  - generic:
+                    - img
+            - generic [ref=e14]:
+              - text: Java
+              - generic [ref=e15]: IQ
+              - generic [ref=e16]: PRO
+          - generic [ref=e17]:
+            - button "🔍" [ref=e18] [cursor=pointer]
+            - generic [ref=e19]:
+              - text: 🔥
+              - generic [ref=e20]: "0"
+            - button "Sign In" [ref=e21] [cursor=pointer]
+      - main [ref=e22]:
+        - main [ref=e25]:
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - generic [ref=e29]: 👋
+              - generic [ref=e30]:
+                - heading "Good afternoon, Learner" [level=2] [ref=e31]
+                - paragraph [ref=e32]: Keep building your Java mastery
+            - generic [ref=e33]:
+              - generic [ref=e34]:
+                - generic [ref=e35]: Level 1
+                - generic [ref=e36]: 0 XP
+              - generic [ref=e38]: 100 XP to next level
+          - generic [ref=e39]:
+            - generic [ref=e40]:
+              - generic [ref=e41]: "0"
+              - generic [ref=e42]: Total XP
+            - generic [ref=e44]:
+              - generic [ref=e45]: "0"
+              - generic [ref=e46]: Day Streak
+            - generic [ref=e48]:
+              - generic [ref=e49]: 0%
+              - generic [ref=e50]: Progress
+          - generic [ref=e52] [cursor=pointer]:
+            - generic [ref=e54]: 
+            - generic [ref=e55]:
+              - generic [ref=e56]: TODAY'S FOCUS
+              - generic [ref=e57]: Daily Challenge
+              - generic [ref=e58]: 5 Questions · +50 XP · 2× Bonus
+            - generic [ref=e59]: 
+          - generic [ref=e61]:
+            - button " Mock Interview" [ref=e62] [cursor=pointer]:
+              - generic [ref=e63]: 
+              - generic [ref=e64]:
+                - text: Mock
+                - text: Interview
+            - button " Study Plan" [ref=e65] [cursor=pointer]:
+              - generic [ref=e66]: 
+              - generic [ref=e67]:
+                - text: Study
+                - text: Plan
+            - button " My Progress" [ref=e68] [cursor=pointer]:
+              - generic [ref=e69]: 
+              - generic [ref=e70]:
+                - text: My
+                - text: Progress
+            - button " Saved" [ref=e71] [cursor=pointer]:
+              - generic [ref=e72]: 
+              - generic [ref=e73]: Saved
+            - button " Leaderboard" [ref=e74] [cursor=pointer]:
+              - generic [ref=e75]: 
+              - generic [ref=e76]: Leaderboard
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - heading "Learning Path" [level=3] [ref=e79]
+              - text: Master Java step by step
+            - generic [ref=e80]:
+              - generic [ref=e86] [cursor=pointer]:
+                - generic [ref=e87]:
+                  - generic [ref=e89]: ☕
+                  - generic [ref=e90]:
+                    - heading "Core Java" [level=4] [ref=e91]
+                    - text: 51 Topics
+                  - generic [ref=e92]: ›
+                - generic [ref=e93]:
+                  - generic [ref=e94]:
+                    - generic [ref=e95]: PROFICIENCY
+                    - generic [ref=e96]: ★★★
+                  - generic [ref=e99]: 0%
+              - generic [ref=e100] [cursor=pointer]:
+                - generic [ref=e102]: 🔒
+                - generic [ref=e103]:
+                  - generic [ref=e104]:
+                    - generic [ref=e106]: 🌿
+                    - generic [ref=e107]:
+                      - heading "Spring Boot" [level=4] [ref=e108]
+                      - text: 52 Topics
+                    - generic [ref=e109]: ›
+                  - generic [ref=e110]:
+                    - text: Complete
+                    - strong [ref=e111]: Core Java
+                    - text: to unlock
+              - generic [ref=e112] [cursor=pointer]:
+                - generic [ref=e114]: 🔒
+                - generic [ref=e115]:
+                  - generic [ref=e116]:
+                    - generic [ref=e118]: 🔗
+                    - generic [ref=e119]:
+                      - heading "Microservices" [level=4] [ref=e120]
+                      - text: 35 Topics
+                    - generic [ref=e121]: ›
+                  - generic [ref=e122]:
+                    - text: Complete
+                    - strong [ref=e123]: Spring Boot
+                    - text: to unlock
+            - button "View all 8 modules " [ref=e124] [cursor=pointer]:
+              - text: View all 8 modules
+              - generic [ref=e125]: 
+          - generic [ref=e126]:
+            - button "🏅 Achievements 0 / 11 ›" [ref=e127] [cursor=pointer]:
+              - generic [ref=e128]: 🏅
+              - generic [ref=e129]: Achievements
+              - generic [ref=e130]: 0 / 11
+              - generic [ref=e131]: ›
+            - generic [ref=e132]:
+              - generic [ref=e135]:
+                - generic [ref=e136]:
+                  - generic [ref=e137]:
+                    - generic [ref=e138]: 🔥
+                    - generic [ref=e139]:
+                      - generic [ref=e140]: "0"
+                      - generic [ref=e141]: Days
+                  - generic [ref=e142]:
+                    - generic [ref=e143]:
+                      - generic [ref=e144]: ⚡
+                      - generic [ref=e145]: Level 1
+                    - generic [ref=e146]: 0 XP
+                - generic [ref=e147]:
+                  - generic [ref=e148]:
+                    - generic [ref=e149]: 7-Day Warrior
+                    - generic [ref=e150]: 7 days to go
+                  - generic [ref=e152]: 100 XP bonus ahead
+              - generic [ref=e155]:
+                - generic [ref=e156]:
+                  - generic [ref=e157]: 🎯 Today's Goal
+                  - generic [ref=e158]: 0 / 3 done
+                - generic [ref=e159]:
+                  - generic [ref=e162]: Complete 1 challenge
+                  - generic [ref=e165]: Read 2 tutorial topics
+                  - generic [ref=e168]: Answer today's question
+            - generic [ref=e171]:
+              - generic [ref=e172]:
+                - generic [ref=e174]: 📅 Question of the Day
+                - generic [ref=e175]: Core Java
+              - paragraph [ref=e176]: What is the difference between JDK, JRE, and JVM?
+              - button "💡 Reveal Answer & Earn 15 XP" [ref=e177] [cursor=pointer]
+            - 'button "▶ Continue Learning 0% Complete Core Java Masterclass Next: JVM Architecture Resume →" [ref=e179] [cursor=pointer]':
+              - generic [ref=e180]:
+                - generic [ref=e181]: ▶ Continue Learning
+                - generic [ref=e182]: 0% Complete
+              - paragraph [ref=e183]: Core Java Masterclass
+              - paragraph [ref=e184]: "Next: JVM Architecture"
+              - generic [ref=e186]: Resume →
+    - tablist "Main navigation" [ref=e187]:
+      - tab "Home" [ref=e188] [cursor=pointer]:
+        - generic [ref=e189]: 
+        - generic [ref=e190]: Home
+      - tab "Learn" [ref=e191] [cursor=pointer]:
+        - generic [ref=e192]: 
+        - generic [ref=e193]: Learn
+      - tab "Practice" [ref=e194] [cursor=pointer]:
+        - generic [ref=e196]: 
+        - generic [ref=e197]: Practice
+      - tab "Progress" [ref=e198] [cursor=pointer]:
+        - generic [ref=e199]: 
+        - generic [ref=e200]: Progress
+      - tab "More options" [ref=e201] [cursor=pointer]:
+        - generic [ref=e202]: 
+        - generic [ref=e203]: More
+  - iframe [ref=e204]:
+    
+```

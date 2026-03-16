@@ -6,7 +6,7 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
 
 const TYPE_CONFIG: Record<BookmarkType, { label: string; icon: string; color: string }> = {
   tutorial: { label: 'Tutorials', icon: 'fa-solid fa-book-open', color: '#10b981' },
-  interview: { label: 'Interview Questions', icon: 'fa-solid fa-circle-question', color: '#6366f1' },
+  interview: { label: 'Interview Questions', icon: 'fa-solid fa-circle-question', color: '#1B4332' },
   coding: { label: 'Coding Questions', icon: 'fa-solid fa-terminal', color: '#3b82f6' },
   leetcode: { label: 'LeetCode', icon: 'fa-solid fa-trophy', color: '#f59e0b' },
   experience: { label: 'Experiences', icon: 'fa-solid fa-microphone-lines', color: '#10b981' },
@@ -79,8 +79,8 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
     </ion-content>
   `,
   styles: `
-    .bm-toolbar { --background: #0b1120; --color: white; --border-style: none; }
-    .bm-content { --background: #0b1120; }
+    .bm-toolbar { --background: var(--ion-background-color, #0b1120); --color: var(--ion-text-color, white); --border-style: none; }
+    .bm-content { --background: var(--ion-background-color, #0b1120); }
 
     .hero {
       position: relative;
@@ -92,7 +92,7 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
       top: -60px; right: -40px;
       width: 220px; height: 220px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(64,145,108,0.12) 0%, transparent 70%);
       pointer-events: none;
     }
     .hero-inner { position: relative; z-index: 1; }
@@ -105,9 +105,9 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      color: #6366f1;
-      background: rgba(99,102,241,0.1);
-      border: 1px solid rgba(99,102,241,0.25);
+      color: #40916C;
+      background: rgba(64,145,108,0.12);
+      border: 1px solid rgba(64,145,108,0.3);
       border-radius: 20px;
       padding: 5px 14px;
       margin-bottom: 14px;
@@ -118,7 +118,7 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
       letter-spacing: -0.03em; line-height: 1.15; margin: 0 0 8px;
     }
     .hero-accent {
-      background: linear-gradient(135deg, #6366f1, #818cf8);
+      background: linear-gradient(135deg, #1B4332, #40916C);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -134,7 +134,7 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
     .hero-stat { text-align: center; }
     .stat-num {
       display: block; font-size: 1.4rem; font-weight: 800;
-      background: linear-gradient(135deg, #6366f1, #818cf8);
+      background: linear-gradient(135deg, #1B4332, #40916C);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;

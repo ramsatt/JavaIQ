@@ -14,10 +14,13 @@ import { BookmarksService } from '../../bookmarks.service';
     <ion-header class="ion-no-border" translucent="false">
       <ion-toolbar class="detail-toolbar">
         <ion-buttons slot="start">
-          <ion-back-button [defaultHref]="'/interview-questions/' + categorySlug()" text="" style="color: white"></ion-back-button>
+          <ion-back-button [defaultHref]="'/interview-questions/' + categorySlug()" text="" class="detail-back-btn"></ion-back-button>
         </ion-buttons>
         <ion-title class="brand-title">
-          <span class="nav-position">{{ currentIndex() + 1 }} / {{ totalInCategory() }}</span>
+          <div class="nav-title-group">
+            <span class="nav-topic">{{ categoryTitle() }}</span>
+            <span class="nav-position">{{ currentIndex() + 1 }} / {{ totalInCategory() }}</span>
+          </div>
         </ion-title>
         <ion-buttons slot="end">
           <button class="bm-btn" (click)="toggleBookmark()" [class.bm-active]="isBookmarked()">
@@ -196,10 +199,20 @@ import { BookmarksService } from '../../bookmarks.service';
       letter-spacing: -0.02em;
       color: white;
     }
+    .detail-back-btn {
+      color: white;
+    }
+    .nav-title-group {
+      display: flex; flex-direction: column; align-items: center; gap: 1px;
+    }
+    .nav-topic {
+      font-size: 0.78rem; font-weight: 700; color: #e2e8f0;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
     .nav-position {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #94a3b8;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: #64748b;
     }
 
     /* ── Content ── */
@@ -506,16 +519,87 @@ import { BookmarksService } from '../../bookmarks.service';
     :host-context(html:not(.dark)) .detail-content {
       --background: #F5F7F2;
     }
-    :host-context(html:not(.dark)) .definition-card,
-    :host-context(html:not(.dark)) .usecase-card {
-      background: #ffffff !important;
-      border: 1px solid #D6DDD2 !important;
+
+    /* Header */
+    :host-context(html:not(.dark)) .meta-badge {
+      color: #52665A;
+      background: #E8EFE9;
+      border-color: #D6DDD2;
     }
     :host-context(html:not(.dark)) .detail-title {
       color: #1B1B1B;
       -webkit-text-fill-color: #1B1B1B;
     }
     :host-context(html:not(.dark)) .detail-answer {
+      color: #374151;
+      border-left-color: #B7CCBB;
+    }
+
+    /* Section labels */
+    :host-context(html:not(.dark)) .section-label {
+      color: #52665A;
+    }
+
+    /* Definition card */
+    :host-context(html:not(.dark)) .definition-card {
+      background: #ffffff;
+      border-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .def-text {
+      color: #1a1a1a;
+    }
+
+    /* Concept pills */
+    :host-context(html:not(.dark)) .concept-pill {
+      background: #ffffff;
+      border-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .pill-header {
+      color: #1a1a1a;
+    }
+    :host-context(html:not(.dark)) .pill-desc {
+      color: #374151;
+    }
+
+    /* Use case cards */
+    :host-context(html:not(.dark)) .usecase-card {
+      background: #ffffff;
+      border-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .usecase-title {
+      color: #1a1a1a;
+    }
+    :host-context(html:not(.dark)) .usecase-desc {
+      color: #374151;
+    }
+    :host-context(html:not(.dark)) .nav-topic { color: rgba(255,255,255,0.95); }
+    :host-context(html:not(.dark)) .nav-position { color: rgba(255,255,255,0.6); }
+
+    /* Toolbar bookmark button */
+    :host-context(html:not(.dark)) .bm-btn {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.8);
+    }
+    :host-context(html:not(.dark)) .nav-position {
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Navigation footer */
+    :host-context(html:not(.dark)) .nav-footer {
+      border-top-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .nav-btn {
+      background: #ffffff;
+      border-color: #D6DDD2;
+      color: #1B1B1B;
+    }
+    :host-context(html:not(.dark)) .nav-btn:hover {
+      background: rgba(27,67,50,0.08);
+      border-color: #40916C;
+      color: #1B4332;
+    }
+    :host-context(html:not(.dark)) .nav-progress-text {
       color: #52665A;
     }
   `
@@ -542,6 +626,16 @@ export class IqDetailComponent {
   });
 
   totalInCategory = computed(() => this.categoryQuestions().length);
+
+  categoryTitle = computed(() => {
+    const map: Record<string, string> = {
+      'core-java': 'Core Java', 'spring-boot': 'Spring Boot',
+      'microservices': 'Microservices', 'hibernate': 'Hibernate',
+      'coding-patterns': 'Coding Questions', 'reactive-prog': 'Reactive Programming',
+      'multithreading': 'Multithreading', 'spring-reactive': 'Spring Reactive'
+    };
+    return map[this.categorySlug()] ?? this.categorySlug().replace(/-/g, ' ');
+  });
 
   constructor() {
     this.route.paramMap.subscribe(async params => {

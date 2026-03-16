@@ -499,10 +499,10 @@ export class CqListComponent {
     { key: 'arrays', title: 'Arrays & Strings', faIcon: 'fa-solid fa-chart-bar', accentColor: '#3b82f6', iconBg: 'rgba(59,130,246,0.12)', count: 15 },
     { key: 'linked-lists', title: 'Linked Lists', faIcon: 'fa-solid fa-link', accentColor: '#06b6d4', iconBg: 'rgba(6,182,212,0.12)', count: 10 },
     { key: 'trees', title: 'Trees & Graphs', faIcon: 'fa-solid fa-network-wired', accentColor: '#10b981', iconBg: 'rgba(16,185,129,0.12)', count: 12 },
-    { key: 'dp', title: 'Dynamic Programming', faIcon: 'fa-solid fa-calculator', accentColor: '#8b5cf6', iconBg: 'rgba(139,92,246,0.12)', count: 15 },
+    { key: 'dp', title: 'Dynamic Programming', faIcon: 'fa-solid fa-calculator', accentColor: '#0891b2', iconBg: 'rgba(8,145,178,0.12)', count: 15 },
     { key: 'sorting', title: 'Sorting & Searching', faIcon: 'fa-solid fa-sort-amount-down', accentColor: '#f59e0b', iconBg: 'rgba(245,158,11,0.12)', count: 8 },
     { key: 'stacks', title: 'Stacks & Queues', faIcon: 'fa-solid fa-layer-group', accentColor: '#f97316', iconBg: 'rgba(249,115,22,0.12)', count: 8 },
     { key: 'recursion', title: 'Recursion & Backtracking', faIcon: 'fa-solid fa-rotate', accentColor: '#ec4899', iconBg: 'rgba(236,72,153,0.12)', count: 10 },
-    { key: 'hashing', title: 'Hashing', faIcon: 'fa-solid fa-hashtag', accentColor: '#6366f1', iconBg: 'rgba(99,102,241,0.12)', count: 7 }
+    { key: 'hashing', title: 'Hashing', faIcon: 'fa-solid fa-hashtag', accentColor: '#0369a1', iconBg: 'rgba(3,105,161,0.12)', count: 7 }
   ];
 }

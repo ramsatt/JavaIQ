@@ -62,13 +62,15 @@ interface TutorialCourse {
 
       <div class="page-body">
         <!-- Quick Category Filters -->
-        <div class="filter-row">
-          @for (cat of categoryPills; track cat.label; let i = $index) {
-            <button class="filter-chip" [class.filter-active]="i === 0">
-              <i [class]="cat.faIcon" class="filter-chip-icon" [style.color]="cat.color"></i>
-              <span>{{ cat.label }}</span>
-            </button>
-          }
+        <div class="filter-scroll-wrap">
+          <div class="filter-row">
+            @for (cat of categoryPills; track cat.label; let i = $index) {
+              <button class="filter-chip" [class.filter-active]="i === 0">
+                <i [class]="cat.faIcon" class="filter-chip-icon" [style.color]="cat.color"></i>
+                <span>{{ cat.label }}</span>
+              </button>
+            }
+          </div>
         </div>
 
         <!-- Section Header -->
@@ -278,12 +280,26 @@ interface TutorialCourse {
     }
 
     /* ── Filter Chips ── */
+    .filter-scroll-wrap {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .filter-scroll-wrap::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 48px; height: calc(100% - 4px);
+      background: linear-gradient(to right, transparent, #0b1120);
+      pointer-events: none;
+    }
+    :host-context(html:not(.dark)) .filter-scroll-wrap::after {
+      background: linear-gradient(to right, transparent, #f8fafc);
+    }
     .filter-row {
       display: flex;
       gap: 8px;
       overflow-x: auto;
       padding-bottom: 4px;
-      margin-bottom: 28px;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
@@ -475,12 +491,12 @@ interface TutorialCourse {
       color: #34d399;
     }
     .diff-tag[data-level="intermediate"] {
-      background: rgba(139,92,246,0.15);
-      color: #a78bfa;
+      background: rgba(59,130,246,0.15);
+      color: #60a5fa;
     }
     .diff-tag[data-level="advanced"] {
-      background: rgba(239,68,68,0.15);
-      color: #f87171;
+      background: rgba(245,158,11,0.15);
+      color: #f59e0b;
     }
 
     /* Arrow */
@@ -629,8 +645,8 @@ interface TutorialCourse {
       color: #1B4332;
     }
     :host-context(html:not(.dark)) .diff-tag[data-level="advanced"] {
-      background: rgba(220,38,38,0.1);
-      color: #dc2626;
+      background: rgba(217,119,6,0.1);
+      color: #d97706;
     }
   `
 })
@@ -671,7 +687,7 @@ export class TutorialListComponent {
     {
       slug: 'microservices', title: 'Microservices',
       description: 'Service discovery, API gateway, circuit breakers, event-driven design, and Docker.',
-      faIcon: 'fa-solid fa-cubes', accentColor: '#8b5cf6', iconBg: 'rgba(139,92,246,0.12)',
+      faIcon: 'fa-solid fa-cubes', accentColor: '#06b6d4', iconBg: 'rgba(6,182,212,0.12)',
       chapterCount: 14, difficulty: 'advanced', estimatedTime: '8 hours'
     },
     {

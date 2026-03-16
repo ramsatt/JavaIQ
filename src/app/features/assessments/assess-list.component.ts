@@ -344,8 +344,8 @@ interface Assessment {
       border-radius: 6px;
     }
     .diff-badge[data-d="beginner"] { background: rgba(16,185,129,0.15); color: #34d399; }
-    .diff-badge[data-d="intermediate"] { background: rgba(139,92,246,0.15); color: #a78bfa; }
-    .diff-badge[data-d="advanced"] { background: rgba(239,68,68,0.15); color: #f87171; }
+    .diff-badge[data-d="intermediate"] { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .diff-badge[data-d="advanced"] { background: rgba(245,158,11,0.15); color: #f59e0b; }
 
     .card-desc { font-size: 0.75rem; color: #64748b; line-height: 1.5; margin: 0 0 10px; }
 
@@ -478,6 +478,8 @@ interface Assessment {
       color: white !important;
       border-color: #1B4332 !important;
     }
+    :host-context(html:not(.dark)) .card-title { color: #1B1B1B; }
+    :host-context(html:not(.dark)) .card-cat { color: #52665A; }
   `
 })
 export class AssessListComponent {
@@ -486,8 +488,8 @@ export class AssessListComponent {
   filters = [
     { val: 'all', label: 'All', color: '#94a3b8' },
     { val: 'beginner', label: 'Beginner', color: '#10b981' },
-    { val: 'intermediate', label: 'Intermediate', color: '#8b5cf6' },
-    { val: 'advanced', label: 'Advanced', color: '#f87171' }
+    { val: 'intermediate', label: 'Intermediate', color: '#3b82f6' },
+    { val: 'advanced', label: 'Advanced', color: '#f59e0b' }
   ];
 
   assessments: Assessment[] = [

@@ -12,7 +12,7 @@ import { AdGateService } from '../../ad-gate.service';
     <ion-header class="ion-no-border" translucent="false">
       <ion-toolbar class="cat-toolbar">
         <ion-buttons slot="start">
-          <ion-back-button defaultHref="/interview-questions" text="" style="color: white"></ion-back-button>
+          <ion-back-button defaultHref="/interview-questions" text="" class="cat-back-btn"></ion-back-button>
         </ion-buttons>
         <ion-title class="cat-brand">JavaIQ</ion-title>
       </ion-toolbar>
@@ -74,7 +74,7 @@ import { AdGateService } from '../../ad-gate.service';
                   @if (isRevealed(q.id) || isUnlocked(q.id)) {
                     <i class="fa-solid fa-chevron-right"></i>
                   } @else {
-                    <i class="fa-solid fa-lock" style="color: #f59e0b; font-size: 11px;"></i>
+                    <i class="fa-solid fa-lock q-lock-icon"></i>
                   }
                 </div>
               </button>
@@ -96,6 +96,9 @@ import { AdGateService } from '../../ad-gate.service';
       font-family: 'Inter', sans-serif;
       font-weight: 800;
       letter-spacing: -0.02em;
+      color: white;
+    }
+    .cat-back-btn {
       color: white;
     }
 
@@ -122,7 +125,7 @@ import { AdGateService } from '../../ad-gate.service';
       color: rgba(255,255,255,0.5);
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 4px;
+      border-radius: 100px;
       padding: 3px 10px;
       margin-bottom: 10px;
     }
@@ -213,7 +216,7 @@ import { AdGateService } from '../../ad-gate.service';
       display: flex;
       width: 100%;
       text-align: left;
-      align-items: center;
+      align-items: flex-start;
       gap: 14px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.06);
@@ -233,9 +236,9 @@ import { AdGateService } from '../../ad-gate.service';
       transform: scale(0.99);
     }
 
-    /* Visited card - subtle left border */
+    /* Visited card - inset shadow avoids layout shift */
     .q-card-visited {
-      border-left: 3px solid rgba(16,185,129,0.4);
+      box-shadow: inset 3px 0 0 rgba(16,185,129,0.45);
     }
 
     /* ── Number Badge ── */
@@ -270,7 +273,7 @@ import { AdGateService } from '../../ad-gate.service';
     .q-title-row { display: flex; align-items: flex-start; gap: 8px; }
     .new-badge {
       flex-shrink: 0;
-      font-size: 0.48rem;
+      font-size: 0.62rem;
       font-weight: 800;
       letter-spacing: 0.1em;
       padding: 2px 6px;
@@ -316,9 +319,14 @@ import { AdGateService } from '../../ad-gate.service';
     /* ── Arrow ── */
     .q-card-arrow {
       flex-shrink: 0;
+      align-self: center;
       color: #475569;
       font-size: 12px;
       transition: color 0.15s ease;
+    }
+    .q-lock-icon {
+      color: #f59e0b;
+      font-size: 11px;
     }
     .q-card:hover .q-card-arrow {
       color: #94a3b8;
@@ -332,16 +340,65 @@ import { AdGateService } from '../../ad-gate.service';
     :host-context(html:not(.dark)) .cat-content {
       --background: #F5F7F2;
     }
-    :host-context(html:not(.dark)) .q-card {
-      background: #ffffff !important;
-      border: 1px solid #D6DDD2 !important;
+    :host-context(html:not(.dark)) .cat-hero {
+      background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 55%, #40916C 100%);
+      border-bottom-color: rgba(0,0,0,0.08);
+    }
+    :host-context(html:not(.dark)) .cat-hero-badge {
+      color: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.25);
     }
     :host-context(html:not(.dark)) .cat-hero-title {
-      color: #1B1B1B;
-      -webkit-text-fill-color: #1B1B1B;
+      color: #ffffff;
+      -webkit-text-fill-color: #ffffff;
     }
     :host-context(html:not(.dark)) .cat-hero-count {
+      color: rgba(255,255,255,0.75);
+    }
+    :host-context(html:not(.dark)) .cat-hero-sep {
+      color: rgba(255,255,255,0.5);
+    }
+    :host-context(html:not(.dark)) .cat-hero-visited {
+      color: #86efac;
+    }
+    :host-context(html:not(.dark)) .cat-progress-track {
+      background: rgba(255,255,255,0.2);
+    }
+    :host-context(html:not(.dark)) .q-card {
+      background: #ffffff;
+      border: 1px solid #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .q-card-visited {
+      box-shadow: inset 3px 0 0 rgba(16,185,129,0.6);
+    }
+    :host-context(html:not(.dark)) .q-title {
+      color: #1a1a1a;
+    }
+    :host-context(html:not(.dark)) .q-number {
+      background: #F0F4F1;
+      border-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .q-num-text {
       color: #52665A;
+    }
+    :host-context(html:not(.dark)) .q-num-visited {
+      background: rgba(16,185,129,0.12);
+      border-color: rgba(16,185,129,0.3);
+    }
+    :host-context(html:not(.dark)) .q-meta {
+      color: #52665A;
+      background: #F0F4F1;
+      border-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .q-meta-icon {
+      color: #8A9B8F;
+    }
+    :host-context(html:not(.dark)) .q-card-arrow {
+      color: #B7CCBB;
+    }
+    :host-context(html:not(.dark)) .q-card:hover .q-card-arrow {
+      color: #1B4332;
     }
   `
 })

@@ -655,7 +655,7 @@ export class TutorialDetailComponent {
       badge: 'CORE JAVA',
       title: 'Core Java Masterclass',
       subtitle: 'From fundamentals to modern Java features. Master OOP, Collections, Streams, and more.',
-      estimatedTime: '8 hours',
+      estimatedTime: '15 hours',
       themeColor: '#f59e0b',
       topics: [
         { slug: 'data-types', title: 'Primitive Data Types', description: '8 primitive types, wrapper classes, autoboxing, and the integer cache trap', iconName: 'box', duration: '35 min' },

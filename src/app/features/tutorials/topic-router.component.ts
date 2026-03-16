@@ -3,38 +3,67 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle } from '@ionic/angular/standalone';
 import { DataService } from '../../data.service';
 import { AdGateService } from '../../ad-gate.service';
+import { NotificationService } from '../../services/notification.service';
+import { COURSE_TOPICS } from '../../data/course-topics.const';
 
 // Lazy import map for all topic components
 const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = {
   'core-java': {
-    'data-types':        () => import('./topics/data-types.component').then(m => m.DataTypesComponent),
-    'variables-casting': () => import('./topics/variables-casting.component').then(m => m.VariablesCastingComponent),
-    'operators':         () => import('./topics/operators.component').then(m => m.OperatorsComponent),
-    'control-flow':      () => import('./topics/control-flow.component').then(m => m.ControlFlowComponent),
-    'loops':             () => import('./topics/loops.component').then(m => m.LoopsComponent),
-    'methods':           () => import('./topics/methods.component').then(m => m.MethodsComponent),
-    'arrays': () => import('./topics/arrays.component').then(m => m.ArraysComponent),
-    'strings': () => import('./topics/strings.component').then(m => m.StringsComponent),
-    'oop-classes': () => import('./topics/oop-classes.component').then(m => m.OopClassesComponent),
-    'inheritance': () => import('./topics/inheritance.component').then(m => m.InheritanceComponent),
-    'polymorphism': () => import('./topics/polymorphism.component').then(m => m.PolymorphismComponent),
-    'abstraction': () => import('./topics/abstraction.component').then(m => m.AbstractionComponent),
-    'encapsulation': () => import('./topics/encapsulation.component').then(m => m.EncapsulationComponent),
-    'enums':         () => import('./topics/enums.component').then(m => m.EnumsComponent),
-    'nested-classes': () => import('./topics/nested-classes.component').then(m => m.NestedClassesComponent),
-    'final-static':  () => import('./topics/final-static.component').then(m => m.FinalStaticComponent),
-    'object-class':  () => import('./topics/object-class.component').then(m => m.ObjectClassComponent),
-    'exceptions': () => import('./topics/exceptions.component').then(m => m.ExceptionsComponent),
-    'collections-list': () => import('./topics/collections-list.component').then(m => m.CollectionsListComponent),
-    'collections-map': () => import('./topics/collections-map.component').then(m => m.CollectionsMapComponent),
-    'generics': () => import('./topics/generics.component').then(m => m.GenericsComponent),
-    'streams': () => import('./topics/streams.component').then(m => m.StreamsComponent),
-    'lambdas': () => import('./topics/lambdas.component').then(m => m.LambdasComponent),
+    // ── Foundations ──────────────────────────────────────────────────────────
+    'jvm-basics':            () => import('./topics/jvm-basics.component').then(m => m.JvmBasicsComponent),
+    'data-types':            () => import('./topics/data-types.component').then(m => m.DataTypesComponent),
+    'variables-casting':     () => import('./topics/variables-casting.component').then(m => m.VariablesCastingComponent),
+    'operators':             () => import('./topics/operators.component').then(m => m.OperatorsComponent),
+    'control-flow':          () => import('./topics/control-flow.component').then(m => m.ControlFlowComponent),
+    'loops':                 () => import('./topics/loops.component').then(m => m.LoopsComponent),
+    'methods':               () => import('./topics/methods.component').then(m => m.MethodsComponent),
+    'arrays':                () => import('./topics/arrays.component').then(m => m.ArraysComponent),
+    // ── Strings ───────────────────────────────────────────────────────────────
+    'strings':               () => import('./topics/strings.component').then(m => m.StringsComponent),
+    'string-pool':           () => import('./topics/string-pool.component').then(m => m.StringPoolComponent),
+    'wrapper-classes':       () => import('./topics/wrapper-classes.component').then(m => m.WrapperClassesComponent),
+    // ── OOP ───────────────────────────────────────────────────────────────────
+    'oop-classes':           () => import('./topics/oop-classes.component').then(m => m.OopClassesComponent),
+    'inheritance':           () => import('./topics/inheritance.component').then(m => m.InheritanceComponent),
+    'polymorphism':          () => import('./topics/polymorphism.component').then(m => m.PolymorphismComponent),
+    'abstraction':           () => import('./topics/abstraction.component').then(m => m.AbstractionComponent),
+    'encapsulation':         () => import('./topics/encapsulation.component').then(m => m.EncapsulationComponent),
+    'enums':                 () => import('./topics/enums.component').then(m => m.EnumsComponent),
+    'nested-classes':        () => import('./topics/nested-classes.component').then(m => m.NestedClassesComponent),
+    'final-static':          () => import('./topics/final-static.component').then(m => m.FinalStaticComponent),
+    'object-class':          () => import('./topics/object-class.component').then(m => m.ObjectClassComponent),
+    'equals-hashcode':       () => import('./topics/equals-hashcode.component').then(m => m.EqualsHashcodeComponent),
+    'immutable-classes':     () => import('./topics/immutable-classes.component').then(m => m.ImmutableClassesComponent),
+    // ── Exceptions ────────────────────────────────────────────────────────────
+    'exceptions':            () => import('./topics/exceptions.component').then(m => m.ExceptionsComponent),
+    'try-resources':         () => import('./topics/try-resources.component').then(m => m.TryResourcesComponent),
+    // ── Collections ───────────────────────────────────────────────────────────
+    'collections-list':      () => import('./topics/collections-list.component').then(m => m.CollectionsListComponent),
+    'collections-map':       () => import('./topics/collections-map.component').then(m => m.CollectionsMapComponent),
+    'collections-queue':     () => import('./topics/collections-queue.component').then(m => m.CollectionsQueueComponent),
+    'iterator-iterable':     () => import('./topics/iterator-iterable.component').then(m => m.IteratorIterableComponent),
+    'comparable-comparator': () => import('./topics/comparable-comparator.component').then(m => m.ComparableComparatorComponent),
+    // ── Generics & Functional ─────────────────────────────────────────────────
+    'generics':              () => import('./topics/generics.component').then(m => m.GenericsComponent),
     'functional-interfaces': () => import('./topics/functional-interfaces.component').then(m => m.FunctionalInterfacesComponent),
-    'method-references': () => import('./topics/method-references.component').then(m => m.MethodReferencesComponent),
-    'optional': () => import('./topics/optional.component').then(m => m.OptionalComponent),
-    'records-sealed': () => import('./topics/records-sealed.component').then(m => m.RecordsSealedComponent),
-    'io-files': () => import('./topics/io-files.component').then(m => m.IoFilesComponent),
+    'lambdas':               () => import('./topics/lambdas.component').then(m => m.LambdasComponent),
+    'method-references':     () => import('./topics/method-references.component').then(m => m.MethodReferencesComponent),
+    'streams':               () => import('./topics/streams.component').then(m => m.StreamsComponent),
+    'optional':              () => import('./topics/optional.component').then(m => m.OptionalComponent),
+    // ── Modern Java ───────────────────────────────────────────────────────────
+    'date-time':             () => import('./topics/date-time.component').then(m => m.DateTimeComponent),
+    'annotations':           () => import('./topics/annotations.component').then(m => m.AnnotationsComponent),
+    'var-type-inference':    () => import('./topics/var-type-inference.component').then(m => m.VarTypeInferenceComponent),
+    'pattern-matching':      () => import('./topics/pattern-matching.component').then(m => m.PatternMatchingComponent),
+    'text-blocks':           () => import('./topics/text-blocks.component').then(m => m.TextBlocksComponent),
+    'records-sealed':        () => import('./topics/records-sealed.component').then(m => m.RecordsSealedComponent),
+    // ── Advanced ──────────────────────────────────────────────────────────────
+    'serialization':         () => import('./topics/serialization.component').then(m => m.SerializationComponent),
+    'cloning':               () => import('./topics/cloning.component').then(m => m.CloningComponent),
+    'java-memory-model':     () => import('./topics/java-memory-model.component').then(m => m.JavaMemoryModelComponent),
+    'garbage-collection':    () => import('./topics/garbage-collection.component').then(m => m.GarbageCollectionComponent),
+    'reflection':            () => import('./topics/reflection.component').then(m => m.ReflectionComponent),
+    'io-files':              () => import('./topics/io-files.component').then(m => m.IoFilesComponent),
   },
   'spring-framework': {
     'spring-ioc': () => import('./topics/spring-ioc.component').then(m => m.SpringIocComponent),
@@ -224,7 +253,7 @@ const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
         </div>
       }
 
-      <div style="height: calc(120px + var(--admob-banner-height, 0px)); display: block;"></div>
+      <div style="height: calc(env(safe-area-inset-bottom, 0px) + var(--ion-tab-bar-height, 56px) + var(--admob-banner-height, 0px) + 80px); display: block;"></div>
     </ion-content>
   `,
   styles: `
@@ -303,20 +332,22 @@ const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
     }
     .back-link:active { transform: scale(0.96); }
 
-    /* ── Nav Bar (fixed above banner ad + safe-area) ── */
+    /* ── Nav Bar (fixed above tab bar + banner ad + safe-area) ── */
     .nav-bar {
       position: fixed;
-      /* Sit above the AdMob banner. --admob-banner-height is set by AdMobService
-         when the banner renders (0px on web, actual height on device). */
-      bottom: var(--admob-banner-height, 0px);
+      /* Stack: safe-area + tab bar (56px) + optional admob banner */
+      bottom: calc(
+        env(safe-area-inset-bottom, 0px) +
+        var(--ion-tab-bar-height, 56px) +
+        var(--admob-banner-height, 0px)
+      );
       left: 0;
       right: 0;
-      z-index: 100;
-      background: rgba(11, 17, 32, 0.96);
+      z-index: 200;
+      background: rgba(11, 17, 32, 0.97);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid rgba(255,255,255,0.07);
-      padding-bottom: env(safe-area-inset-bottom, 0);
     }
 
     /* Progress strip along the top of the nav bar */
@@ -410,6 +441,7 @@ export class TopicRouterComponent implements OnInit {
   private vcr = inject(ViewContainerRef);
   private dataService = inject(DataService);
   private adGate = inject(AdGateService);
+  private notifSvc = inject(NotificationService);
 
   courseSlug = signal('');
   topicSlug = signal('');
@@ -418,6 +450,9 @@ export class TopicRouterComponent implements OnInit {
 
   @ViewChild('outlet', { read: ViewContainerRef, static: true })
   outlet!: ViewContainerRef;
+
+  @ViewChild(IonContent, { static: true })
+  ionContent!: IonContent;
 
   // ── Navigation computed values ──
   topicSlugs = computed(() => TOPIC_ORDER[this.courseSlug()] ?? []);
@@ -494,6 +529,10 @@ export class TopicRouterComponent implements OnInit {
         this.outlet.clear();
         this.outlet.createComponent(component as Type<unknown>);
         this.loading.set(false);
+        this.ionContent.scrollToTop(0);
+        const courseEntry = COURSE_TOPICS.find(c => c.slug === slug);
+        const topicEntry = courseEntry?.topics.find(t => t.slug === topic);
+        if (topicEntry) this.notifSvc.trackLastVisited(slug, topic, topicEntry.title);
       } catch {
         this.loading.set(false);
         this.notFound.set(true);

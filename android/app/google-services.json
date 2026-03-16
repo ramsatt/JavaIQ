@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "1014219218540",
+    "firebase_url": "https://javaiq-default-rtdb.firebaseio.com",
+    "project_id": "javaiq",
+    "storage_bucket": "javaiq.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1014219218540:android:72e294d0987ae8f80e0249",
+        "android_client_info": {
+          "package_name": "in.sangathi.javaiq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1014219218540-6h0c5c5irg44kjtljgq816gko0en6dgg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.sangathi.javaiq",
+            "certificate_hash": "3d3d447c40858b825edfc6384eac76fead4cabe7"
+          }
+        },
+        {
+          "client_id": "1014219218540-c4mikkb1q5e4d4v0iuifn968etjf3h81.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.sangathi.javaiq",
+            "certificate_hash": "824d04610f9bffdabf977e37e91004155018fb06"
+          }
+        },
+        {
+          "client_id": "1014219218540-rgbk8d79omn84rv001g8ih1he8let86r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtl34JuPKEdBbtNGdUyRFk6a4iYx-aBBs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1014219218540-rgbk8d79omn84rv001g8ih1he8let86r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

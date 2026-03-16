@@ -102,6 +102,17 @@ const PERIOD_LABELS: Record<string, string> = {
         </div>
       }
 
+      <!-- Invite prompt when fewer than 3 competitors -->
+      @if (!loading() && podium().length > 0 && podium().length < 3) {
+        <div class="lb-invite">
+          <span class="lb-invite-icon">🏆</span>
+          <div class="lb-invite-text">
+            <span class="lb-invite-title">You're a top learner!</span>
+            <span class="lb-invite-sub">Invite friends to compete on the leaderboard.</span>
+          </div>
+        </div>
+      }
+
       <!-- Rest of the list -->
       <div class="lb-list">
         @if (loading()) {
@@ -366,6 +377,22 @@ const PERIOD_LABELS: Record<string, string> = {
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .lb-empty p { font-size: 0.82rem; margin: 0; }
+
+    /* ── Invite prompt ── */
+    .lb-invite {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 16px 16px;
+      padding: 14px 16px;
+      background: rgba(212,168,83,0.06);
+      border: 1px solid rgba(212,168,83,0.18);
+      border-radius: 14px;
+    }
+    .lb-invite-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .lb-invite-text { display: flex; flex-direction: column; gap: 2px; }
+    .lb-invite-title { font-size: 0.82rem; font-weight: 700; color: #d4a853; }
+    .lb-invite-sub   { font-size: 0.72rem; color: rgba(255,255,255,0.45); }
 
     /* ── My rank callout ── */
     .my-rank-bar {

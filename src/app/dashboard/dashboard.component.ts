@@ -136,14 +136,14 @@ export class DashboardComponent implements OnDestroy {
   }
 
   categories = [
-    { name: 'Core Java', emoji: '☕', color: '#f97316' },
-    { name: 'Spring Boot', emoji: '🌿', color: '#22c55e' },
-    { name: 'Microservices', emoji: '🔗', color: '#38bdf8' },
-    { name: 'Hibernate', emoji: '🗄️', color: '#a855f7' },
-    { name: 'Spring Reactive', emoji: '⚡', color: '#eab308' },
-    { name: 'Multithreading', emoji: '🧵', color: '#ec4899' },
-    { name: 'Reactive Programming', emoji: '📡', color: '#fb923c' },
-    { name: 'Coding Questions', emoji: '💻', color: '#10b981' },
+    { name: 'Core Java', emoji: '☕', color: '#f97316', slug: 'core-java' },
+    { name: 'Spring Boot', emoji: '🌿', color: '#22c55e', slug: 'spring-boot' },
+    { name: 'Microservices', emoji: '🔗', color: '#38bdf8', slug: 'microservices' },
+    { name: 'Hibernate', emoji: '🗄️', color: '#a855f7', slug: 'hibernate' },
+    { name: 'Spring Reactive', emoji: '⚡', color: '#eab308', slug: 'spring-framework' },
+    { name: 'Multithreading', emoji: '🧵', color: '#ec4899', slug: 'multithreading' },
+    { name: 'Reactive Programming', emoji: '📡', color: '#fb923c', slug: 'design-patterns' },
+    { name: 'Coding Questions', emoji: '💻', color: '#10b981', slug: 'coding-questions' },
   ];
 
   getQuestionCount(category: string): number {
@@ -162,10 +162,9 @@ export class DashboardComponent implements OnDestroy {
     return this.dataService.isCategoryLocked(category);
   }
 
-  navigateToCategory(category: string) {
-    if (this.isLocked(category)) return;
-    // Route to Challenge Component for the "Game" experience
-    this.router.navigate(['/challenge', category]);
+  navigateToCategory(category: { name: string; slug: string }) {
+    if (this.isLocked(category.name)) return;
+    this.router.navigate(['/tutorials', category.slug]);
   }
 
   goToLeaderboard() {

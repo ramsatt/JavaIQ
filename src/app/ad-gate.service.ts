@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { AdMobService } from './admob.service';
 import { AlertService } from './alert.service';
 
@@ -16,10 +17,14 @@ import { AlertService } from './alert.service';
  *    After the user completes something (marks topic done, finishes quiz),
  *    show an interstitial — but no more than once every INTERSTITIAL_COOLDOWN_MS.
  */
+/** Routes where interstitial ads should never fire (core navigation pages). */
+const NO_INTERSTITIAL_ROUTES = ['/progress', '/settings', '/leaderboard', '/achievements', '/onboarding'];
+
 @Injectable({ providedIn: 'root' })
 export class AdGateService {
     private admob = inject(AdMobService);
     private alertService = inject(AlertService);
+    private router = inject(Router);
 
     // ── Constants ──────────────────────────────────────────────────────────
     /** Minimum gap (ms) between interstitial ads */
@@ -28,6 +33,7 @@ export class AdGateService {
     // ── Storage keys ────────────────────────────────────────────────────────
     private readonly STORAGE_KEY_UNLOCKED = 'adgate_unlocked_items';
     private readonly STORAGE_KEY_INTERSTITIAL = 'adgate_interstitial_time';
+    private readonly STORAGE_KEY_VISITED = 'adgate_visited_items';
 
     // ── State ────────────────────────────────────────────────────────────────
     /**
@@ -39,19 +45,29 @@ export class AdGateService {
 
     private lastInterstitialTime = 0;
 
+    /**
+     * Items the user has previously unlocked (persisted across sessions).
+     * On return visits, an interstitial is shown instead of a reward ad.
+     */
+    private visitedItems = new Set<string>();
+
     constructor() {
-        // Restore persisted unlocked items
-        try {
-            const raw = localStorage.getItem(this.STORAGE_KEY_UNLOCKED);
-            if (raw) {
-                const arr: string[] = JSON.parse(raw);
-                this.unlockedItems.set(new Set(arr));
-            }
-        } catch { /* corrupt storage — start fresh */ }
+        // Unlocked items are session-only (in-memory only, not restored from storage).
+        // This ensures a reward ad is required each new session for locked content,
+        // preventing permanent free access after a single ad view.
 
         // Restore last interstitial timestamp
         const storedInter = localStorage.getItem(this.STORAGE_KEY_INTERSTITIAL);
         if (storedInter) this.lastInterstitialTime = parseInt(storedInter, 10);
+
+        // Restore visited items (persisted — used to show interstitial on return visits)
+        const storedVisited = localStorage.getItem(this.STORAGE_KEY_VISITED);
+        if (storedVisited) {
+            try {
+                const arr: string[] = JSON.parse(storedVisited);
+                this.visitedItems = new Set(arr);
+            } catch { /* ignore corrupt data */ }
+        }
     }
 
     // ── Per-Item Unlock ─────────────────────────────────────────────────────
@@ -71,12 +87,23 @@ export class AdGateService {
      * @returns Promise<boolean>  true → item was unlocked; false → user cancelled
      */
     async unlockItemWithAd(itemId: string, itemTitle = 'this content'): Promise<boolean> {
-        // Already unlocked — no ad needed
+        // Already unlocked this session — no ad needed
         if (this.isItemUnlocked(itemId)) return true;
 
+        const isReturnVisit = this.visitedItems.has(itemId);
+
+        if (isReturnVisit) {
+            // Return visitor: show a non-blocking interstitial, then grant access
+            await this.admob.showInterstitial();
+            this.persistUnlock(itemId);
+            return true;
+        }
+
+        // First visit: require a reward ad to earn access
         const earned = await this.admob.showRewardAd();
 
         if (earned) {
+            this.markVisited(itemId);
             this.persistUnlock(itemId);
             return true;
         }
@@ -84,7 +111,7 @@ export class AdGateService {
         // User dismissed without earning
         await this.alertService.showAlert({
             title: '🔒 Watch Ad to Unlock',
-            message: `Watch the short video ad to permanently unlock "${itemTitle}". This helps keep JavaIQ free!`,
+            message: `Watch the short video ad to unlock "${itemTitle}" for this session. This helps keep JavaIQ free!`,
             confirmText: 'OK',
             showCancel: false,
             type: 'warning'
@@ -92,14 +119,17 @@ export class AdGateService {
         return false;
     }
 
-    /** Persist the unlock of an item to localStorage */
+    /** Unlock an item for the current session only (in-memory, not persisted) */
     private persistUnlock(itemId: string) {
         const current = new Set(this.unlockedItems());
         current.add(itemId);
         this.unlockedItems.set(current);
-        try {
-            localStorage.setItem(this.STORAGE_KEY_UNLOCKED, JSON.stringify([...current]));
-        } catch { /* storage full or unavailable */ }
+    }
+
+    /** Mark item as previously visited so future sessions show an interstitial instead of reward ad */
+    private markVisited(itemId: string) {
+        this.visitedItems.add(itemId);
+        localStorage.setItem(this.STORAGE_KEY_VISITED, JSON.stringify([...this.visitedItems]));
     }
 
     // ── Interstitial on Complete ─────────────────────────────────────────────
@@ -109,6 +139,11 @@ export class AdGateService {
      * Shows an interstitial if the cooldown has passed.
      */
     async onContentCompleted(): Promise<void> {
+        const currentUrl = this.router.url;
+        if (NO_INTERSTITIAL_ROUTES.some(r => currentUrl.startsWith(r))) {
+            return;
+        }
+
         const now = Date.now();
         const msSinceLast = now - this.lastInterstitialTime;
 
@@ -129,7 +164,8 @@ export class AdGateService {
     resetAll() {
         this.unlockedItems.set(new Set());
         this.lastInterstitialTime = 0;
-        localStorage.removeItem(this.STORAGE_KEY_UNLOCKED);
+        this.visitedItems = new Set();
         localStorage.removeItem(this.STORAGE_KEY_INTERSTITIAL);
+        localStorage.removeItem(this.STORAGE_KEY_VISITED);
     }
 }

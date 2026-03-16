@@ -20,11 +20,6 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
         <ng-content />
       </main>
 
-      <!-- Footer -->
-      <footer class="footer">
-        <div class="footer-logo">JavaIQ</div>
-        <p>© 2026 JavaIQ. Master your Java journey.</p>
-      </footer>
     </div>
   `,
   styles: `
@@ -80,20 +75,6 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       margin: 0 auto;
       padding: 48px 20px 100px;
     }
-
-    .footer {
-      background: #081C15;
-      color: #8A9B8F;
-      text-align: center;
-      padding: 48px 24px;
-    }
-    .footer-logo {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: #DAA520;
-      margin-bottom: 8px;
-    }
-    .footer p { margin: 0; font-size: 0.75rem; font-weight: 500; }
   `
 })
 export class TutorialLayoutComponent {

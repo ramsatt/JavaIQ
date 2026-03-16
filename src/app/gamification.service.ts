@@ -18,6 +18,7 @@ export class GamificationService {
   streak = signal<number>(0);
   bestStreak = signal<number>(0);
   lastActiveDate = signal<string | null>(null);
+  activeDays = signal<Set<string>>(new Set());
 
   // --- Computed Values ---
   level = computed(() => Math.floor(Math.sqrt(this.xp() / 100)) + 1);
@@ -102,6 +103,7 @@ export class GamificationService {
     }
 
     this.lastActiveDate.set(today);
+    this.activeDays.update(s => { s.add(today); return new Set(s); });
 
     // Schedule tomorrow's reminder (lazy permission request on first meaningful activity)
     this.notifService.requestPermissionAndSchedule(this.streak());
@@ -119,6 +121,10 @@ export class GamificationService {
     if (storedStreak) this.streak.set(parseInt(storedStreak, 10));
     if (storedBestStreak) this.bestStreak.set(parseInt(storedBestStreak, 10));
     if (storedLastDate) this.lastActiveDate.set(storedLastDate);
+    const storedDays = localStorage.getItem('game_active_days');
+    if (storedDays) {
+      try { this.activeDays.set(new Set(JSON.parse(storedDays))); } catch { /* ignore */ }
+    }
   }
 
   private saveState() {
@@ -128,6 +134,7 @@ export class GamificationService {
     if (this.lastActiveDate()) {
       localStorage.setItem('game_last_active', this.lastActiveDate()!);
     }
+    localStorage.setItem('game_active_days', JSON.stringify([...this.activeDays()]));
   }
 
   private async syncWithCloud(uid: string) {

@@ -1,13 +1,17 @@
 {
   "name": "java-iq",
-  "version": "1.0.6",
+  "version": "1.5.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "android:build": "ng build && npx cap sync android"
+    "android:build": "ng build && npx cap sync android",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "e2e:ui": "playwright test --ui",
+    "e2e:report": "playwright show-report e2e/playwright-report"
   },
   "prettier": {
     "printWidth": 100,
@@ -52,6 +56,7 @@
     "@angular/build": "^21.0.0",
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
+    "@playwright/test": "^1.58.2",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

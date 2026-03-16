@@ -7,6 +7,7 @@ import { AuthService } from '../../auth.service';
 import { AlertService } from '../../alert.service';
 import { NotificationService } from '../../services/notification.service';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { environment } from '../../../environments/environment';
 
 const GOALS = [
   { key: 'faang',   label: 'Crack FAANG',   emoji: '🎯' },
@@ -182,7 +183,7 @@ const REMINDER_TIMES = [
                 </div>
                 <span class="set-row-label">Version</span>
               </div>
-              <span class="set-version-val">1.3.0</span>
+              <span class="set-version-val">{{ appVersion }}</span>
             </div>
           </div>
         </div>
@@ -203,8 +204,8 @@ const REMINDER_TIMES = [
     </ion-content>
   `,
   styles: `
-    .set-toolbar { --background: #0b1120; --color: white; --border-style: none; }
-    .set-content { --background: #0b1120; }
+    .set-toolbar { --background: var(--ion-background-color, #0b1120); --color: var(--ion-text-color, white); --border-style: none; }
+    .set-content { --background: var(--ion-background-color, #0b1120); }
 
     .set-body { padding: 8px 16px 80px; max-width: 520px; margin: 0 auto; }
 
@@ -354,6 +355,7 @@ export class SettingsComponent implements OnInit {
 
   readonly goals         = GOALS;
   readonly reminderTimes = REMINDER_TIMES;
+  readonly appVersion    = environment.appVersion;
 
   goalKey        = signal(localStorage.getItem('user_goal') ?? '');
   showGoalPicker = signal(false);

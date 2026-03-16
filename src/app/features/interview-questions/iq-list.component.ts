@@ -487,8 +487,8 @@ export class IqListComponent {
     },
     {
       key: 'microservices', title: 'Microservices', categoryName: 'Microservices', questionCount: 35,
-      faIcon: 'fa-solid fa-cubes', accentColor: '#8b5cf6',
-      iconBg: 'rgba(139,92,246,0.12)'
+      faIcon: 'fa-solid fa-cubes', accentColor: '#06b6d4',
+      iconBg: 'rgba(6,182,212,0.12)'
     },
     {
       key: 'hibernate', title: 'Hibernate', categoryName: 'Hibernate', questionCount: 29,

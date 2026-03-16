@@ -143,7 +143,7 @@ type Phase = 'empty' | 'session' | 'complete';
     </ion-content>
   `,
   styles: `
-    .rv-content { --background: #0b1120; }
+    .rv-content { --background: var(--ion-background-color, #0b1120); }
 
     .rv-wrap {
       min-height: 100%;
@@ -183,7 +183,7 @@ type Phase = 'empty' | 'session' | 'complete';
     .rv-complete-ring {
       width: 100px; height: 100px;
       border-radius: 50%;
-      border: 4px solid #6366f1;
+      border: 4px solid #40916C;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 2px;
     }
@@ -193,15 +193,15 @@ type Phase = 'empty' | 'session' | 'complete';
     .rv-cta-btn {
       padding: 14px 32px;
       border-radius: 14px;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      background: linear-gradient(135deg, #1B4332, #40916C);
       border: none;
       color: white;
       font-size: 0.95rem; font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+      box-shadow: 0 4px 20px rgba(27,67,50,0.4);
       transition: all 0.2s;
     }
-    .rv-cta-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(99,102,241,0.45); }
+    .rv-cta-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(27,67,50,0.5); }
     .rv-cta-green { background: linear-gradient(135deg, #10b981, #059669) !important; box-shadow: 0 4px 20px rgba(16,185,129,0.35) !important; }
     .rv-link-btn {
       background: transparent; border: none;
@@ -228,7 +228,7 @@ type Phase = 'empty' | 'session' | 'complete';
     }
     .rv-prog-fill {
       height: 100%; border-radius: 2px;
-      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      background: linear-gradient(90deg, #1B4332, #40916C);
       transition: width 0.4s ease;
     }
 

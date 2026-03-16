@@ -74,7 +74,7 @@ const SLIDES: OnboardingSlide[] = [
 
         @if (!showGoalStep()) {
           <!-- ── Intro Slides ── -->
-          <div class="ob-slides" [style.transform]="'translateX(-' + (activeIndex() * 100) + '%)'">
+          <div class="ob-slides" [style.transform]="'translateX(-' + (activeIndex() * 100) + 'vw)'">
             @for (slide of slides; track slide.emoji; let i = $index) {
               <div class="ob-slide" [style.background]="'linear-gradient(160deg, ' + slide.gradientFrom + ' 0%, ' + slide.gradientTo + ' 100%)'">
                 <div class="ob-slide-inner">

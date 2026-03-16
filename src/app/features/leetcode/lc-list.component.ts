@@ -53,10 +53,12 @@ import { DataService } from '../../data.service';
               <div class="stat-num medium-text">{{ mediumCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ mediumTotalCount() }}</span></div>
               <div class="stat-label">Medium</div>
             </div>
-            <div class="stat-box">
-              <div class="stat-num hard-text">{{ hardCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ hardTotalCount() }}</span></div>
-              <div class="stat-label">Hard</div>
-            </div>
+            @if (hardTotalCount() > 0) {
+              <div class="stat-box">
+                <div class="stat-num hard-text">{{ hardCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ hardTotalCount() }}</span></div>
+                <div class="stat-label">Hard</div>
+              </div>
+            }
           </div>
         </div>
 

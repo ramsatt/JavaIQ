@@ -24,6 +24,10 @@ import { ThemeService } from './theme.service';
 import { ConnectivityService } from './connectivity.service';
 import { AchievementToastComponent } from './shared/achievement-toast.component';
 import { WhatsNewComponent } from './shared/whats-new.component';
+import { NotificationService } from './services/notification.service';
+import { AuthService } from './auth.service';
+import { GamificationService } from './gamification.service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -43,12 +47,12 @@ import { WhatsNewComponent } from './shared/whats-new.component';
             <div class="header-glow header-glow-2"></div>
             <div class="header-bg"></div>
             <div class="header-inner">
-              <h1 class="header-logo">JavaIQ</h1>
+              <h1 class="header-logo">JavaIQ <span class="sidebar-pro-badge">PRO</span></h1>
               <div class="profile-preview">
-                <div class="avatar">☕</div>
+                <div class="avatar">{{ (authSvc.user()?.displayName || 'J').charAt(0).toUpperCase() }}</div>
                 <div class="profile-info">
-                  <span class="user-name">Java Learner</span>
-                  <span class="user-level">Beginner Explorer</span>
+                  <span class="user-name">{{ authSvc.user()?.displayName || 'Java Learner' }}</span>
+                  <span class="user-level">Level {{ gameSvc.level() }} · {{ gameSvc.xp() }} XP</span>
                 </div>
               </div>
             </div>
@@ -196,7 +200,7 @@ import { WhatsNewComponent } from './shared/whats-new.component';
                 class="theme-toggle">
               </ion-toggle>
             </div>
-            <span class="version">v1.4.0</span>
+            <span class="version">v{{ appVersion }}</span>
             <span class="footer-brand">Built with ❤️ for Java developers</span>
           </div>
         </ion-footer>
@@ -242,9 +246,9 @@ import { WhatsNewComponent } from './shared/whats-new.component';
             <i class="fa-solid fa-chart-simple"></i>
             <span>Progress</span>
           </a>
-          <button class="bnav-tab" (click)="openMenu()" role="tab" aria-label="More options">
+          <button class="bnav-tab" (click)="openMenu()" role="tab" aria-label="Open menu">
             <i class="fa-solid fa-bars"></i>
-            <span>More</span>
+            <span>Menu</span>
           </button>
         </nav>
       }
@@ -313,7 +317,7 @@ import { WhatsNewComponent } from './shared/whats-new.component';
       font-family: 'Inter', sans-serif;
       font-size: 1.8rem;
       font-weight: 900;
-      background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 50%, #c4b5fd 100%);
+      background: linear-gradient(135deg, #40916C 0%, #52B788 50%, #74C69D 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -349,6 +353,20 @@ import { WhatsNewComponent } from './shared/whats-new.component';
     .profile-info { display: flex; flex-direction: column; gap: 2px; }
     .user-name { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: #e2e8f0; }
     .user-level { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; color: #94a3b8; }
+
+    .sidebar-pro-badge {
+      display: inline-block;
+      font-size: 0.55rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: #0b1120;
+      background: linear-gradient(135deg, #52b788, #74c69d);
+      border-radius: 4px;
+      padding: 2px 5px;
+      vertical-align: middle;
+      margin-left: 4px;
+      line-height: 1.4;
+    }
 
     /* Navigation items */
     .menu-content {
@@ -419,7 +437,7 @@ import { WhatsNewComponent } from './shared/whats-new.component';
     .active-indicator {
       width: 3px;
       height: 20px;
-      background: #8b5cf6;
+      background: #40916C;
       border-radius: 4px;
       position: absolute;
       right: 0;
@@ -464,7 +482,7 @@ import { WhatsNewComponent } from './shared/whats-new.component';
     }
     .theme-toggle {
       --background: #334155;
-      --background-checked: #8b5cf6;
+      --background-checked: #40916C;
       --handle-background: #fff;
       --handle-background-checked: #fff;
       --border-radius: 12px;
@@ -717,9 +735,13 @@ export class AppComponent {
 
   protected themeService = inject(ThemeService);
   protected connectivity = inject(ConnectivityService);
+  protected authSvc = inject(AuthService);
+  protected gameSvc = inject(GamificationService);
+  readonly appVersion = environment.appVersion;
   private adMobService = inject(AdMobService);
   private router = inject(Router);
   private menuCtrl = inject(MenuController);
+  private notifSvc = inject(NotificationService);
 
   private navUrl = toSignal(
     this.router.events.pipe(
@@ -753,15 +775,24 @@ export class AppComponent {
       bookmarkOutline, settingsOutline, calendarOutline,
       briefcaseOutline, barChartOutline, refreshOutline
     });
-    this.adMobService.showBanner();
     this.checkFirstLaunch();
+    this.notifSvc.initOnStartup();
 
-    // Scroll to top on every navigation
+    // Scroll to top on every navigation; hide banner on onboarding
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd)
-    ).subscribe(() => {
+    ).subscribe((e) => {
       window.scrollTo({ top: 0 });
-      (document.querySelector('ion-content') as any)?.scrollToTop(0);
+      // Wait for Ionic's page transition to complete, then scroll all ion-content to top
+      setTimeout(() => {
+        document.querySelectorAll('ion-content').forEach((el: any) => el.scrollToTop(0));
+      }, 50);
+      const url = (e as NavigationEnd).urlAfterRedirects;
+      if (url.startsWith('/onboarding')) {
+        this.adMobService.hideBanner();
+      } else {
+        this.adMobService.showBanner();
+      }
     });
 
     // Sync html.has-bnav class so global CSS padding can activate

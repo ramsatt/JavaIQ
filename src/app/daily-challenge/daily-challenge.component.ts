@@ -294,22 +294,22 @@ const TOTAL_QUESTIONS = 5;
 
     .dc-reveal-btn {
       width: 100%; padding: 16px;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
+      background: linear-gradient(135deg, #1B4332, #40916C);
       border: none; border-radius: 16px;
       color: white; font-size: 0.92rem; font-weight: 700;
       display: flex; align-items: center; justify-content: center; gap: 10px;
       cursor: pointer; transition: all 0.2s;
-      box-shadow: 0 4px 20px rgba(245,158,11,0.3);
+      box-shadow: 0 4px 20px rgba(27,67,50,0.4);
     }
-    .dc-reveal-btn:hover { box-shadow: 0 6px 28px rgba(245,158,11,0.4); transform: translateY(-1px); }
+    .dc-reveal-btn:hover { box-shadow: 0 6px 28px rgba(27,67,50,0.5); transform: translateY(-1px); }
 
     .dc-btn-primary {
       width: 100%; padding: 14px;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
+      background: linear-gradient(135deg, #1B4332, #40916C);
       border: none; border-radius: 14px;
       color: white; font-size: 0.9rem; font-weight: 700;
       cursor: pointer; transition: all 0.2s; margin-top: 20px;
-      box-shadow: 0 4px 16px rgba(245,158,11,0.25);
+      box-shadow: 0 4px 16px rgba(27,67,50,0.35);
     }
     .dc-btn-primary:hover { transform: translateY(-1px); }
 

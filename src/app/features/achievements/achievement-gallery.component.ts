@@ -62,7 +62,8 @@ const RARITY_COLOR: Record<string, string> = {
               @if (a.unlockedAt) {
                 <span class="badge-date">{{ formatDate(a.unlockedAt) }}</span>
                 <button class="share-btn" (click)="share(a)" title="Share achievement">
-                  <i class="bi bi-share-fill"></i>
+                  <i class="fa-solid fa-share-nodes"></i>
+                  <span>Share</span>
                 </button>
               }
             </div>

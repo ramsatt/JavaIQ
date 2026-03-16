@@ -82,9 +82,8 @@ interface ResumeTarget {
     }
 
     :host-context(html.dark) .continue-card {
-      background:
-        #0d1a10 padding-box,
-        linear-gradient(160deg, rgba(82,183,136,0.20), rgba(82,183,136,0.05), rgba(82,183,136,0.20)) border-box;
+      background: #0d1a10;
+      border-color: rgba(82,183,136,0.25);
       box-shadow: 0 2px 16px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.35);
     }
 

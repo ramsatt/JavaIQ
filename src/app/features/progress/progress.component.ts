@@ -72,6 +72,7 @@ const CATEGORIES = [
         </div>
 
         <!-- XP bar -->
+        <div class="pr-xp-bar-label">Progress to Next Level</div>
         <div class="pr-xp-bar-wrap">
           <div class="pr-xp-track">
             <div class="pr-xp-fill" [style.width.%]="gameSvc.levelProgress()"></div>
@@ -95,7 +96,7 @@ const CATEGORIES = [
           </div>
           <div class="pr-stat">
             <span class="pr-stat-num pr-dc-done" [class.pr-dc-yes]="dcService.isCompletedToday()">
-              {{ dcService.isCompletedToday() ? '✓' : '—' }}
+              {{ dcService.isCompletedToday() ? '✓' : '0' }}
             </span>
             <span class="pr-stat-lbl">Daily Done</span>
           </div>
@@ -193,6 +194,11 @@ const CATEGORIES = [
               }
             </div>
           </div>
+        } @else if (hasUnstartedCategories()) {
+          <div class="pr-no-weak pr-not-started">
+            <span class="pr-no-weak-icon">📚</span>
+            <span class="pr-no-weak-txt">Start practising categories to reveal your focus areas.</span>
+          </div>
         } @else {
           <div class="pr-no-weak">
             <span class="pr-no-weak-icon">🎯</span>
@@ -243,9 +249,9 @@ const CATEGORIES = [
     .pr-level-badge {
       width: 56px; height: 56px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      background: linear-gradient(135deg, #1B4332, #40916C);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      box-shadow: 0 0 20px rgba(99,102,241,0.3);
+      box-shadow: 0 0 20px rgba(27,67,50,0.4);
     }
     .pr-lv-num { font-size: 1.3rem; font-weight: 900; color: white; line-height: 1; }
     .pr-lv-lbl { font-size: 0.5rem; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.08em; }
@@ -273,7 +279,7 @@ const CATEGORIES = [
     }
     .pr-xp-fill {
       height: 100%; border-radius: 4px;
-      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      background: linear-gradient(90deg, #1B4332, #40916C);
       transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
     }
     .pr-xp-pct { font-size: 0.72rem; font-weight: 700; color: #64748b; min-width: 36px; text-align: right; }
@@ -319,8 +325,8 @@ const CATEGORIES = [
       transition: all 0.2s;
     }
     .pr-day-active { background: rgba(16,185,129,0.25) !important; border-color: #10b981 !important; }
-    .pr-day-today  { border-color: #6366f1 !important; box-shadow: 0 0 8px rgba(99,102,241,0.35); }
-    .pr-day-active.pr-day-today { background: rgba(99,102,241,0.3) !important; border-color: #818cf8 !important; }
+    .pr-day-today  { border-color: #40916C !important; box-shadow: 0 0 8px rgba(64,145,108,0.35); }
+    .pr-day-active.pr-day-today { background: rgba(16,185,129,0.35) !important; border-color: #40916C !important; }
     .pr-day-label  { font-size: 0.58rem; font-weight: 600; color: #475569; }
 
     /* Category list */
@@ -399,6 +405,16 @@ const CATEGORIES = [
     }
     .pr-show-more:hover { background: rgba(255,255,255,0.04); color: #94a3b8; }
 
+    /* XP bar label */
+    .pr-xp-bar-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+
     /* No weak areas */
     .pr-no-weak {
       display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -407,6 +423,11 @@ const CATEGORIES = [
       border: 1px solid rgba(16,185,129,0.12);
       border-radius: 14px;
     }
+    .pr-not-started {
+      background: rgba(99,102,241,0.05);
+      border-color: rgba(99,102,241,0.12);
+    }
+    .pr-not-started .pr-no-weak-txt { color: #818cf8; }
     .pr-no-weak-icon { font-size: 1.2rem; }
     .pr-no-weak-txt  { font-size: 0.82rem; font-weight: 600; color: #34d399; }
 
@@ -458,32 +479,24 @@ export class ProgressComponent {
     this.wrongSvc.filterReviewQuestions(this.dataSvc.getAllQuestionsStable())
   );
 
+  hasUnstartedCategories = computed(() =>
+    this.categories.some(cat => this.dataSvc.getProgress(cat.name) === 0)
+  );
+
   showAllWeak = signal(false);
 
-  /** Last 7 days activity derived from streak + lastActiveDate */
+  /** Last 7 days activity from the actual per-day activity log */
   weekDays = computed(() => {
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
-    const lastActive = this.gameSvc.lastActiveDate();
-    const streak = this.gameSvc.streak();
+    const activeDays = this.gameSvc.activeDays();
+    const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return Array.from({ length: 7 }, (_, i) => {
       const d = new Date(today);
       d.setDate(today.getDate() - (6 - i));
       const dateStr = d.toISOString().split('T')[0];
-      const isToday = dateStr === todayStr;
-
-      // A day is "active" if it falls within the current streak window
-      let active = false;
-      if (lastActive && streak > 0) {
-        const lastDate = new Date(lastActive);
-        const diffMs = lastDate.getTime() - d.getTime();
-        const diffDays = Math.round(diffMs / 86_400_000);
-        active = diffDays >= 0 && diffDays < streak;
-      }
-
-      const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      return { label: labels[d.getDay()], active, isToday };
+      return { label: labels[d.getDay()], active: activeDays.has(dateStr), isToday: dateStr === todayStr };
     });
   });
 

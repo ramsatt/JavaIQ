@@ -88,9 +88,8 @@ import { DailyEngagementService } from '../services/daily-engagement.service';
     }
 
     :host-context(html.dark) .goal-card {
-      background:
-        #0d1a10 padding-box,
-        linear-gradient(160deg, rgba(82,183,136,0.22), rgba(82,183,136,0.06), rgba(82,183,136,0.22)) border-box;
+      background: #0d1a10;
+      border-color: rgba(82,183,136,0.25);
       box-shadow: 0 2px 16px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.35);
     }
 

@@ -16,7 +16,7 @@ export const appConfig: ApplicationConfig = {
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withHashLocation(), withInMemoryScrolling({ scrollPositionRestoration: 'top' })),
-    provideIonicAngular({ mode: 'md' }),
+    provideIonicAngular({ mode: 'md', navAnimation: undefined }),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),

@@ -85,7 +85,7 @@
     <section class="qa-section">
       <div class="qa-row">
         <button class="qa-tile" (click)="goToMockInterview()">
-          <i class="bi bi-briefcase-fill qa-icon" style="color:#818cf8"></i>
+          <i class="bi bi-briefcase-fill qa-icon" style="color:#40916C"></i>
           <span class="qa-label">Mock<br>Interview</span>
         </button>
         <button class="qa-tile" (click)="goToStudyPlan()">
@@ -101,7 +101,7 @@
           <span class="qa-label">Saved</span>
         </button>
         <button class="qa-tile" (click)="goToLeaderboard()">
-          <i class="bi bi-trophy-fill qa-icon" style="color:#f87171"></i>
+          <i class="bi bi-trophy-fill qa-icon" style="color:#DAA520"></i>
           <span class="qa-label">Leaderboard</span>
         </button>
       </div>
@@ -120,7 +120,7 @@
         @for (cat of visibleCategories(); track cat.name; let i = $index) {
         <div class="module-item" [class.is-locked]="isLocked(cat.name)"
           [class.is-active]="!isLocked(cat.name) && getCategoryStars(cat.name) < 3"
-          [class.is-done]="getCategoryStars(cat.name) === 3" (click)="navigateToCategory(cat.name)">
+          [class.is-done]="getCategoryStars(cat.name) === 3" (click)="navigateToCategory(cat)">
 
           <!-- Timeline dot -->
           <div class="tm-dot">

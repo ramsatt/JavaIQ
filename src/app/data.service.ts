@@ -264,6 +264,7 @@ export class DataService {
 
   getCategoryStars(category: string): number {
     const progress = this.getProgress(category);
+    if (!progress || progress <= 0) return 0;
     if (progress >= 100) return 3;
     if (progress >= 60) return 2;
     if (progress >= 30) return 1;

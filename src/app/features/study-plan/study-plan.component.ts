@@ -14,15 +14,15 @@ const GOAL_LABELS: Record<string, string> = {
 
 const TASK_META: Record<string, { color: string; bg: string; time: string; step: number }> = {
   tutorial: { color: '#1B4332', bg: '#D8F3DC', time: '~10 min', step: 1 },
-  interview: { color: '#6d28d9', bg: '#ede9fe', time: '~15 min', step: 2 },
+  interview: { color: '#1B4332', bg: '#D8F3DC', time: '~15 min', step: 2 },
   challenge: { color: '#b45309', bg: '#fef3c7', time: '~5 min', step: 3 }
 };
 
 const MOTIVATIONAL: string[] = [
-  'Ready to begin? Let\'s crush it! 💪',
-  'Great start! Keep the momentum! 🚀',
-  'Almost there — one more quest! ⚡',
-  'All done! You\'re unstoppable! 🎉'
+  'Ready to begin? Let\'s crush it today.',
+  'Great start! Keep the momentum going.',
+  'Almost there — one more quest to complete.',
+  'All done! You\'re unstoppable.'
 ];
 
 const DAILY_TIPS: string[] = [

@@ -68,14 +68,16 @@ interface ExpCard {
       <div class="body">
 
         <!-- Company Filter Pills -->
-        <div class="filter-scroll">
-          @for (c of companies; track c; let i = $index) {
-            <button class="cpill"
-              [class.cpill-active]="selectedCompany() === c"
-              (click)="setCompany(c)">
-              {{ c }}
-            </button>
-          }
+        <div class="filter-scroll-wrap">
+          <div class="filter-scroll">
+            @for (c of companies; track c; let i = $index) {
+              <button class="cpill"
+                [class.cpill-active]="selectedCompany() === c"
+                (click)="setCompany(c)">
+                {{ c }}
+              </button>
+            }
+          </div>
         </div>
 
         <!-- Difficulty / Result row -->
@@ -301,22 +303,36 @@ interface ExpCard {
       align-items: center;
       gap: 6px;
       font-size: 0.62rem;
-      color: #475569;
+      color: #94a3b8;
       margin: 10px 0 0;
       font-weight: 500;
     }
-    .hero-disclaimer i { font-size: 0.6rem; opacity: 0.7; }
+    .hero-disclaimer i { font-size: 0.6rem; opacity: 0.8; }
 
     /* ── Body ── */
     .body { padding: 20px 16px 100px; max-width: 600px; margin: 0 auto; }
 
     /* ── Company Pills ── */
+    .filter-scroll-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .filter-scroll-wrap::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 0; bottom: 4px;
+      width: 48px;
+      background: linear-gradient(to right, transparent, #0b1120);
+      pointer-events: none;
+    }
+    :host-context(html:not(.dark)) .filter-scroll-wrap::after {
+      background: linear-gradient(to right, transparent, #F5F7F2);
+    }
     .filter-scroll {
       display: flex;
       gap: 8px;
       overflow-x: auto;
       padding-bottom: 4px;
-      margin-bottom: 16px;
       scrollbar-width: none;
     }
     .filter-scroll::-webkit-scrollbar { display: none; }
