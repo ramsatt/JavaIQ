@@ -5,6 +5,7 @@ import { AuthService } from '../auth.service';
 import { GamificationService } from '../gamification.service';
 import { AlertService } from '../alert.service';
 import { SearchModalComponent } from '../search-modal/search-modal.component';
+import { PurchaseService } from '../services/purchase.service';
 
 @Component({
   selector: 'app-header',
@@ -18,7 +19,9 @@ import { SearchModalComponent } from '../search-modal/search-modal.component';
         <ion-menu-button class="menu-btn" color="light"></ion-menu-button>
         <div class="wordmark">
           Java<span class="wm-accent">IQ</span>
-          <span class="wm-pro">PRO</span>
+          @if (purchaseService.isPro()) {
+            <span class="wm-pro">PRO</span>
+          }
         </div>
       </div>
 
@@ -165,12 +168,18 @@ import { SearchModalComponent } from '../search-modal/search-modal.component';
       background: rgba(255,255,255,0.22);
       border-color: rgba(255,255,255,0.38);
     }
+
+    /* Hide hamburger when the split-pane sidebar is pinned (≥1024px) */
+    @media (min-width: 1024px) {
+      .menu-btn { display: none; }
+    }
   `]
 })
 export class AppHeaderComponent {
   public authService = inject(AuthService);
   public gameService = inject(GamificationService);
   private alertSvc = inject(AlertService);
+  protected purchaseService = inject(PurchaseService);
 
   @ViewChild(SearchModalComponent) searchModal!: SearchModalComponent;
 

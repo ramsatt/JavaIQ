@@ -433,6 +433,94 @@ const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
       --background: #1B4332;
       --color: white;
     }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — Tablet (≥640px)
+       ═══════════════════════════════════════════ */
+    @media (min-width: 640px) {
+      .nav-row {
+        padding: 12px 24px;
+        gap: 16px;
+      }
+      .complete-btn { max-width: 200px; font-size: 0.82rem; padding: 12px 24px; }
+      .nav-btn { min-width: 100px; font-size: 0.78rem; padding: 11px 18px; }
+    }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — Desktop (≥1024px)
+       ═══════════════════════════════════════════ */
+    @media (min-width: 1024px) {
+      /* Hide toolbar — sidebar + breadcrumb already in view */
+      .topic-toolbar { display: none; }
+
+      /* Constrain and center the tutorial content */
+      .tutorial-scroll-container {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 32px 40px 40px;
+      }
+
+      /* Nav bar: account for the 268px split-pane sidebar */
+      .nav-bar {
+        left: 268px;
+        bottom: 0;  /* No tab bar on desktop */
+        border-top: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .nav-row {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 14px 40px;
+        gap: 20px;
+      }
+      .complete-btn { max-width: 220px; font-size: 0.85rem; }
+      .nav-btn { min-width: 120px; font-size: 0.8rem; }
+    }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — Wide (≥1440px)
+       ═══════════════════════════════════════════ */
+    @media (min-width: 1440px) {
+      .tutorial-scroll-container {
+        max-width: 1000px;
+        padding: 40px 56px 48px;
+      }
+      .nav-row {
+        max-width: 1000px;
+        padding: 14px 56px;
+      }
+    }
+
+    /* ── Light Mode Nav Bar ── */
+    :host-context(html:not(.dark)) .nav-bar {
+      background: rgba(245, 247, 242, 0.97);
+      border-top-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .progress-fill {
+      background: linear-gradient(90deg, #1B4332, #40916C);
+    }
+    :host-context(html:not(.dark)) .nav-btn {
+      color: #52665A;
+      background: rgba(27,67,50,0.05);
+      border-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .nav-btn:hover {
+      color: #1B4332;
+      background: rgba(27,67,50,0.1);
+    }
+    :host-context(html:not(.dark)) .complete-btn {
+      background: rgba(27,67,50,0.1);
+      color: #1B4332;
+      border-color: rgba(27,67,50,0.25);
+    }
+    :host-context(html:not(.dark)) .complete-btn:hover {
+      background: rgba(27,67,50,0.18);
+    }
+    :host-context(html:not(.dark)) .complete-btn-done {
+      background: rgba(27,67,50,0.06) !important;
+      color: #40916C !important;
+      border-color: rgba(27,67,50,0.15) !important;
+    }
   `
 })
 export class TopicRouterComponent implements OnInit {

@@ -372,7 +372,7 @@
 
 .xp-hint {
   font-size: 0.70rem;
-  color: rgba(255, 255, 255, 0.38);
+  color: rgba(255, 255, 255, 0.72);
   text-align: right;
 }
 
@@ -380,10 +380,14 @@
    WIDGETS SECTION
 ───────────────────────────────────────── */
 .widgets-section {
-  padding: 16px var(--page-px) 4px;
+  padding: 20px var(--page-px) 4px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.widgets-section .section-head {
+  margin-bottom: 2px;
 }
 
 /* Achievements shortcut — gold gradient border */
@@ -724,8 +728,7 @@
 .mc-locked {
   padding: 6px 14px 12px 68px;
   font-size: 0.76rem;
-  color: var(--txt3);
-  font-style: italic;
+  color: var(--txt2);
 }
 
 /* --- Daily Challenge Card --- */
@@ -733,7 +736,7 @@
    TODAY'S FOCUS CARD
 ───────────────────────────────────────── */
 .tf-section {
-  padding: 32px var(--page-px) 0;
+  padding: 14px var(--page-px) 0;
 }
 
 .tf-card {
@@ -816,7 +819,7 @@
    QUICK ACTIONS ROW
 ───────────────────────────────────────── */
 .qa-section {
-  padding: 16px var(--page-px) 0;
+  padding: 16px 0 0 var(--page-px);
 }
 
 .qa-row {
@@ -1000,6 +1003,9 @@
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
   padding: 12px var(--page-px);
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10);
 }
 
 .stat-item {
@@ -1032,6 +1038,13 @@
 }
 
 /* ─────────────────────────────────────────
+   CONTINUE LEARNING — pinned above the fold
+───────────────────────────────────────── */
+.cl-pinned {
+  padding: 14px var(--page-px) 0;
+}
+
+/* ─────────────────────────────────────────
    VIEW ALL BUTTON
 ───────────────────────────────────────── */
 .view-all-btn {
@@ -1056,4 +1069,145 @@
   border-color: var(--accent);
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — Tablet (≥640px)
+   ═══════════════════════════════════════════ */
+@media (min-width: 640px) {
+  :host {
+    --page-px: 24px;
+  }
+
+  .dash-main {
+    max-width: 860px;
+  }
+
+  /* Hero: side-by-side greeting + XP bar */
+  .hero-inner {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+  }
+  .hero-greeting { flex: 1; }
+  .xp-section { flex: 1; min-width: 200px; }
+
+  .hero-name { font-size: 1.35rem; }
+  .hero-wave { font-size: 1.8rem; }
+
+  /* Stats: spread out with more padding */
+  .stats-strip { padding: 16px 32px; }
+  .stat-val { font-size: 1.3rem; }
+
+  /* Quick actions: no horizontal scroll, equal columns */
+  .qa-section { padding: 16px var(--page-px) 0; }
+  .qa-row {
+    overflow-x: visible;
+    justify-content: flex-start;
+  }
+  .qa-tile {
+    flex: 1;
+    max-width: 110px;
+    width: auto;
+  }
+
+  /* Today's focus */
+  .tf-card { padding: 18px 20px; }
+  .cl-pinned { padding: 16px var(--page-px) 0; }
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — Desktop (≥1024px)
+   ═══════════════════════════════════════════ */
+@media (min-width: 1024px) {
+  :host { --page-px: 32px; }
+
+  .dash-main {
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    column-gap: 28px;
+    align-items: start;
+  }
+
+  /* Full-width rows */
+  .hero-banner {
+    grid-column: 1 / -1;
+    padding: 32px var(--page-px) 38px;
+  }
+  .hero-inner { gap: 48px; }
+  .hero-name { font-size: 1.5rem; }
+
+  .stats-strip {
+    grid-column: 1 / -1;
+    padding: 18px var(--page-px);
+    justify-content: flex-start;
+    gap: 48px;
+  }
+  .stat-divider { display: none; }
+  .stat-item { align-items: flex-start; }
+  .stat-val { font-size: 1.5rem; }
+
+  /* Left column items */
+  .cl-pinned {
+    grid-column: 1;
+    padding: 20px 0 0 var(--page-px);
+  }
+  .tf-section {
+    grid-column: 1;
+    padding: 16px 0 0 var(--page-px);
+  }
+  .qa-section {
+    grid-column: 1;
+    padding: 16px 0 0 var(--page-px);
+  }
+  .qa-row {
+    flex-wrap: wrap;
+    gap: 10px;
+    overflow-x: visible;
+  }
+  .qa-tile {
+    flex: 0 0 calc(20% - 8px);
+    max-width: none;
+  }
+  .learning-section {
+    grid-column: 1;
+    padding: 24px 0 0 var(--page-px);
+  }
+
+  /* Learning path cards: 2 columns */
+  .module-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding-left: 0;
+  }
+  .timeline-line { display: none; }
+  .module-item { gap: 0; }
+  .tm-dot { display: none; }
+  .module-card { width: 100%; }
+
+  /* Right column — sticky widget panel */
+  .widgets-section {
+    grid-column: 2;
+    grid-row: 3 / 8;
+    padding: 20px var(--page-px) 0 0;
+    position: sticky;
+    top: 12px;
+    align-self: start;
+  }
+  .two-col { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — Wide (≥1440px)
+   ═══════════════════════════════════════════ */
+@media (min-width: 1440px) {
+  .dash-main {
+    max-width: 1320px;
+    grid-template-columns: 1fr 400px;
+    column-gap: 40px;
+  }
+  .hero-name { font-size: 1.65rem; }
+  .stat-val { font-size: 1.7rem; }
 }

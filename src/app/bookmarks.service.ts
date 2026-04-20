@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, effect } from '@angular/core';
 import { Firestore, doc, updateDoc, getDoc, setDoc } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
+import { PurchaseService } from './services/purchase.service';
 
 export type BookmarkType = 'interview' | 'coding' | 'leetcode' | 'tutorial' | 'experience';
 
@@ -19,6 +20,7 @@ const LOCAL_KEY = 'bookmarks_v1';
 export class BookmarksService {
   private firestore = inject(Firestore);
   private authService = inject(AuthService);
+  private purchaseSvc = inject(PurchaseService);
 
   bookmarks = signal<Bookmark[]>([]);
 
@@ -43,6 +45,12 @@ export class BookmarksService {
     if (existing >= 0) {
       updated = this.bookmarks().filter(b => b.id !== bookmark.id);
     } else {
+      // Lite users: max 30 bookmarks
+      if (!this.purchaseSvc.isPro() && this.bookmarks().length >= 30) {
+        const uid = this.authService.user()?.uid;
+        if (uid) await this.purchaseSvc.presentPaywallIfNeeded(uid);
+        return false;
+      }
       updated = [{ ...bookmark, savedAt: Date.now() }, ...this.bookmarks()];
     }
     this.bookmarks.set(updated);

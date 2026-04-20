@@ -6,6 +6,7 @@ import { ThemeService } from '../../theme.service';
 import { AuthService } from '../../auth.service';
 import { AlertService } from '../../alert.service';
 import { NotificationService } from '../../services/notification.service';
+import { PurchaseService } from '../../services/purchase.service';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { environment } from '../../../environments/environment';
 
@@ -188,6 +189,67 @@ const REMINDER_TIMES = [
           </div>
         </div>
 
+        <!-- Pro -->
+        <div class="set-section">
+          <span class="set-section-label">Pro</span>
+          <div class="set-card">
+            @if (purchaseService.isPro()) {
+              <div class="set-row set-version-row">
+                <div class="set-row-left">
+                  <div class="set-icon-wrap" style="background:rgba(250,204,21,0.12)">
+                    <i class="fa-solid fa-crown" style="color:#fbbf24"></i>
+                  </div>
+                  <div>
+                    <span class="set-row-label">JavaIQ Pro</span>
+                    <span class="set-row-sub">You're a Pro member — ad-free forever</span>
+                  </div>
+                </div>
+                <span class="pro-badge-active">PRO</span>
+              </div>
+              <div class="set-divider"></div>
+              <div class="set-row" (click)="openCustomerCenter()">
+                <div class="set-row-left">
+                  <div class="set-icon-wrap" style="background:rgba(250,204,21,0.1)">
+                    <i class="fa-solid fa-gear" style="color:#fbbf24"></i>
+                  </div>
+                  <span class="set-row-label">Manage Subscription</span>
+                </div>
+                <i class="fa-solid fa-chevron-right set-chevron"></i>
+              </div>
+              <div class="set-divider"></div>
+              <div class="set-row" (click)="restorePurchases()">
+                <div class="set-row-left">
+                  <div class="set-icon-wrap" style="background:rgba(99,102,241,0.1)">
+                    <i class="fa-solid fa-rotate" style="color:#818cf8"></i>
+                  </div>
+                  <span class="set-row-label">Restore Purchase</span>
+                </div>
+                <i class="fa-solid fa-chevron-right set-chevron"></i>
+              </div>
+            } @else {
+              <button class="pro-upgrade-btn" [disabled]="purchaseService.purchasing()" (click)="upgradeToPro()">
+                @if (purchaseService.purchasing()) {
+                  <i class="fa-solid fa-spinner fa-spin"></i>
+                  Processing...
+                } @else {
+                  <i class="fa-solid fa-crown"></i>
+                  Upgrade to Pro — Ad-Free Forever
+                }
+              </button>
+              <div class="set-divider"></div>
+              <div class="set-row" (click)="restorePurchases()">
+                <div class="set-row-left">
+                  <div class="set-icon-wrap" style="background:rgba(99,102,241,0.1)">
+                    <i class="fa-solid fa-rotate" style="color:#818cf8"></i>
+                  </div>
+                  <span class="set-row-label">Restore Purchase</span>
+                </div>
+                <i class="fa-solid fa-chevron-right set-chevron"></i>
+              </div>
+            }
+          </div>
+        </div>
+
         <!-- Danger Zone -->
         @if (auth.user()) {
           <div class="set-section">
@@ -204,28 +266,29 @@ const REMINDER_TIMES = [
     </ion-content>
   `,
   styles: `
-    .set-toolbar { --background: var(--ion-background-color, #0b1120); --color: var(--ion-text-color, white); --border-style: none; }
-    .set-content { --background: var(--ion-background-color, #0b1120); }
+    .set-toolbar { --background: var(--ion-background-color); --color: var(--ion-text-color); --border-style: none; }
+    .set-content { --background: var(--ion-background-color); }
 
     .set-body { padding: 8px 16px 80px; max-width: 520px; margin: 0 auto; }
 
     .set-header { padding: 8px 4px 24px; }
-    .set-title { font-size: 1.8rem; font-weight: 900; color: #e2e8f0; letter-spacing: -0.03em; margin: 0 0 4px; }
-    .set-sub { font-size: 0.78rem; color: #64748b; margin: 0; }
+    .set-title { font-size: 1.8rem; font-weight: 900; color: var(--ion-text-color); letter-spacing: -0.03em; margin: 0 0 4px; }
+    .set-sub { font-size: 0.78rem; color: var(--ion-color-medium); margin: 0; }
 
     .set-section { margin-bottom: 20px; }
     .set-section-label {
       display: block;
       font-size: 0.6rem; font-weight: 700;
       text-transform: uppercase; letter-spacing: 0.12em;
-      color: #475569; margin-bottom: 8px; padding-left: 4px;
+      color: var(--ion-color-medium); margin-bottom: 8px; padding-left: 4px;
     }
 
     .set-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
+      background: var(--ion-card-background, var(--ion-item-background));
+      border: 1px solid var(--ion-border-color, rgba(0,0,0,0.09));
       border-radius: 16px;
       overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
 
     /* Account */
@@ -241,8 +304,8 @@ const REMINDER_TIMES = [
       font-size: 1.2rem; font-weight: 700; color: white;
       flex-shrink: 0;
     }
-    .account-name { display: block; font-size: 0.95rem; font-weight: 700; color: #e2e8f0; }
-    .account-email { display: block; font-size: 0.72rem; color: #64748b; margin-top: 2px; }
+    .account-name { display: block; font-size: 0.95rem; font-weight: 700; color: var(--ion-text-color); }
+    .account-email { display: block; font-size: 0.72rem; color: var(--ion-color-medium); margin-top: 2px; }
 
     /* Rows */
     .set-row {
@@ -251,7 +314,7 @@ const REMINDER_TIMES = [
       cursor: pointer;
       transition: background 0.15s;
     }
-    .set-row:hover { background: rgba(255,255,255,0.025); }
+    .set-row:hover { background: var(--ion-color-light-tint, rgba(0,0,0,0.03)); }
     .set-version-row { cursor: default; }
     .set-version-row:hover { background: transparent; }
 
@@ -262,17 +325,17 @@ const REMINDER_TIMES = [
       display: flex; align-items: center; justify-content: center;
       font-size: 0.8rem; flex-shrink: 0;
     }
-    .set-row-label { font-size: 0.88rem; font-weight: 600; color: #e2e8f0; }
-    .set-row-sub { font-size: 0.65rem; color: #64748b; display: block; margin-top: 1px; }
-    .set-chevron { font-size: 0.6rem; color: #475569; }
-    .set-version-val { font-size: 0.78rem; font-weight: 600; color: #475569; }
-    .set-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 0 16px; }
+    .set-row-label { font-size: 0.88rem; font-weight: 600; color: var(--ion-text-color); }
+    .set-row-sub { font-size: 0.65rem; color: var(--ion-color-medium); display: block; margin-top: 1px; }
+    .set-chevron { font-size: 0.6rem; color: var(--ion-color-medium); }
+    .set-version-val { font-size: 0.78rem; font-weight: 600; color: var(--ion-color-medium); }
+    .set-divider { height: 1px; background: var(--ion-border-color, rgba(0,0,0,0.07)); margin: 0 16px; }
 
     /* Toggle */
     .toggle-track {
       width: 44px; height: 26px;
       border-radius: 13px;
-      background: rgba(255,255,255,0.1);
+      background: var(--ion-border-color, rgba(0,0,0,0.15));
       position: relative;
       cursor: pointer;
       transition: background 0.25s;
@@ -302,15 +365,15 @@ const REMINDER_TIMES = [
       display: flex; flex-direction: column; align-items: center; gap: 4px;
       padding: 12px 8px;
       border-radius: 12px;
-      background: rgba(255,255,255,0.03);
-      border: 1.5px solid rgba(255,255,255,0.07);
+      background: var(--ion-color-light, rgba(0,0,0,0.03));
+      border: 1.5px solid var(--ion-border-color, rgba(0,0,0,0.09));
       cursor: pointer;
       transition: all 0.18s;
       font-size: 1.2rem;
     }
     .goal-opt:hover { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); }
     .goal-opt-sel { background: rgba(16,185,129,0.12) !important; border-color: #10b981 !important; }
-    .goal-opt-label { font-size: 0.72rem; font-weight: 600; color: #cbd5e1; }
+    .goal-opt-label { font-size: 0.72rem; font-weight: 600; color: var(--ion-color-medium-shade); }
 
     /* Time picker */
     .time-picker-row {
@@ -321,21 +384,45 @@ const REMINDER_TIMES = [
       padding: 6px 14px;
       border-radius: 20px;
       font-size: 0.75rem; font-weight: 600;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.09);
-      color: #94a3b8;
+      background: var(--ion-color-light, rgba(0,0,0,0.05));
+      border: 1px solid var(--ion-border-color, rgba(0,0,0,0.1));
+      color: var(--ion-color-medium);
       cursor: pointer;
       transition: all 0.18s;
     }
-    .time-chip:hover { background: rgba(99,102,241,0.12); color: #a5b4fc; }
-    .time-chip-sel { background: rgba(99,102,241,0.2) !important; border-color: #818cf8 !important; color: #c7d2fe !important; }
+    .time-chip:hover { background: rgba(99,102,241,0.12); color: #818cf8; }
+    .time-chip-sel { background: rgba(99,102,241,0.15) !important; border-color: #818cf8 !important; color: #6366f1 !important; }
+
+    /* Pro */
+    .pro-upgrade-btn {
+      width: 100%; padding: 15px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: none;
+      color: #0b1120;
+      font-size: 0.9rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      border-radius: 16px 16px 0 0;
+    }
+    .pro-upgrade-btn:hover { opacity: 0.88; }
+    .pro-upgrade-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pro-badge-active {
+      font-size: 0.62rem; font-weight: 800;
+      color: #d97706;
+      background: rgba(251,191,36,0.15);
+      border: 1px solid rgba(251,191,36,0.4);
+      border-radius: 6px;
+      padding: 2px 7px;
+      letter-spacing: 0.06em;
+    }
 
     /* Logout */
     .set-logout-btn {
       width: 100%; padding: 14px;
       background: rgba(239,68,68,0.08);
       border: none;
-      color: #f87171;
+      color: #ef4444;
       font-size: 0.88rem; font-weight: 700;
       display: flex; align-items: center; justify-content: center; gap: 10px;
       cursor: pointer;
@@ -343,6 +430,19 @@ const REMINDER_TIMES = [
       border-radius: 16px;
     }
     .set-logout-btn:hover { background: rgba(239,68,68,0.14); }
+
+    /* Dark mode overrides */
+    @media (prefers-color-scheme: dark) {
+      .set-card { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); box-shadow: none; }
+      .set-row:hover { background: rgba(255,255,255,0.03); }
+      .set-divider { background: rgba(255,255,255,0.06); }
+      .toggle-track { background: rgba(255,255,255,0.12); }
+      .goal-opt { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+      .time-chip { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
+      .time-chip-sel { color: #c7d2fe !important; }
+      .pro-badge-active { color: #fbbf24; }
+      .set-logout-btn { color: #f87171; }
+    }
   `
 })
 export class SettingsComponent implements OnInit {
@@ -352,6 +452,7 @@ export class SettingsComponent implements OnInit {
   private alertService = inject(AlertService);
   private router       = inject(Router);
   private firestore    = inject(Firestore);
+  purchaseService      = inject(PurchaseService);
 
   readonly goals         = GOALS;
   readonly reminderTimes = REMINDER_TIMES;
@@ -391,6 +492,20 @@ export class SettingsComponent implements OnInit {
   }
 
   openAbout() { this.router.navigate(['/about']); }
+
+  async upgradeToPro() {
+    const uid = this.auth.user()?.uid ?? 'anonymous';
+    await this.purchaseService.presentPaywall(uid);
+  }
+
+  async openCustomerCenter() {
+    await this.purchaseService.openCustomerCenter();
+  }
+
+  async restorePurchases() {
+    const uid = this.auth.user()?.uid;
+    if (uid) await this.purchaseService.restorePurchases(uid);
+  }
 
   async confirmLogout() {
     const confirmed = await this.alertService.showAlert({

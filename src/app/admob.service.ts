@@ -7,6 +7,7 @@ import {
 import { Capacitor } from '@capacitor/core';
 import { AlertService } from './alert.service';
 import { environment } from '../environments/environment';
+import { PurchaseService } from './services/purchase.service';
 
 // ─── Ad Unit IDs ────────────────────────────────────────────────────────────
 const AD_IDS = {
@@ -29,6 +30,7 @@ const INTERSTITIAL_MIN_NAVIGATIONS = 2;          // skip first 2 nav actions
 @Injectable({ providedIn: 'root' })
 export class AdMobService {
   private alertService = inject(AlertService);
+  private purchaseService = inject(PurchaseService);
 
   /** Signal tracking if a reward ad was successfully earned this session */
   rewardEarned = signal(false);
@@ -57,8 +59,7 @@ export class AdMobService {
   }
 
   // ── Frequency cap guard ─────────────────────────────────────────────────
-  canShowInterstitial(): boolean {
-    this.navigationCount++;
+  canShowInterstitial(): boolean {    if (this.purchaseService.isPro()) return false;    this.navigationCount++;
     if (this.navigationCount <= INTERSTITIAL_MIN_NAVIGATIONS) return false;
     const now = Date.now();
     if (now - this.lastInterstitialTime < INTERSTITIAL_COOLDOWN_MS) return false;
@@ -66,8 +67,7 @@ export class AdMobService {
   }
 
   // ── Initialization ──────────────────────────────────────────────────────
-  async initialize() {
-    try {
+  async initialize() {    if (this.purchaseService.isPro()) return;    try {
       await AdMob.initialize({
         testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'],
         initializeForTesting: environment.adMobTesting,
@@ -115,7 +115,7 @@ export class AdMobService {
 
   // ── Banner ────────────────────────────────────────────────────────────
   async showBanner() {
-    if (!this.isNative) return;
+    if (!this.isNative || this.purchaseService.isPro()) return;
     try {
       // When banner renders, get its actual height and expose it as a CSS variable.
       // All fixed-bottom UI (nav-bar, buttons) use var(--admob-banner-height)

@@ -36,6 +36,9 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
       border: 1px solid #30363d;
       box-shadow: 0 4px 16px rgba(0,0,0,0.3);
       margin: 16px 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
     .code-topbar {
       display: flex;
@@ -75,7 +78,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
     }
     .code-pre {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
+      font-size: clamp(0.68rem, 1.8vw, 0.78rem);
       line-height: 1.75;
       color: #c9d1d9;
       margin: 0;

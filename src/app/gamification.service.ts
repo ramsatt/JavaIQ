@@ -3,6 +3,7 @@ import { Firestore, doc, getDoc, setDoc, updateDoc } from '@angular/fire/firesto
 import { AuthService } from './auth.service';
 import { NotificationService } from './services/notification.service';
 import { RatingService } from './services/rating.service';
+import { PurchaseService } from './services/purchase.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class GamificationService {
   private authService = inject(AuthService);
   private notifService = inject(NotificationService);
   private ratingSvc = inject(RatingService);
+  private purchaseSvc = inject(PurchaseService);
 
   // --- Signals for State ---
   xp = signal<number>(0);
@@ -49,10 +51,9 @@ export class GamificationService {
       }
     });
 
-    // Auto-save on changes
+    // Auto-save to local storage on signal changes
     effect(() => {
-      this.saveState(); // Local
-      this.saveToCloud(); // Cloud
+      this.saveState();
     });
   }
 
@@ -74,9 +75,19 @@ export class GamificationService {
   // --- Core Logic ---
 
   addXp(amount: number) {
-    this.xp.update(val => val + amount);
+    // Pro users earn 1.5× XP
+    const earned = this.purchaseSvc.isPro() ? Math.round(amount * 1.5) : amount;
+    const prevLevel = this.level();
+    this.xp.update(val => val + earned);
+    // Level 10 soft paywall — trigger once when crossing this milestone
+    const newLevel = this.level();
+    if (!this.purchaseSvc.isPro() && prevLevel < 10 && newLevel >= 10) {
+      const uid = this.authService.user()?.uid;
+      if (uid) this.purchaseSvc.presentPaywallIfNeeded(uid).catch(() => {});
+    }
     this.updateStreak();
     this.ratingSvc.checkAfterLevel(this.level());
+    this.saveToCloud();
   }
 
   updateStreak() {
@@ -107,6 +118,12 @@ export class GamificationService {
 
     // Schedule tomorrow's reminder (lazy permission request on first meaningful activity)
     this.notifService.requestPermissionAndSchedule(this.streak());
+
+    // 7-day streak soft paywall (fires the first time streak hits 7)
+    if (!this.purchaseSvc.isPro() && this.streak() === 7) {
+      const uid = this.authService.user()?.uid;
+      if (uid) this.purchaseSvc.presentPaywallIfNeeded(uid).catch(() => {});
+    }
   }
 
   // --- Persistence ---
@@ -143,7 +160,7 @@ export class GamificationService {
       const snap = await getDoc(docRef);
       if (snap.exists()) {
         const data = snap.data();
-        // Merge strategy: Take max XP (in case local was ahead or behind? usually max is safer for XP)
+        // Merge strategy: Take max XP
         const cloudXp = data['xp'] || 0;
         if (cloudXp > this.xp()) this.xp.set(cloudXp);
 
@@ -151,6 +168,16 @@ export class GamificationService {
         const cloudBest = data['bestStreak'] || 0;
         if (cloudBest > this.bestStreak()) this.bestStreak.set(cloudBest);
         this.lastActiveDate.set(data['lastActiveDate'] || null);
+
+        // Merge activeDays: union of local and cloud sets
+        const cloudDays: string[] = data['activeDays'] || [];
+        if (cloudDays.length > 0) {
+          this.activeDays.update(local => {
+            const merged = new Set(local);
+            cloudDays.forEach(d => merged.add(d));
+            return merged;
+          });
+        }
       }
     } catch (e) {
       console.error("Cloud sync failed", e);
@@ -168,6 +195,7 @@ export class GamificationService {
         streak: this.streak(),
         bestStreak: this.bestStreak(),
         lastActiveDate: this.lastActiveDate(),
+        activeDays: [...this.activeDays()],
         lastUpdated: new Date()
       }, { merge: true });
 
@@ -185,6 +213,7 @@ export class GamificationService {
         displayName: user.displayName || 'Anonymous',
         photoURL: user.photoURL || null,
         points: this.xp(), // Using XP as 'points' for leaderboard
+        isPro: this.purchaseSvc.isPro(),
         lastUpdated: new Date()
       }, { merge: true });
     } catch (e) {

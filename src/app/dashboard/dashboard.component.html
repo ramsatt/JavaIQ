@@ -54,6 +54,11 @@
       </div>
     </section>
 
+    <!-- ────────── Continue Learning (primary resume action, pinned high) ────────── -->
+    <section class="cl-pinned">
+      <app-continue-learning-card />
+    </section>
+
     <!-- ────────── Today's Focus ────────── -->
     @if (todayFocusCard(); as focus) {
     <section class="tf-section">
@@ -92,17 +97,17 @@
           <i class="bi bi-calendar-check-fill qa-icon" style="color:#52b788"></i>
           <span class="qa-label">Study<br>Plan</span>
         </button>
-        <button class="qa-tile" (click)="goToProgress()">
-          <i class="bi bi-bar-chart-fill qa-icon" style="color:#10b981"></i>
-          <span class="qa-label">My<br>Progress</span>
-        </button>
         <button class="qa-tile" (click)="goToBookmarks()">
           <i class="bi bi-bookmark-fill qa-icon" style="color:#f59e0b"></i>
           <span class="qa-label">Saved</span>
         </button>
         <button class="qa-tile" (click)="goToLeaderboard()">
           <i class="bi bi-trophy-fill qa-icon" style="color:#DAA520"></i>
-          <span class="qa-label">Leaderboard</span>
+          <span class="qa-label">Leader-<br>board</span>
+        </button>
+        <button class="qa-tile" (click)="goToReview()">
+          <i class="bi bi-arrow-repeat qa-icon" style="color:#f87171"></i>
+          <span class="qa-label">Review<br>Queue</span>
         </button>
       </div>
     </section>
@@ -186,6 +191,10 @@
     <!-- ────────── Daily Widgets ────────── -->
     <section class="widgets-section">
 
+      <div class="section-head">
+        <h3 class="section-title">Progress &amp; Achievements</h3>
+      </div>
+
       <!-- Achievements shortcut -->
       <button class="ach-row-btn" (click)="goToAchievements()">
         <span class="ach-medal">🏅</span>
@@ -202,9 +211,6 @@
 
       <!-- Question of the Day -->
       <app-qotd-card />
-
-      <!-- Continue Learning -->
-      <app-continue-learning-card />
 
     </section>
 

@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs/operators';
 import {
-  IonApp, IonRouterOutlet, IonMenu, IonHeader,
+  IonApp, IonRouterOutlet, IonMenu, IonHeader, IonSplitPane,
   IonContent, IonList, IonItem, IonIcon, IonLabel,
   IonMenuToggle, IonFooter, IonToggle, MenuController
 } from '@ionic/angular/standalone';
@@ -16,9 +16,11 @@ import {
   moonOutline, sunnyOutline, personCircleOutline,
   homeOutline, ribbonOutline,
   bookmarkOutline, settingsOutline, calendarOutline,
-  briefcaseOutline, barChartOutline, refreshOutline
+  briefcaseOutline, barChartOutline, refreshOutline,
+  chevronForwardOutline, helpCircleOutline, logOutOutline
 } from 'ionicons/icons';
 import { AdMobService } from './admob.service';
+import { PurchaseService } from './services/purchase.service';
 import { CustomAlertComponent } from './custom-alert/custom-alert.component';
 import { ThemeService } from './theme.service';
 import { ConnectivityService } from './connectivity.service';
@@ -33,13 +35,14 @@ import { environment } from '../environments/environment';
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule, RouterLink, RouterLinkActive, IonApp, IonRouterOutlet, IonMenu,
+    CommonModule, RouterLink, RouterLinkActive, IonApp, IonRouterOutlet, IonMenu, IonSplitPane,
     IonHeader, IonContent, IonList, IonItem,
     IonIcon, IonLabel, IonMenuToggle, IonFooter, IonToggle,
     CustomAlertComponent, AchievementToastComponent, WhatsNewComponent
   ],
   template: `
     <ion-app>
+      <ion-split-pane contentId="main-content" when="(min-width: 1024px)">
       <ion-menu menuId="main-menu" contentId="main-content" type="overlay">
         <ion-header class="ion-no-border">
           <div class="menu-header">
@@ -47,13 +50,20 @@ import { environment } from '../environments/environment';
             <div class="header-glow header-glow-2"></div>
             <div class="header-bg"></div>
             <div class="header-inner">
-              <h1 class="header-logo">JavaIQ <span class="sidebar-pro-badge">PRO</span></h1>
-              <div class="profile-preview">
+              <h1 class="header-logo">JavaIQ
+                @if (purchaseService.isPro()) {
+                  <span class="sidebar-pro-badge">PRO</span>
+                } @else {
+                  <button class="sidebar-upgrade-badge" (click)="upgradeToPro()">✦ PRO</button>
+                }
+              </h1>
+              <div class="profile-preview" (click)="goToSettings()">
                 <div class="avatar">{{ (authSvc.user()?.displayName || 'J').charAt(0).toUpperCase() }}</div>
                 <div class="profile-info">
                   <span class="user-name">{{ authSvc.user()?.displayName || 'Java Learner' }}</span>
                   <span class="user-level">Level {{ gameSvc.level() }} · {{ gameSvc.xp() }} XP</span>
                 </div>
+                <ion-icon name="chevron-forward-outline" class="profile-chevron"></ion-icon>
               </div>
             </div>
           </div>
@@ -61,7 +71,9 @@ import { environment } from '../environments/environment';
 
         <ion-content class="menu-content">
           <div class="menu-nav">
-            <span class="nav-label">LEARNING PATHS</span>
+
+            <!-- MAIN -->
+            <span class="nav-label">MAIN</span>
             <ion-list lines="none" class="menu-list">
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/dashboard" routerLinkActive="selected" detail="false" class="nav-item">
@@ -70,7 +82,11 @@ import { environment } from '../environments/environment';
                   <div class="active-indicator"></div>
                 </ion-item>
               </ion-menu-toggle>
+            </ion-list>
 
+            <!-- LEARNING -->
+            <span class="nav-label">LEARNING</span>
+            <ion-list lines="none" class="menu-list">
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/tutorials" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="book-outline"></ion-icon></div>
@@ -78,47 +94,6 @@ import { environment } from '../environments/environment';
                   <div class="active-indicator"></div>
                 </ion-item>
               </ion-menu-toggle>
-
-              <ion-menu-toggle auto-hide="false">
-                <ion-item routerLink="/interview-questions" routerLinkActive="selected" detail="false" class="nav-item">
-                  <div slot="start" class="icon-box"><ion-icon name="chatbubbles-outline"></ion-icon></div>
-                  <ion-label>Interview Questions</ion-label>
-                  <div class="active-indicator"></div>
-                </ion-item>
-              </ion-menu-toggle>
-
-              <ion-menu-toggle auto-hide="false">
-                <ion-item routerLink="/coding-questions" routerLinkActive="selected" detail="false" class="nav-item">
-                  <div slot="start" class="icon-box"><ion-icon name="code-slash-outline"></ion-icon></div>
-                  <ion-label>Coding Questions</ion-label>
-                  <div class="active-indicator"></div>
-                </ion-item>
-              </ion-menu-toggle>
-
-              <ion-menu-toggle auto-hide="false">
-                <ion-item routerLink="/leetcode" routerLinkActive="selected" detail="false" class="nav-item">
-                  <div slot="start" class="icon-box"><ion-icon name="trophy-outline"></ion-icon></div>
-                  <ion-label>LeetCode</ion-label>
-                  <div class="active-indicator"></div>
-                </ion-item>
-              </ion-menu-toggle>
-
-              <ion-menu-toggle auto-hide="false">
-                <ion-item routerLink="/assessments" routerLinkActive="selected" detail="false" class="nav-item">
-                  <div slot="start" class="icon-box"><ion-icon name="clipboard-outline"></ion-icon></div>
-                  <ion-label>Assessments</ion-label>
-                  <div class="active-indicator"></div>
-                </ion-item>
-              </ion-menu-toggle>
-
-              <ion-menu-toggle auto-hide="false">
-                <ion-item routerLink="/experiences" routerLinkActive="selected" detail="false" class="nav-item">
-                  <div slot="start" class="icon-box"><ion-icon name="people-outline"></ion-icon></div>
-                  <ion-label>Interview Stories</ion-label>
-                  <div class="active-indicator"></div>
-                </ion-item>
-              </ion-menu-toggle>
-
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/study-plan" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="calendar-outline"></ion-icon></div>
@@ -126,7 +101,32 @@ import { environment } from '../environments/environment';
                   <div class="active-indicator"></div>
                 </ion-item>
               </ion-menu-toggle>
+            </ion-list>
 
+            <!-- PRACTICE & PREP -->
+            <span class="nav-label">PRACTICE &amp; PREP</span>
+            <ion-list lines="none" class="menu-list">
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/coding-questions" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="code-slash-outline"></ion-icon></div>
+                  <ion-label>Coding Questions</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/leetcode" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="trophy-outline"></ion-icon></div>
+                  <ion-label>LeetCode</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/assessments" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="clipboard-outline"></ion-icon></div>
+                  <ion-label>Assessments</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/mock-interview" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="briefcase-outline"></ion-icon></div>
@@ -134,7 +134,30 @@ import { environment } from '../environments/environment';
                   <div class="active-indicator"></div>
                 </ion-item>
               </ion-menu-toggle>
+            </ion-list>
 
+            <!-- COMMUNITY -->
+            <span class="nav-label">COMMUNITY</span>
+            <ion-list lines="none" class="menu-list">
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/interview-questions" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="chatbubbles-outline"></ion-icon></div>
+                  <ion-label>Interview Questions</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+              <ion-menu-toggle auto-hide="false">
+                <ion-item routerLink="/experiences" routerLinkActive="selected" detail="false" class="nav-item">
+                  <div slot="start" class="icon-box"><ion-icon name="people-outline"></ion-icon></div>
+                  <ion-label>Interview Stories</ion-label>
+                  <div class="active-indicator"></div>
+                </ion-item>
+              </ion-menu-toggle>
+            </ion-list>
+
+            <!-- TOOLS -->
+            <div class="nav-divider"></div>
+            <ion-list lines="none" class="menu-list">
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/progress" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="bar-chart-outline"></ion-icon></div>
@@ -142,7 +165,6 @@ import { environment } from '../environments/environment';
                   <div class="active-indicator"></div>
                 </ion-item>
               </ion-menu-toggle>
-
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/review" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="refresh-outline"></ion-icon></div>
@@ -150,7 +172,6 @@ import { environment } from '../environments/environment';
                   <div class="active-indicator"></div>
                 </ion-item>
               </ion-menu-toggle>
-
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/bookmarks" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="bookmark-outline"></ion-icon></div>
@@ -158,15 +179,6 @@ import { environment } from '../environments/environment';
                   <div class="active-indicator"></div>
                 </ion-item>
               </ion-menu-toggle>
-
-              <ion-menu-toggle auto-hide="false">
-                <ion-item routerLink="/settings" routerLinkActive="selected" detail="false" class="nav-item">
-                  <div slot="start" class="icon-box"><ion-icon name="settings-outline"></ion-icon></div>
-                  <ion-label>Settings</ion-label>
-                  <div class="active-indicator"></div>
-                </ion-item>
-              </ion-menu-toggle>
-
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/achievements" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="ribbon-outline"></ion-icon></div>
@@ -174,9 +186,6 @@ import { environment } from '../environments/environment';
                   <div class="active-indicator"></div>
                 </ion-item>
               </ion-menu-toggle>
-
-              <div class="nav-divider"></div>
-
               <ion-menu-toggle auto-hide="false">
                 <ion-item routerLink="/about" routerLinkActive="selected" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="person-circle-outline"></ion-icon></div>
@@ -185,11 +194,25 @@ import { environment } from '../environments/environment';
                 </ion-item>
               </ion-menu-toggle>
             </ion-list>
+
           </div>
         </ion-content>
 
         <ion-footer class="ion-no-border">
           <div class="menu-footer">
+            <div class="footer-nav-row" (click)="goToSettings()">
+              <ion-icon name="settings-outline" class="footer-nav-icon"></ion-icon>
+              <span class="footer-nav-label">Settings</span>
+            </div>
+            <div class="footer-nav-row" (click)="openSupport()">
+              <ion-icon name="help-circle-outline" class="footer-nav-icon"></ion-icon>
+              <span class="footer-nav-label">Help / Support</span>
+            </div>
+            <div class="footer-nav-row footer-logout" (click)="logout()">
+              <ion-icon name="log-out-outline" class="footer-nav-icon"></ion-icon>
+              <span class="footer-nav-label">Log Out</span>
+            </div>
+            <div class="footer-divider"></div>
             <div class="theme-row">
               <ion-icon [name]="themeService.theme() === 'dark' ? 'moon-outline' : 'sunny-outline'" class="theme-icon"></ion-icon>
               <span class="theme-label">{{ themeService.theme() === 'dark' ? 'Dark Mode' : 'Light Mode' }}</span>
@@ -209,6 +232,7 @@ import { environment } from '../environments/environment';
       <div id="main-content">
         <ion-router-outlet></ion-router-outlet>
       </div>
+      </ion-split-pane>
 
       <!-- Offline Banner -->
       @if (!connectivity.isOnline()) {
@@ -263,6 +287,25 @@ import { environment } from '../environments/environment';
 
     #main-content {
       height: 100%;
+      flex: 1;
+      min-width: 0;
+      position: relative;  /* Contain absolutely-positioned ion-page children */
+      overflow: hidden;
+    }
+
+    /* ── Desktop Split Pane ── */
+    ion-split-pane {
+      --border: 1px solid rgba(255,255,255,0.06);
+      --side-width: 268px;
+      --side-max-width: 268px;
+      --side-min-width: 268px;
+      height: 100%;
+    }
+    :host-context(html:not(.dark)) ion-split-pane {
+      --border: 1px solid #D6DDD2;
+    }
+    @media (min-width: 1024px) {
+      .bottom-nav { display: none !important; }
     }
 
     /* Menu container styling */
@@ -333,6 +376,7 @@ import { environment } from '../environments/environment';
       border: 1px solid rgba(255,255,255,0.06);
       border-radius: 16px;
       transition: all 0.2s ease;
+      cursor: pointer;
     }
     .profile-preview:hover {
       background: rgba(255,255,255,0.06);
@@ -350,9 +394,10 @@ import { environment } from '../environments/environment';
       justify-content: center;
       font-size: 1.2rem;
     }
-    .profile-info { display: flex; flex-direction: column; gap: 2px; }
-    .user-name { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: #e2e8f0; }
+    .profile-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+    .user-name { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
     .user-level { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; color: #94a3b8; }
+    .profile-chevron { font-size: 1rem; color: #475569; flex-shrink: 0; margin-left: auto; }
 
     .sidebar-pro-badge {
       display: inline-block;
@@ -368,21 +413,44 @@ import { environment } from '../environments/environment';
       line-height: 1.4;
     }
 
+    .sidebar-upgrade-badge {
+      display: inline-block;
+      font-size: 0.55rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: #74c69d;
+      background: transparent;
+      border: 1px solid rgba(116,198,157,0.45);
+      border-radius: 4px;
+      padding: 2px 5px;
+      vertical-align: middle;
+      margin-left: 4px;
+      line-height: 1.4;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+    .sidebar-upgrade-badge:hover {
+      background: rgba(116,198,157,0.12);
+    }
+
     /* Navigation items */
     .menu-content {
       --background: #0b1120;
+      --padding-bottom: var(--admob-banner-height, 0px);
     }
-    .menu-nav { padding: 24px 16px; }
+    .menu-nav { padding: 16px 16px 8px; }
     .nav-label {
       display: block;
       font-family: 'Inter', sans-serif;
-      font-size: 0.75rem;
+      font-size: 0.65rem;
       font-weight: 800;
       letter-spacing: 0.12em;
       color: #64748b;
-      margin-bottom: 16px;
+      margin-bottom: 8px;
+      margin-top: 20px;
       padding-left: 12px;
     }
+    .menu-nav > .nav-label:first-child { margin-top: 4px; }
     .menu-list { background: transparent; }
     .nav-divider {
       height: 1px;
@@ -435,32 +503,45 @@ import { environment } from '../environments/environment';
     .nav-item.selected ion-icon { color: #c4b5fd; }
 
     .active-indicator {
-      width: 3px;
-      height: 20px;
-      background: #40916C;
-      border-radius: 4px;
-      position: absolute;
-      right: 0;
-      opacity: 0;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: scaleY(0);
+      display: none;
+    }
+
+    /* Left-side active bar via inset box-shadow on the native part — avoids
+       shadow-DOM slot positioning issues entirely */
+    .nav-item.selected::part(native) {
+      box-shadow: inset 3px 0 0 0 #40916C;
     }
     .nav-item.selected .active-indicator {
-      opacity: 1;
-      right: 10px;
-      transform: scaleY(1);
+      display: none;
     }
+
+    /* Footer Nav Utilities */
+    .footer-nav-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 4px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background 0.15s;
+      width: 100%;
+    }
+    .footer-nav-row:hover { background: rgba(255,255,255,0.05); }
+    .footer-nav-icon { font-size: 1.1rem; color: #64748b; flex-shrink: 0; }
+    .footer-nav-label { font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 600; color: #94a3b8; }
+    .footer-logout .footer-nav-icon { color: #f87171; }
+    .footer-logout .footer-nav-label { color: #f87171; }
+    .footer-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 0; width: 100%; }
 
     /* Footer Branding */
     .menu-footer {
-      padding: 20px;
+      padding: 14px 20px calc(14px + var(--admob-banner-height, 0px));
       background: #0b1120;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
       border-top: 1px solid rgba(255,255,255,0.06);
-      align-items: center;
-      text-align: center;
+      align-items: flex-start;
     }
     /* Theme Toggle Row */
     .theme-row {
@@ -538,6 +619,7 @@ import { environment } from '../environments/environment';
     }
     :host-context(html:not(.dark)) .user-name { color: #1B1B1B; }
     :host-context(html:not(.dark)) .user-level { color: #52665A; }
+    :host-context(html:not(.dark)) .profile-chevron { color: #8A9B8F; }
     :host-context(html:not(.dark)) .nav-label { color: #8A9B8F; }
     :host-context(html:not(.dark)) .nav-divider { background: #E8EDE5; }
     :host-context(html:not(.dark)) .nav-item {
@@ -568,13 +650,19 @@ import { environment } from '../environments/environment';
     :host-context(html:not(.dark)) .nav-item.selected .icon-box ion-icon {
       color: #1B4332;
     }
-    :host-context(html:not(.dark)) .active-indicator {
-      background: #1B4332;
+    :host-context(html:not(.dark)) .nav-item.selected::part(native) {
+      box-shadow: inset 3px 0 0 0 #1B4332;
     }
     :host-context(html:not(.dark)) .menu-footer {
       background: #F5F7F2;
       border-top-color: #D6DDD2;
     }
+    :host-context(html:not(.dark)) .footer-nav-row:hover { background: rgba(27,67,50,0.06); }
+    :host-context(html:not(.dark)) .footer-nav-icon { color: #52665A; }
+    :host-context(html:not(.dark)) .footer-nav-label { color: #2D4A38; }
+    :host-context(html:not(.dark)) .footer-logout .footer-nav-icon { color: #dc2626; }
+    :host-context(html:not(.dark)) .footer-logout .footer-nav-label { color: #dc2626; }
+    :host-context(html:not(.dark)) .footer-divider { background: #D6DDD2; }
     :host-context(html:not(.dark)) .theme-row {
       border-bottom-color: #D6DDD2;
     }
@@ -739,6 +827,7 @@ export class AppComponent {
   protected gameSvc = inject(GamificationService);
   readonly appVersion = environment.appVersion;
   private adMobService = inject(AdMobService);
+  protected purchaseService = inject(PurchaseService);
   private router = inject(Router);
   private menuCtrl = inject(MenuController);
   private notifSvc = inject(NotificationService);
@@ -773,10 +862,12 @@ export class AppComponent {
       moonOutline, sunnyOutline, personCircleOutline,
       homeOutline, ribbonOutline,
       bookmarkOutline, settingsOutline, calendarOutline,
-      briefcaseOutline, barChartOutline, refreshOutline
+      briefcaseOutline, barChartOutline, refreshOutline,
+      chevronForwardOutline, helpCircleOutline, logOutOutline
     });
     this.checkFirstLaunch();
     this.notifSvc.initOnStartup();
+    this.purchaseService.init();
 
     // Scroll to top on every navigation; hide banner on onboarding
     this.router.events.pipe(
@@ -788,7 +879,7 @@ export class AppComponent {
         document.querySelectorAll('ion-content').forEach((el: any) => el.scrollToTop(0));
       }, 50);
       const url = (e as NavigationEnd).urlAfterRedirects;
-      if (url.startsWith('/onboarding')) {
+      if (url.startsWith('/onboarding') || this.purchaseService.isPro()) {
         this.adMobService.hideBanner();
       } else {
         this.adMobService.showBanner();
@@ -803,11 +894,40 @@ export class AppComponent {
         document.documentElement.classList.remove('has-bnav');
       }
     });
+
+    // Immediately hide the ad banner the moment a user becomes Pro
+    effect(() => {
+      if (this.purchaseService.isPro()) {
+        this.adMobService.hideBanner();
+      }
+    });
   }
 
   private checkFirstLaunch() {
     if (!localStorage.getItem('onboarding_done')) {
       this.router.navigate(['/onboarding'], { replaceUrl: true });
     }
+  }
+
+  async upgradeToPro() {
+    const uid = this.authSvc.user()?.uid;
+    if (uid) {
+      await this.menuCtrl.close('main-menu');
+      await this.purchaseService.presentPaywall(uid);
+    }
+  }
+
+  async goToSettings() {
+    await this.menuCtrl.close('main-menu');
+    this.router.navigate(['/settings']);
+  }
+
+  async logout() {
+    await this.menuCtrl.close('main-menu');
+    await this.authSvc.logout();
+  }
+
+  openSupport() {
+    window.open('mailto:support@javaiq.app', '_system');
   }
 }

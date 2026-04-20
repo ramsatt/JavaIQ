@@ -1,5 +1,8 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject, effect } from '@angular/core';
+import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
+import { AuthService } from '../auth.service';
 import { Question } from '../data/question.model';
+import { PurchaseService } from './purchase.service';
 
 interface WrongEntry {
   id: number;
@@ -10,19 +13,38 @@ interface WrongEntry {
 @Injectable({ providedIn: 'root' })
 export class WrongAnswerService {
   private readonly LS_KEY = 'wrong_answers_v1';
+  private firestore = inject(Firestore);
+  private authService = inject(AuthService);
+  private purchaseSvc = inject(PurchaseService);
 
   /** Map of questionId → WrongEntry for questions answered incorrectly */
   private entries = signal<Map<number, WrongEntry>>(this.loadFromStorage());
 
-  /** Total questions in the review queue */
+  /** Total questions in the review queue (includes hidden items for Lite users) */
   reviewCount = computed(() => this.entries().size);
 
-  /** IDs in the review queue, sorted by most recently missed */
-  reviewIds = computed((): number[] =>
-    [...this.entries().values()]
+  /** IDs in the review queue, sorted by most recently missed.
+   *  Lite users see only the 20 most recent; Pro users see all. */
+  reviewIds = computed((): number[] => {
+    const all = [...this.entries().values()]
       .sort((a, b) => b.missedAt.localeCompare(a.missedAt))
-      .map(e => e.id)
-  );
+      .map(e => e.id);
+    return this.purchaseSvc.isPro() ? all : all.slice(0, 20);
+  });
+
+  /** Number of review items hidden behind the Pro paywall for Lite users. */
+  hiddenReviewCount = computed((): number => {
+    if (this.purchaseSvc.isPro()) return 0;
+    return Math.max(0, this.entries().size - 20);
+  });
+
+  constructor() {
+    // Load from Firestore whenever the user signs in
+    effect(() => {
+      const user = this.authService.user();
+      if (user) this.loadFromFirestore(user.uid);
+    });
+  }
 
   /**
    * Record a wrong answer for a question.
@@ -46,6 +68,7 @@ export class WrongAnswerService {
     }
     this.entries.set(map);
     this.persist();
+    this.saveToFirestore();
   }
 
   /**
@@ -56,6 +79,7 @@ export class WrongAnswerService {
     map.delete(questionId);
     this.entries.set(map);
     this.persist();
+    this.saveToFirestore();
   }
 
   /**
@@ -80,6 +104,7 @@ export class WrongAnswerService {
   clearAll(): void {
     this.entries.set(new Map());
     localStorage.removeItem(this.LS_KEY);
+    this.saveToFirestore();
   }
 
   // ── Persistence ─────────────────────────────────────────────────────────
@@ -98,5 +123,34 @@ export class WrongAnswerService {
   private persist(): void {
     const arr = [...this.entries().values()];
     localStorage.setItem(this.LS_KEY, JSON.stringify(arr));
+  }
+
+  private async loadFromFirestore(uid: string): Promise<void> {
+    try {
+      const snap = await getDoc(doc(this.firestore, `wrong_answers/${uid}`));
+      if (!snap.exists()) return;
+      const cloudEntries: WrongEntry[] = snap.data()['entries'] || [];
+      // Union merge: take max missCount between local and cloud
+      const merged = new Map(this.entries());
+      cloudEntries.forEach(ce => {
+        const local = merged.get(ce.id);
+        if (!local || ce.missCount > local.missCount) {
+          merged.set(ce.id, ce);
+        }
+      });
+      this.entries.set(merged);
+      this.persist();
+    } catch { /* offline — silent fail */ }
+  }
+
+  private async saveToFirestore(): Promise<void> {
+    const user = this.authService.user();
+    if (!user) return;
+    try {
+      await setDoc(doc(this.firestore, `wrong_answers/${user.uid}`), {
+        entries: [...this.entries().values()],
+        lastUpdated: new Date()
+      }, { merge: true });
+    } catch { /* offline — silent fail */ }
   }
 }

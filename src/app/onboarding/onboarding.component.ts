@@ -384,7 +384,7 @@ export class OnboardingComponent {
       const user = this.auth.user();
       if (user) {
         const ref = doc(this.firestore, `users/${user.uid}`);
-        await setDoc(ref, { goal: this.selectedGoal(), profileSetup: true }, { merge: true });
+        await setDoc(ref, { goal: this.selectedGoal(), profileSetup: true, isPro: false }, { merge: true });
       }
     }
     this.analytics.onboardingCompleted();

@@ -2,6 +2,8 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdMobService } from './admob.service';
 import { AlertService } from './alert.service';
+import { PurchaseService } from './services/purchase.service';
+import { AuthService } from './auth.service';
 
 /**
  * AdGateService
@@ -25,6 +27,8 @@ export class AdGateService {
     private admob = inject(AdMobService);
     private alertService = inject(AlertService);
     private router = inject(Router);
+    private purchaseService = inject(PurchaseService);
+    private authService = inject(AuthService);
 
     // ── Constants ──────────────────────────────────────────────────────────
     /** Minimum gap (ms) between interstitial ads */
@@ -34,6 +38,7 @@ export class AdGateService {
     private readonly STORAGE_KEY_UNLOCKED = 'adgate_unlocked_items';
     private readonly STORAGE_KEY_INTERSTITIAL = 'adgate_interstitial_time';
     private readonly STORAGE_KEY_VISITED = 'adgate_visited_items';
+    private readonly STORAGE_KEY_DAILY_UNLOCKS = 'adgate_daily_unlocks';
 
     // ── State ────────────────────────────────────────────────────────────────
     /**
@@ -77,6 +82,7 @@ export class AdGateService {
      * @param itemId  Unique ID for the item (e.g. "core-java::arrays", "iq::123")
      */
     isItemUnlocked(itemId: string): boolean {
+        if (this.purchaseService.isPro()) return true;
         return this.unlockedItems().has(itemId);
     }
 
@@ -87,6 +93,12 @@ export class AdGateService {
      * @returns Promise<boolean>  true → item was unlocked; false → user cancelled
      */
     async unlockItemWithAd(itemId: string, itemTitle = 'this content'): Promise<boolean> {
+        // Pro users get instant access — no ad required
+        if (this.purchaseService.isPro()) {
+            this.persistUnlock(itemId);
+            return true;
+        }
+
         // Already unlocked this session — no ad needed
         if (this.isItemUnlocked(itemId)) return true;
 
@@ -105,6 +117,14 @@ export class AdGateService {
         if (earned) {
             this.markVisited(itemId);
             this.persistUnlock(itemId);
+            // Soft paywall: show upgrade prompt on the 4th free unlock of the day
+            if (!this.purchaseService.isPro()) {
+                const count = this.incrementDailyUnlockCount();
+                if (count >= 4) {
+                    const uid = this.authService.user()?.uid;
+                    if (uid) this.purchaseService.presentPaywallIfNeeded(uid).catch(() => {});
+                }
+            }
             return true;
         }
 
@@ -132,6 +152,27 @@ export class AdGateService {
         localStorage.setItem(this.STORAGE_KEY_VISITED, JSON.stringify([...this.visitedItems]));
     }
 
+    // ── Daily unlock counter ─────────────────────────────────────────────────
+
+    private getDailyUnlockCount(): number {
+        const today = new Date().toISOString().split('T')[0];
+        try {
+            const raw = localStorage.getItem(this.STORAGE_KEY_DAILY_UNLOCKS);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed.date === today) return parsed.count as number;
+            }
+        } catch { /* ignore */ }
+        return 0;
+    }
+
+    private incrementDailyUnlockCount(): number {
+        const today = new Date().toISOString().split('T')[0];
+        const count = this.getDailyUnlockCount() + 1;
+        localStorage.setItem(this.STORAGE_KEY_DAILY_UNLOCKS, JSON.stringify({ date: today, count }));
+        return count;
+    }
+
     // ── Interstitial on Complete ─────────────────────────────────────────────
 
     /**
@@ -139,6 +180,9 @@ export class AdGateService {
      * Shows an interstitial if the cooldown has passed.
      */
     async onContentCompleted(): Promise<void> {
+        // Pro users never see interstitials
+        if (this.purchaseService.isPro()) return;
+
         const currentUrl = this.router.url;
         if (NO_INTERSTITIAL_ROUTES.some(r => currentUrl.startsWith(r))) {
             return;

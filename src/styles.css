@@ -661,8 +661,13 @@ html.dark ::-webkit-scrollbar-thumb:hover {
    Light Mode — Sidebar (ion-menu) Overrides
    ========================================== */
 html:not(.dark) ion-menu::part(container) {
-  background: #ffffff;
+  background: #F5F7F2;
   border-right: 1px solid #D6DDD2;
+}
+
+/* Ensure the sidebar menu is always above the routed pages in split-pane */
+ion-menu.split-pane-side {
+  z-index: 10 !important;
 }
 
 /* ==========================================
@@ -675,6 +680,27 @@ html:not(.dark) ion-menu::part(container) {
 /* When bottom nav is visible, push ion-content up */
 html.has-bnav ion-content {
   --padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+}
+
+/* ==========================================
+   Desktop — Persistent Sidebar Layout (≥1024px)
+   ========================================== */
+@media (min-width: 1024px) {
+  /* Remove bottom nav offset — no bottom nav at desktop */
+  html.has-bnav ion-content {
+    --padding-bottom: 0px;
+  }
+
+  /* Widen the content and add comfortable horizontal padding */
+  ion-content {
+    --padding-start: 24px;
+    --padding-end: 24px;
+  }
+
+  /* Remove admob banner offset on desktop (no ads for Pro / no bottom nav) */
+  :root {
+    --admob-banner-height: 0px;
+  }
 }
 
 /* ==========================================

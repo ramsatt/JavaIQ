@@ -316,7 +316,7 @@ export class DataService {
     }
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(d => ({ id: d.id, ...d.data() } as { id: string; displayName: string; photoURL?: string | null; points: number }));
+    return querySnapshot.docs.map(d => ({ id: d.id, ...d.data() } as { id: string; displayName: string; photoURL?: string | null; points: number; isPro?: boolean }));
   }
 
   // Legacy support for older components (can be removed once all components are updated)

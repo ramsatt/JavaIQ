@@ -10,6 +10,9 @@ import { WrongAnswerService } from '../../services/wrong-answer.service';
 import { ShareService } from '../../services/share.service';
 import { AnalyticsService } from '../../analytics.service';
 import { AppHeaderComponent } from '../../shared/app-header.component';
+import { PurchaseService } from '../../services/purchase.service';
+import { DailyEngagementService } from '../../services/daily-engagement.service';
+import { AuthService } from '../../auth.service';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -641,6 +644,9 @@ export class MockInterviewComponent implements OnDestroy {
   private wrongSvc = inject(WrongAnswerService);
   private shareSvc = inject(ShareService);
   private analytics = inject(AnalyticsService);
+  private purchaseSvc = inject(PurchaseService);
+  private engagementSvc = inject(DailyEngagementService);
+  private authSvc = inject(AuthService);
 
   // Constants exposed to template
   readonly allCategories = ALL_CATEGORIES;
@@ -710,7 +716,14 @@ export class MockInterviewComponent implements OnDestroy {
     );
   }
 
-  startSession() {
+  async startSession() {
+    // Lite users: max 2 mock interview sessions per day
+    if (!this.purchaseSvc.isPro() && this.engagementSvc.dailyMockCount >= 2) {
+      const uid = this.authSvc.user()?.uid;
+      if (uid) await this.purchaseSvc.presentPaywallIfNeeded(uid);
+      return;
+    }
+
     const cats = this.selectedCategories().length > 0
       ? this.selectedCategories()
       : ALL_CATEGORIES.map(c => c.name);
@@ -730,6 +743,7 @@ export class MockInterviewComponent implements OnDestroy {
     this.currentIdx.set(0);
     this.answerVisible.set(false);
     this.phase.set('session');
+    this.engagementSvc.incrementMockSession();
     this.analytics.track('mock_interview_started', {
       categories: cats.join(','),
       count: picked.length,

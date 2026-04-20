@@ -602,6 +602,96 @@ interface CourseData {
     :host-context(html:not(.dark)) .footer-text {
       color: #52665A;
     }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — Tablet (≥640px)
+       ═══════════════════════════════════════════ */
+    @media (min-width: 640px) {
+      .page-container { max-width: 860px; padding: 0 24px 48px; }
+      .hero { padding: 40px 32px 56px; }
+      .hero-content { max-width: 720px; }
+      .title { font-size: 2.2rem; }
+      .subtitle { font-size: 0.92rem; max-width: 560px; margin-left: auto; margin-right: auto; }
+    }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — Desktop (≥1024px)
+       ═══════════════════════════════════════════ */
+    @media (min-width: 1024px) {
+      /* Hide the ion-toolbar back button — sidebar handles navigation */
+      .tut-toolbar { display: none; }
+
+      .page-container {
+        max-width: 1100px;
+        padding: 0 40px 56px;
+      }
+
+      /* Hero: full-width with centered content cap */
+      .hero {
+        padding: 56px 40px 64px;
+        text-align: left;
+      }
+      .hero-content {
+        max-width: 1020px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto auto;
+        column-gap: 64px;
+        align-items: start;
+      }
+      .badge-wrapper {
+        grid-column: 1 / -1;
+        margin-bottom: 16px;
+      }
+      .title {
+        grid-column: 1;
+        font-size: 2.6rem;
+        margin-bottom: 12px;
+      }
+      .subtitle {
+        grid-column: 1;
+        margin-bottom: 0;
+        font-size: 0.95rem;
+        max-width: 480px;
+      }
+      .stat-pill-row {
+        grid-column: 2;
+        grid-row: 2 / 4;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding-top: 4px;
+        gap: 10px;
+      }
+      .progress-wrap {
+        grid-column: 1;
+        align-items: flex-start;
+        margin: 20px 0 0 0;
+        max-width: 420px;
+      }
+      .cert-cta-wrap {
+        grid-column: 1;
+        align-items: flex-start;
+      }
+
+      /* Curriculum list: 2-column grid */
+      .list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — Wide (≥1440px)
+       ═══════════════════════════════════════════ */
+    @media (min-width: 1440px) {
+      .page-container { max-width: 1320px; padding: 0 56px 64px; }
+      .hero { padding: 64px 56px 72px; }
+      .hero-content { max-width: 1200px; column-gap: 80px; }
+      .title { font-size: 3rem; }
+      .list { grid-template-columns: repeat(3, 1fr); }
+    }
   `
 })
 export class TutorialDetailComponent {

@@ -2,6 +2,10 @@ export const environment = {
   production: false,
   adMobTesting: false,
   appVersion: '1.5.0',
+  // RevenueCat API keys from app.revenuecat.com
+  revenueCatApiKeyAndroid: 'test_MteMokPRExnQIBaThNKJBZiZaXk',
+  revenueCatApiKeyIos: 'test_MteMokPRExnQIBaThNKJBZiZaXk',
+  proEntitlementId: 'JavaIQ Pro',
   firebaseConfig: {
     apiKey: "AIzaSyAhhnYTEfU724e-FgAr9pVwpPQ259AzhZQ",
     authDomain: "javaiq.firebaseapp.com",

@@ -1,8 +1,9 @@
 import { Injectable, signal, inject, effect } from '@angular/core';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { AuthService } from '../auth.service';
 import { GamificationService } from '../gamification.service';
 import { DataService } from '../data.service';
+import { PurchaseService } from './purchase.service';
 
 export interface Achievement {
   id: string;
@@ -106,8 +107,31 @@ const ACHIEVEMENT_DEFINITIONS: Omit<Achievement, 'unlockedAt'>[] = [
     description: 'Ranked in the top 10 on the global leaderboard',
     icon: 'bi-people-fill',
     iconColor: '#8b5cf6',
+    rarity: 'legendary'  },
+  // ── Pro ───────────────────────────────────────────────────────────────────────────
+  {
+    id: 'pro-subscriber',
+    title: 'Pro Member',
+    description: 'Upgraded to JavaIQ Pro',
+    icon: 'bi-diamond-fill',
+    iconColor: '#a855f7',
     rarity: 'legendary'
-  }
+  },
+  {
+    id: 'pro-streak-7',
+    title: 'Pro Streak',
+    description: 'Maintained a 7-day streak as a Pro subscriber',
+    icon: 'bi-fire',
+    iconColor: '#a855f7',
+    rarity: 'epic'
+  },
+  {
+    id: 'pro-streak-30',
+    title: 'Pro Champion',
+    description: 'Maintained a 30-day streak as a Pro subscriber',
+    icon: 'bi-trophy-fill',
+    iconColor: '#a855f7',
+    rarity: 'legendary'  }
 ];
 
 @Injectable({ providedIn: 'root' })
@@ -116,6 +140,7 @@ export class AchievementService {
   private authService  = inject(AuthService);
   private gamService   = inject(GamificationService);  // one-way, no circular
   private dataService  = inject(DataService);           // one-way, no circular
+  private purchaseSvc  = inject(PurchaseService);       // one-way, no circular
 
   private readonly LS_KEY = 'achievements_state';
 
@@ -126,10 +151,26 @@ export class AchievementService {
   justUnlocked = signal<Achievement | null>(null);
 
   constructor() {
+    // ── Load achievements from Firestore when user logs in ──
+    effect(() => {
+      const user = this.authService.user();
+      if (user) this.loadFromFirestore(user.uid);
+    });
+
     // ── Reactive streak watcher (avoids injecting AchievementService into GamificationService) ──
     effect(() => {
       const streak = this.gamService.streak();
       if (streak > 0) this.checkStreakAchievements(streak);
+    });
+
+    // ── Reactive Pro watcher ── unlock pro-subscriber + pro-streak badges when eligible ──
+    effect(() => {
+      if (this.purchaseSvc.isPro()) {
+        this.unlockById('pro-subscriber');
+        const streak = this.gamService.streak();
+        if (streak >= 7)  this.unlockById('pro-streak-7');
+        if (streak >= 30) this.unlockById('pro-streak-30');
+      }
     });
 
     // ── Reactive topic watcher — check topic achievements when completedTopicIds grows ──
@@ -145,6 +186,11 @@ export class AchievementService {
     if (streak >= 7)   this.unlockById('streak-7');
     if (streak >= 30)  this.unlockById('streak-30');
     if (streak >= 100) this.unlockById('streak-100');
+    // Pro streak badges
+    if (this.purchaseSvc.isPro()) {
+      if (streak >= 7)  this.unlockById('pro-streak-7');
+      if (streak >= 30) this.unlockById('pro-streak-30');
+    }
   }
 
   checkTopicAchievements(totalCompleted: number): void {
@@ -214,6 +260,23 @@ export class AchievementService {
     } catch { /* malformed JSON */ }
 
     return ACHIEVEMENT_DEFINITIONS.map(def => ({ ...def, unlockedAt: null }));
+  }
+
+  private async loadFromFirestore(uid: string): Promise<void> {
+    try {
+      const snap = await getDoc(doc(this.firestore, `achievements/${uid}`));
+      if (!snap.exists()) return;
+      const data = snap.data() as Record<string, string | null>;
+      // Merge: Firestore unlockedAt wins over null — never downgrade an unlock
+      this.achievements.update(list =>
+        list.map(a => {
+          const cloudDate = data[a.id];
+          if (cloudDate && !a.unlockedAt) return { ...a, unlockedAt: cloudDate };
+          return a;
+        })
+      );
+      this.persistLocal();
+    } catch { /* offline — silent fail */ }
   }
 
   private persistLocal(): void {

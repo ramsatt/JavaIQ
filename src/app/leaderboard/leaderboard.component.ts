@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DataService } from '../data.service';
 import { AuthService } from '../auth.service';
 import { AchievementService } from '../services/achievement.service';
+import { PurchaseService } from '../services/purchase.service';
 import { Router } from '@angular/router';
 
 interface LeaderboardUser {
@@ -10,6 +11,7 @@ interface LeaderboardUser {
   displayName: string;
   photoURL?: string | null;
   points: number;
+  isPro?: boolean;
 }
 
 const PERIOD_LABELS: Record<string, string> = {
@@ -135,6 +137,9 @@ const PERIOD_LABELS: Record<string, string> = {
                 <span class="lb-name">{{ u.displayName || 'Anonymous' }}</span>
                 @if (isMe(u.id)) {
                   <span class="you-chip">You</span>
+                }
+                @if (u.isPro) {
+                  <span class="pro-chip">PRO</span>
                 }
               </div>
               <span class="lb-pts">
@@ -347,6 +352,19 @@ const PERIOD_LABELS: Record<string, string> = {
       flex-shrink: 0;
     }
 
+    .pro-chip {
+      font-size: 0.55rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: rgba(168,85,247,0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168,85,247,0.35);
+      border-radius: 5px;
+      padding: 2px 6px;
+      flex-shrink: 0;
+    }
+
     .lb-pts {
       font-size: 0.82rem;
       font-weight: 800;
@@ -414,6 +432,7 @@ export class LeaderboardComponent implements OnInit {
   private dataService = inject(DataService);
   private authService = inject(AuthService);
   private achSvc      = inject(AchievementService);
+  private purchaseSvc = inject(PurchaseService);
   private router      = inject(Router);
 
   readonly periods = ['alltime', 'monthly', 'weekly'] as const;
