@@ -156,12 +156,14 @@ interface TutorialCourse {
     }
     .tut-content {
       --background: #0b1120;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     /* ── Hero Section ── */
     .hero-section {
       position: relative;
-      padding: 0 20px 32px;
+      padding: 0 clamp(16px, 4vw, 64px) 32px;
       overflow: hidden;
     }
     .hero-glow {
@@ -208,7 +210,7 @@ interface TutorialCourse {
     }
     .hero-title {
       font-family: 'Inter', sans-serif;
-      font-size: 1.85rem;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
       font-weight: 900;
       color: #e2e8f0;
       letter-spacing: -0.03em;
@@ -274,9 +276,9 @@ interface TutorialCourse {
 
     /* ── Page Body ── */
     .page-body {
-      padding: 24px 16px 100px;
-      max-width: 600px;
-      margin: 0 auto;
+      padding: 24px clamp(16px, 4vw, 64px) 100px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     /* ── Filter Chips ── */
@@ -532,6 +534,8 @@ interface TutorialCourse {
     }
     :host-context(html:not(.dark)) .tut-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     /* Premium green hero in light mode */
@@ -647,6 +651,33 @@ interface TutorialCourse {
     :host-context(html:not(.dark)) .diff-tag[data-level="advanced"] {
       background: rgba(217,119,6,0.1);
       color: #d97706;
+    }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — Tablet (≥640px)
+       ═══════════════════════════════════════════ */
+    @media (min-width: 640px) {
+      .hero-section { padding: 0 clamp(24px, 5vw, 72px) 40px; }
+      .page-body { padding: 28px clamp(24px, 5vw, 72px) 100px; }
+      .course-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .filter-row { flex-wrap: wrap; overflow-x: visible; }
+      .filter-scroll-wrap::after { display: none; }
+    }
+
+    @media (min-width: 1024px) {
+      .hero-section { padding: 0 clamp(32px, 5vw, 80px) 52px; }
+      .hero-stat-val { font-size: 1.7rem; }
+      .page-body { padding: 36px clamp(32px, 5vw, 80px) 120px; }
+      .course-list { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .course-card-inner { padding: 20px 20px 22px; }
+      .course-title { font-size: 1rem; }
+      .course-desc { font-size: 0.8rem; }
+    }
+
+    @media (min-width: 1440px) {
+      .hero-section { padding: 0 clamp(48px, 6vw, 96px) 56px; }
+      .page-body { padding: 40px clamp(48px, 6vw, 96px) 120px; }
+      .course-list { grid-template-columns: repeat(3, 1fr); gap: 18px; }
     }
   `
 })

@@ -130,13 +130,17 @@ import { AdGateService } from '../../ad-gate.service';
     }
     .tut-content {
       --background: #0b1120;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     .page-container {
-      padding: 0 16px 40px;
-      max-width: 600px;
-      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 64px) 40px;
     }
+
+    @media (min-width: 640px) { .page-container { padding: 0 clamp(24px, 5vw, 72px) 40px; } }
+    @media (min-width: 1024px) { .page-container { padding: 0 clamp(32px, 5vw, 80px) 40px; } }
+    @media (min-width: 1440px) { .page-container { padding: 0 clamp(48px, 6vw, 96px) 40px; } }
 
     /* ── Hero Section ── */
     .hero {
@@ -447,6 +451,8 @@ import { AdGateService } from '../../ad-gate.service';
     }
     :host-context(html:not(.dark)) .tut-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
     :host-context(html:not(.dark)) .hero {
       background: linear-gradient(145deg, #0d1a10 0%, #1B4332 100%);

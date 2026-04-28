@@ -153,12 +153,20 @@ const META: Record<string, { faIcon: string; iconColor: string; iconBg: string; 
   `,
   styles: `
     .quiz-toolbar { --background: #0b1120; --border-style: none; }
-    .quiz-content  { --background: #0b1120; }
+    .quiz-content  { --background: #0b1120; --padding-start: 0; --padding-end: 0; }
 
     .quiz-wrapper {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 24px 16px 100px;
+      padding: 24px clamp(16px, 4vw, 64px) 100px;
+    }
+
+    @media (min-width: 640px) {
+      .quiz-wrapper { padding: 24px clamp(24px, 5vw, 72px) 100px; }
+    }
+    @media (min-width: 1024px) {
+      .quiz-wrapper { padding: 24px clamp(32px, 5vw, 80px) 100px; }
+    }
+    @media (min-width: 1440px) {
+      .quiz-wrapper { padding: 24px clamp(48px, 6vw, 96px) 100px; }
     }
 
     /* ── Toolbar progress ── */
@@ -468,7 +476,7 @@ const META: Record<string, { faIcon: string; iconColor: string; iconBg: string; 
 
     /* ── Light Mode ── */
     :host-context(html:not(.dark)) .quiz-toolbar { --background: #1B4332; }
-    :host-context(html:not(.dark)) .quiz-content  { --background: #F5F7F2; }
+    :host-context(html:not(.dark)) .quiz-content  { --background: #F5F7F2; --padding-start: 0; --padding-end: 0; }
     :host-context(html:not(.dark)) .toolbar-bar { background: rgba(255,255,255,0.3); }
     :host-context(html:not(.dark)) .toolbar-bar-fill { background: linear-gradient(90deg, #1B4332, #40916C); }
     :host-context(html:not(.dark)) .toolbar-q-num { color: rgba(255,255,255,0.75); }

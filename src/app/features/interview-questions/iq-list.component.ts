@@ -118,19 +118,37 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
 
     .iq-page-content {
       --background: #0b1120;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     .page-wrapper {
-      padding: 0 16px 100px;
-      max-width: 600px;
-      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 64px) 100px;
+    }
+
+    @media (min-width: 640px) {
+      .page-wrapper { padding: 0 clamp(24px, 5vw, 72px) 100px; }
+    }
+
+    @media (min-width: 1024px) {
+      .page-wrapper { padding: 0 clamp(32px, 5vw, 80px) 100px; }
+      .topic-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      .page-wrapper { padding: 0 clamp(48px, 6vw, 96px) 100px; }
+      .topic-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
     /* ── Hero Section ── */
     .hero-section {
       position: relative;
       text-align: center;
-      padding: 28px 16px 24px;
+      padding: 28px clamp(16px, 4vw, 64px) 24px;
     }
     .hero-glow {
       position: absolute;
@@ -397,13 +415,14 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
     }
     :host-context(html:not(.dark)) .iq-page-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     /* Premium green hero — full bleed with generous spacing */
     :host-context(html:not(.dark)) .hero-section {
       background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 55%, #40916C 100%);
-      padding: 44px 32px 60px;
-      margin: 0 -16px;
+      padding: 44px clamp(16px, 4vw, 64px) 60px;
     }
     :host-context(html:not(.dark)) .hero-glow {
       background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);

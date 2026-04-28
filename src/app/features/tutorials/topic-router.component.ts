@@ -453,11 +453,11 @@ const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
       /* Hide toolbar — sidebar + breadcrumb already in view */
       .topic-toolbar { display: none; }
 
-      /* Constrain and center the tutorial content */
+      /* Tutorial content fills full available width */
       .tutorial-scroll-container {
-        max-width: 860px;
-        margin: 0 auto;
-        padding: 32px 40px 40px;
+        max-width: 100%;
+        margin: 0;
+        padding: 0 0 100px;
       }
 
       /* Nav bar: account for the 268px split-pane sidebar */
@@ -468,7 +468,7 @@ const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
       }
 
       .nav-row {
-        max-width: 860px;
+        max-width: 100%;
         margin: 0 auto;
         padding: 14px 40px;
         gap: 20px;
@@ -482,11 +482,11 @@ const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
        ═══════════════════════════════════════════ */
     @media (min-width: 1440px) {
       .tutorial-scroll-container {
-        max-width: 1000px;
-        padding: 40px 56px 48px;
+        max-width: 100%;
+        padding: 0 0 100px;
       }
       .nav-row {
-        max-width: 1000px;
+        max-width: 100%;
         padding: 14px 56px;
       }
     }

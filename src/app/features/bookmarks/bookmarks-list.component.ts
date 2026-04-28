@@ -80,11 +80,11 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
   `,
   styles: `
     .bm-toolbar { --background: var(--ion-background-color, #0b1120); --color: var(--ion-text-color, white); --border-style: none; }
-    .bm-content { --background: var(--ion-background-color, #0b1120); }
+    .bm-content { --background: var(--ion-background-color, #0b1120); --padding-start: 0; --padding-end: 0; }
 
     .hero {
       position: relative;
-      padding: 0 20px 28px;
+      padding: 0 clamp(16px, 4vw, 64px) 28px;
       overflow: hidden;
     }
     .hero-glow.g1 {
@@ -144,7 +144,17 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
       color: #64748b; text-transform: uppercase; letter-spacing: 0.08em;
     }
 
-    .body { padding: 8px 16px 100px; }
+    .body { padding: 8px clamp(16px, 4vw, 64px) 100px; }
+
+    @media (min-width: 640px) {
+      .body { padding: 8px clamp(24px, 5vw, 72px) 100px; }
+    }
+    @media (min-width: 1024px) {
+      .body { padding: 16px clamp(32px, 5vw, 80px) 100px; }
+    }
+    @media (min-width: 1440px) {
+      .body { padding: 24px clamp(48px, 6vw, 96px) 100px; }
+    }
 
     .section { margin-bottom: 24px; }
     .section-head {

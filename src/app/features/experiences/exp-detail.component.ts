@@ -200,12 +200,12 @@ import { AdGateService } from '../../ad-gate.service';
   styles: `
     /* ── Layout ── */
     .det-toolbar { --background: #0b1120; --color: white; --border-style: none; }
-    .det-content { --background: #0b1120; }
+    .det-content { --background: #0b1120; --padding-start: 0; --padding-end: 0; }
 
     /* ── Hero Banner ── */
     .det-hero {
       position: relative;
-      padding: 16px 20px 28px;
+      padding: 16px clamp(16px, 4vw, 64px) 28px;
       overflow: hidden;
       text-align: center;
       background: linear-gradient(180deg, rgba(from var(--brand, #10b981) r g b / 0.08) 0%, transparent 100%);
@@ -272,7 +272,7 @@ import { AdGateService } from '../../ad-gate.service';
       display: flex;
       align-items: center;
       justify-content: space-evenly;
-      margin: 0 16px 24px;
+      margin: 0 clamp(16px, 4vw, 64px) 24px;
       background: rgba(255,255,255,0.035);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255,255,255,0.06);
@@ -286,7 +286,18 @@ import { AdGateService } from '../../ad-gate.service';
     .stat-divider { width: 1px; height: 32px; background: rgba(255,255,255,0.07); }
 
     /* ── Body ── */
-    .det-body { padding: 0 16px 100px; max-width: 600px; margin: 0 auto; }
+    .det-body { padding: 0 clamp(16px, 4vw, 64px) 100px; }
+
+    @media (min-width: 640px) {
+      .det-body { padding: 0 clamp(24px, 5vw, 72px) 100px; }
+    }
+    @media (min-width: 1024px) {
+      .det-body { padding: 0 clamp(32px, 5vw, 80px) 100px; }
+      .rounds-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+    }
+    @media (min-width: 1440px) {
+      .det-body { padding: 0 clamp(48px, 6vw, 96px) 100px; }
+    }
 
     /* ── Section ── */
     .det-section { margin-bottom: 28px; }
@@ -542,6 +553,8 @@ import { AdGateService } from '../../ad-gate.service';
     }
     :host-context(html:not(.dark)) .det-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
     :host-context(html:not(.dark)) .round-card,
     :host-context(html:not(.dark)) .summary-card {

@@ -103,7 +103,7 @@ import { AdGateService } from '../../ad-gate.service';
     }
 
     /* ── Content ── */
-    .cat-content { --background: #0f172a; }
+    .cat-content { --background: #0f172a; --padding-start: 0; --padding-end: 0; }
 
     /* ── Hero Section ── */
     .cat-hero {
@@ -112,9 +112,7 @@ import { AdGateService } from '../../ad-gate.service';
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .cat-hero-inner {
-      max-width: 56rem;
-      margin: 0 auto;
-      padding: 24px 20px 0;
+      padding: 24px clamp(16px, 4vw, 64px) 0;
     }
     .cat-hero-badge {
       display: inline-block;
@@ -173,11 +171,20 @@ import { AdGateService } from '../../ad-gate.service';
 
     /* ── Body ── */
     .cat-body {
-      max-width: 56rem;
-      margin: 0 auto;
-      padding: 16px 12px 80px;
+      padding: 16px clamp(12px, 4vw, 64px) 80px;
       position: relative;
       z-index: 1;
+    }
+
+    @media (min-width: 640px) {
+      .cat-body { padding: 16px clamp(24px, 5vw, 72px) 80px; }
+    }
+    @media (min-width: 1024px) {
+      .cat-body { padding: 24px clamp(32px, 5vw, 80px) 80px; }
+      .cat-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    }
+    @media (min-width: 1440px) {
+      .cat-body { padding: 32px clamp(48px, 6vw, 96px) 80px; }
     }
 
     /* ── Empty State ── */
@@ -339,6 +346,8 @@ import { AdGateService } from '../../ad-gate.service';
     }
     :host-context(html:not(.dark)) .cat-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
     :host-context(html:not(.dark)) .cat-hero {
       background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 55%, #40916C 100%);

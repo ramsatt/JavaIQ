@@ -17,7 +17,8 @@ export class PurchaseService {
   private readonly isNative = Capacitor.isNativePlatform();
 
   /** True when the current user has an active Pro entitlement */
-  isPro = signal<boolean>(false);
+  // Pro gate disabled — all users treated as Pro until next phase
+  isPro = signal<boolean>(true);
 
   /** True while a restore network call is in-flight */
   purchasing = signal<boolean>(false);
@@ -228,7 +229,7 @@ export class PurchaseService {
 
   /** Reset RevenueCat user on sign-out. */
   async resetUser(): Promise<void> {
-    this.isPro.set(false);
+    // Pro gate disabled — keep isPro true until next phase
     if (!this.rcInitialized) return;
     try { await Purchases.logOut(); } catch { /* ignore */ }
   }

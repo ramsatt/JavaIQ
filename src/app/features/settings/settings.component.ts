@@ -46,234 +46,270 @@ const REMINDER_TIMES = [
           <p class="set-sub">Preferences & account</p>
         </div>
 
-        <!-- Account Section -->
-        @if (auth.user(); as user) {
-          <div class="set-section">
-            <span class="set-section-label">Account</span>
-            <div class="set-card">
-              <div class="account-row">
-                <div class="account-avatar">
-                  {{ user.displayName?.charAt(0) ?? '?' }}
-                </div>
-                <div class="account-info">
-                  <span class="account-name">{{ user.displayName || 'Anonymous' }}</span>
-                  <span class="account-email">{{ user.email }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        }
+        <div class="set-sections-grid">
 
-        <!-- Appearance -->
-        <div class="set-section">
-          <span class="set-section-label">Appearance</span>
-          <div class="set-card">
-            <div class="set-row" (click)="toggleTheme()">
-              <div class="set-row-left">
-                <div class="set-icon-wrap" style="background: rgba(99,102,241,0.12)">
-                  <i class="fa-solid fa-moon" style="color:#818cf8"></i>
-                </div>
-                <span class="set-row-label">Dark Mode</span>
-              </div>
-              <div class="toggle-track" [class.toggle-on]="themeService.theme() === 'dark'" (click)="$event.stopPropagation(); toggleTheme()">
-                <div class="toggle-thumb"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+          <!-- Left column: Account + Appearance + Goal + Notifications -->
+          <div class="set-col">
 
-        <!-- Goal -->
-        <div class="set-section">
-          <span class="set-section-label">Learning Goal</span>
-          <div class="set-card">
-            @if (!showGoalPicker()) {
-              <div class="set-row" (click)="showGoalPicker.set(true)">
-                <div class="set-row-left">
-                  <div class="set-icon-wrap" style="background:rgba(245,158,11,0.12)">
-                    <span style="font-size:1rem">{{ currentGoalEmoji() }}</span>
-                  </div>
-                  <div>
-                    <span class="set-row-label">{{ currentGoalLabel() }}</span>
-                    <span class="set-row-sub">Tap to change your goal</span>
+            <!-- Account Section -->
+            @if (auth.user(); as user) {
+              <div class="set-section">
+                <span class="set-section-label">Account</span>
+                <div class="set-card">
+                  <div class="account-row">
+                    <div class="account-avatar">
+                      {{ user.displayName?.charAt(0) ?? '?' }}
+                    </div>
+                    <div class="account-info">
+                      <span class="account-name">{{ user.displayName || 'Anonymous' }}</span>
+                      <span class="account-email">{{ user.email }}</span>
+                    </div>
                   </div>
                 </div>
-                <i class="fa-solid fa-chevron-right set-chevron"></i>
-              </div>
-            } @else {
-              <div class="goal-picker">
-                @for (g of goals; track g.key) {
-                  <button class="goal-opt" [class.goal-opt-sel]="goalKey() === g.key" (click)="setGoal(g.key)">
-                    <span>{{ g.emoji }}</span>
-                    <span class="goal-opt-label">{{ g.label }}</span>
-                  </button>
-                }
               </div>
             }
-          </div>
-        </div>
 
-        <!-- Notifications -->
-        <div class="set-section">
-          <span class="set-section-label">Notifications</span>
-          <div class="set-card">
-            <div class="set-row" (click)="toggleNotifications()">
-              <div class="set-row-left">
-                <div class="set-icon-wrap" style="background: rgba(16,185,129,0.12)">
-                  <i class="fa-solid fa-bell" style="color:#10b981"></i>
+            <!-- Appearance -->
+            <div class="set-section">
+              <span class="set-section-label">Appearance</span>
+              <div class="set-card">
+                <div class="set-row" (click)="toggleTheme()">
+                  <div class="set-row-left">
+                    <div class="set-icon-wrap" style="background: rgba(99,102,241,0.12)">
+                      <i class="fa-solid fa-moon" style="color:#818cf8"></i>
+                    </div>
+                    <span class="set-row-label">Dark Mode</span>
+                  </div>
+                  <div class="toggle-track" [class.toggle-on]="themeService.theme() === 'dark'" (click)="$event.stopPropagation(); toggleTheme()">
+                    <div class="toggle-thumb"></div>
+                  </div>
                 </div>
-                <div>
-                  <span class="set-row-label">Daily Reminders</span>
-                  <span class="set-row-sub">Get nudged to keep your streak</span>
-                </div>
-              </div>
-              <div class="toggle-track" [class.toggle-on]="notifSvc.notificationsEnabled()" (click)="$event.stopPropagation(); toggleNotifications()">
-                <div class="toggle-thumb"></div>
               </div>
             </div>
 
-            @if (notifSvc.notificationsEnabled()) {
-              <div class="set-divider"></div>
-              <div class="set-row set-version-row">
-                <div class="set-row-left">
-                  <div class="set-icon-wrap" style="background:rgba(99,102,241,0.12)">
-                    <i class="fa-solid fa-clock" style="color:#818cf8"></i>
+            <!-- Goal -->
+            <div class="set-section">
+              <span class="set-section-label">Learning Goal</span>
+              <div class="set-card">
+                @if (!showGoalPicker()) {
+                  <div class="set-row" (click)="showGoalPicker.set(true)">
+                    <div class="set-row-left">
+                      <div class="set-icon-wrap" style="background:rgba(245,158,11,0.12)">
+                        <span style="font-size:1rem">{{ currentGoalEmoji() }}</span>
+                      </div>
+                      <div>
+                        <span class="set-row-label">{{ currentGoalLabel() }}</span>
+                        <span class="set-row-sub">Tap to change your goal</span>
+                      </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right set-chevron"></i>
                   </div>
-                  <span class="set-row-label">Reminder Time</span>
-                </div>
-              </div>
-              <div class="time-picker-row">
-                @for (t of reminderTimes; track t.hour) {
-                  <button class="time-chip" [class.time-chip-sel]="notifSvc.reminderHour() === t.hour"
-                    (click)="setReminderHour(t.hour)">
-                    {{ t.label }}
-                  </button>
-                }
-              </div>
-            }
-          </div>
-        </div>
-
-        <!-- About -->
-        <div class="set-section">
-          <span class="set-section-label">About</span>
-          <div class="set-card">
-            <div class="set-row" (click)="openPrivacyPolicy()">
-              <div class="set-row-left">
-                <div class="set-icon-wrap" style="background: rgba(59,130,246,0.12)">
-                  <i class="fa-solid fa-shield-halved" style="color:#60a5fa"></i>
-                </div>
-                <span class="set-row-label">Privacy Policy</span>
-              </div>
-              <i class="fa-solid fa-chevron-right set-chevron"></i>
-            </div>
-            <div class="set-divider"></div>
-            <div class="set-row" (click)="openAbout()">
-              <div class="set-row-left">
-                <div class="set-icon-wrap" style="background: rgba(245,158,11,0.12)">
-                  <i class="fa-solid fa-circle-info" style="color:#f59e0b"></i>
-                </div>
-                <span class="set-row-label">About JavaIQ</span>
-              </div>
-              <i class="fa-solid fa-chevron-right set-chevron"></i>
-            </div>
-            <div class="set-divider"></div>
-            <div class="set-row set-version-row">
-              <div class="set-row-left">
-                <div class="set-icon-wrap" style="background: rgba(100,116,139,0.12)">
-                  <i class="fa-solid fa-code-branch" style="color:#94a3b8"></i>
-                </div>
-                <span class="set-row-label">Version</span>
-              </div>
-              <span class="set-version-val">{{ appVersion }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pro -->
-        <div class="set-section">
-          <span class="set-section-label">Pro</span>
-          <div class="set-card">
-            @if (purchaseService.isPro()) {
-              <div class="set-row set-version-row">
-                <div class="set-row-left">
-                  <div class="set-icon-wrap" style="background:rgba(250,204,21,0.12)">
-                    <i class="fa-solid fa-crown" style="color:#fbbf24"></i>
-                  </div>
-                  <div>
-                    <span class="set-row-label">JavaIQ Pro</span>
-                    <span class="set-row-sub">You're a Pro member — ad-free forever</span>
-                  </div>
-                </div>
-                <span class="pro-badge-active">PRO</span>
-              </div>
-              <div class="set-divider"></div>
-              <div class="set-row" (click)="openCustomerCenter()">
-                <div class="set-row-left">
-                  <div class="set-icon-wrap" style="background:rgba(250,204,21,0.1)">
-                    <i class="fa-solid fa-gear" style="color:#fbbf24"></i>
-                  </div>
-                  <span class="set-row-label">Manage Subscription</span>
-                </div>
-                <i class="fa-solid fa-chevron-right set-chevron"></i>
-              </div>
-              <div class="set-divider"></div>
-              <div class="set-row" (click)="restorePurchases()">
-                <div class="set-row-left">
-                  <div class="set-icon-wrap" style="background:rgba(99,102,241,0.1)">
-                    <i class="fa-solid fa-rotate" style="color:#818cf8"></i>
-                  </div>
-                  <span class="set-row-label">Restore Purchase</span>
-                </div>
-                <i class="fa-solid fa-chevron-right set-chevron"></i>
-              </div>
-            } @else {
-              <button class="pro-upgrade-btn" [disabled]="purchaseService.purchasing()" (click)="upgradeToPro()">
-                @if (purchaseService.purchasing()) {
-                  <i class="fa-solid fa-spinner fa-spin"></i>
-                  Processing...
                 } @else {
-                  <i class="fa-solid fa-crown"></i>
-                  Upgrade to Pro — Ad-Free Forever
-                }
-              </button>
-              <div class="set-divider"></div>
-              <div class="set-row" (click)="restorePurchases()">
-                <div class="set-row-left">
-                  <div class="set-icon-wrap" style="background:rgba(99,102,241,0.1)">
-                    <i class="fa-solid fa-rotate" style="color:#818cf8"></i>
+                  <div class="goal-picker">
+                    @for (g of goals; track g.key) {
+                      <button class="goal-opt" [class.goal-opt-sel]="goalKey() === g.key" (click)="setGoal(g.key)">
+                        <span>{{ g.emoji }}</span>
+                        <span class="goal-opt-label">{{ g.label }}</span>
+                      </button>
+                    }
                   </div>
-                  <span class="set-row-label">Restore Purchase</span>
+                }
+              </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="set-section">
+              <span class="set-section-label">Notifications</span>
+              <div class="set-card">
+                <div class="set-row" (click)="toggleNotifications()">
+                  <div class="set-row-left">
+                    <div class="set-icon-wrap" style="background: rgba(16,185,129,0.12)">
+                      <i class="fa-solid fa-bell" style="color:#10b981"></i>
+                    </div>
+                    <div>
+                      <span class="set-row-label">Daily Reminders</span>
+                      <span class="set-row-sub">Get nudged to keep your streak</span>
+                    </div>
+                  </div>
+                  <div class="toggle-track" [class.toggle-on]="notifSvc.notificationsEnabled()" (click)="$event.stopPropagation(); toggleNotifications()">
+                    <div class="toggle-thumb"></div>
+                  </div>
                 </div>
-                <i class="fa-solid fa-chevron-right set-chevron"></i>
+
+                @if (notifSvc.notificationsEnabled()) {
+                  <div class="set-divider"></div>
+                  <div class="set-row set-version-row">
+                    <div class="set-row-left">
+                      <div class="set-icon-wrap" style="background:rgba(99,102,241,0.12)">
+                        <i class="fa-solid fa-clock" style="color:#818cf8"></i>
+                      </div>
+                      <span class="set-row-label">Reminder Time</span>
+                    </div>
+                  </div>
+                  <div class="time-picker-row">
+                    @for (t of reminderTimes; track t.hour) {
+                      <button class="time-chip" [class.time-chip-sel]="notifSvc.reminderHour() === t.hour"
+                        (click)="setReminderHour(t.hour)">
+                        {{ t.label }}
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+          </div><!-- /left col -->
+
+          <!-- Right column: About + Pro + Sign Out -->
+          <div class="set-col">
+
+            <!-- About -->
+            <div class="set-section">
+              <span class="set-section-label">About</span>
+              <div class="set-card">
+                <div class="set-row" (click)="openPrivacyPolicy()">
+                  <div class="set-row-left">
+                    <div class="set-icon-wrap" style="background: rgba(59,130,246,0.12)">
+                      <i class="fa-solid fa-shield-halved" style="color:#60a5fa"></i>
+                    </div>
+                    <span class="set-row-label">Privacy Policy</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right set-chevron"></i>
+                </div>
+                <div class="set-divider"></div>
+                <div class="set-row" (click)="openAbout()">
+                  <div class="set-row-left">
+                    <div class="set-icon-wrap" style="background: rgba(245,158,11,0.12)">
+                      <i class="fa-solid fa-circle-info" style="color:#f59e0b"></i>
+                    </div>
+                    <span class="set-row-label">About JavaIQ</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right set-chevron"></i>
+                </div>
+                <div class="set-divider"></div>
+                <div class="set-row set-version-row">
+                  <div class="set-row-left">
+                    <div class="set-icon-wrap" style="background: rgba(100,116,139,0.12)">
+                      <i class="fa-solid fa-code-branch" style="color:#94a3b8"></i>
+                    </div>
+                    <span class="set-row-label">Version</span>
+                  </div>
+                  <span class="set-version-val">{{ appVersion }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pro -->
+            <div class="set-section">
+              <span class="set-section-label">Pro</span>
+              <div class="set-card">
+                @if (purchaseService.isPro()) {
+                  <div class="set-row set-version-row">
+                    <div class="set-row-left">
+                      <div class="set-icon-wrap" style="background:rgba(250,204,21,0.12)">
+                        <i class="fa-solid fa-crown" style="color:#fbbf24"></i>
+                      </div>
+                      <div>
+                        <span class="set-row-label">JavaIQ Pro</span>
+                        <span class="set-row-sub">You're a Pro member — ad-free forever</span>
+                      </div>
+                    </div>
+                    <span class="pro-badge-active">PRO</span>
+                  </div>
+                  <div class="set-divider"></div>
+                  <div class="set-row" (click)="openCustomerCenter()">
+                    <div class="set-row-left">
+                      <div class="set-icon-wrap" style="background:rgba(250,204,21,0.1)">
+                        <i class="fa-solid fa-gear" style="color:#fbbf24"></i>
+                      </div>
+                      <span class="set-row-label">Manage Subscription</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right set-chevron"></i>
+                  </div>
+                  <div class="set-divider"></div>
+                  <div class="set-row" (click)="restorePurchases()">
+                    <div class="set-row-left">
+                      <div class="set-icon-wrap" style="background:rgba(99,102,241,0.1)">
+                        <i class="fa-solid fa-rotate" style="color:#818cf8"></i>
+                      </div>
+                      <span class="set-row-label">Restore Purchase</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right set-chevron"></i>
+                  </div>
+                } @else {
+                  <button class="pro-upgrade-btn" [disabled]="purchaseService.purchasing()" (click)="upgradeToPro()">
+                    @if (purchaseService.purchasing()) {
+                      <i class="fa-solid fa-spinner fa-spin"></i>
+                      Processing...
+                    } @else {
+                      <i class="fa-solid fa-crown"></i>
+                      Upgrade to Pro — Ad-Free Forever
+                    }
+                  </button>
+                  <div class="set-divider"></div>
+                  <div class="set-row" (click)="restorePurchases()">
+                    <div class="set-row-left">
+                      <div class="set-icon-wrap" style="background:rgba(99,102,241,0.1)">
+                        <i class="fa-solid fa-rotate" style="color:#818cf8"></i>
+                      </div>
+                      <span class="set-row-label">Restore Purchase</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right set-chevron"></i>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Sign Out -->
+            @if (auth.user()) {
+              <div class="set-section">
+                <div class="set-card">
+                  <button class="set-logout-btn" (click)="confirmLogout()">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    Sign Out
+                  </button>
+                </div>
               </div>
             }
-          </div>
-        </div>
 
-        <!-- Danger Zone -->
-        @if (auth.user()) {
-          <div class="set-section">
-            <div class="set-card">
-              <button class="set-logout-btn" (click)="confirmLogout()">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                Sign Out
-              </button>
-            </div>
-          </div>
-        }
+          </div><!-- /right col -->
+
+        </div><!-- /grid -->
 
       </div>
     </ion-content>
   `,
   styles: `
     .set-toolbar { --background: var(--ion-background-color); --color: var(--ion-text-color); --border-style: none; }
-    .set-content { --background: var(--ion-background-color); }
+    .set-content { --background: var(--ion-background-color); --padding-start: 0; --padding-end: 0; }
 
-    .set-body { padding: 8px 16px 80px; max-width: 520px; margin: 0 auto; }
+    .set-body { padding: 8px 16px 80px; }
 
     .set-header { padding: 8px 4px 24px; }
-    .set-title { font-size: 1.8rem; font-weight: 900; color: var(--ion-text-color); letter-spacing: -0.03em; margin: 0 0 4px; }
+    .set-title { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 900; color: var(--ion-text-color); letter-spacing: -0.03em; margin: 0 0 4px; }
     .set-sub { font-size: 0.78rem; color: var(--ion-color-medium); margin: 0; }
+
+    /* ── Tablet ── */
+    @media (min-width: 640px) {
+      .set-body { padding: 16px 32px 80px; }
+    }
+
+    /* ── Desktop ── */
+    @media (min-width: 1024px) {
+      .set-body { padding: 24px 48px 80px; }
+      .set-sections-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 32px;
+        align-items: start;
+      }
+    }
+
+    /* ── Wide ── */
+    @media (min-width: 1440px) {
+      .set-body { padding: 32px 64px 80px; }
+      .set-sections-grid { gap: 0 48px; }
+    }
 
     .set-section { margin-bottom: 20px; }
     .set-section-label {

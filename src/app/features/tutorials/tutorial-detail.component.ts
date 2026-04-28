@@ -178,6 +178,8 @@ interface CourseData {
 
     .tut-content {
       --background: #0b1120;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     .page-container {
@@ -545,6 +547,8 @@ interface CourseData {
     }
     :host-context(html:not(.dark)) .tut-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
     :host-context(html:not(.dark)) .hero {
       background: #1B4332;

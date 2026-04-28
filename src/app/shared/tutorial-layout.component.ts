@@ -79,9 +79,8 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 
     .content {
       width: 100%;
-      max-width: min(720px, 100%);
       margin: 0 auto;
-      padding: clamp(28px, 5vw, 64px) clamp(16px, 4vw, 64px) clamp(80px, 10vw, 120px);
+      padding: clamp(24px, 4vw, 48px) clamp(16px, 3vw, 32px) clamp(80px, 10vw, 120px);
     }
 
     /* ── Tablet ── */
@@ -91,15 +90,15 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 
     /* ── Desktop ── */
     @media (min-width: 1024px) {
-      .hero-inner { max-width: min(860px, 100%); }
-      .hero-subtitle { max-width: min(620px, 100%); }
-      .content { max-width: min(860px, 100%); }
+      .hero-inner { max-width: min(900px, 100%); }
+      .hero-subtitle { max-width: min(680px, 100%); }
+      .content { padding-left: clamp(32px, 4vw, 64px); padding-right: clamp(32px, 4vw, 64px); }
     }
 
     /* ── Wide ── */
     @media (min-width: 1440px) {
-      .hero-inner { max-width: min(1000px, 100%); }
-      .content { max-width: min(1000px, 100%); }
+      .hero-inner { max-width: min(1060px, 100%); }
+      .content { padding-left: clamp(48px, 5vw, 80px); padding-right: clamp(48px, 5vw, 80px); }
     }
   `
 })

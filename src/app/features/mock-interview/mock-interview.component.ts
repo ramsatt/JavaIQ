@@ -283,7 +283,7 @@ function grade(pct: number): { letter: string; color: string } {
     </ion-content>
   `,
   styles: `
-    .mi-content { --background: #0b1120; }
+    .mi-content { --background: #0b1120; --padding-start: 0; --padding-end: 0; }
 
     .mi-wrap {
       min-height: 100%;
@@ -293,13 +293,23 @@ function grade(pct: number): { letter: string; color: string } {
 
     .mi-page {
       flex: 1;
-      padding: 56px 20px 40px;
-      max-width: 540px;
-      margin: 0 auto;
+      padding: 56px clamp(16px, 4vw, 64px) 40px;
       width: 100%;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       gap: 24px;
+    }
+
+    @media (min-width: 640px) {
+      .mi-page { padding: 56px clamp(24px, 5vw, 72px) 40px; }
+    }
+    @media (min-width: 1024px) {
+      .mi-page { padding: 56px clamp(32px, 5vw, 80px) 40px; }
+      .mi-cat-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (min-width: 1440px) {
+      .mi-page { padding: 56px clamp(48px, 6vw, 96px) 40px; }
     }
 
     /* Header */

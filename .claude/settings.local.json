@@ -59,7 +59,8 @@
       "Bash(grep -n \"from.*CommonModule\\\\|standalone: true\\\\|from ''../tutorial-layout\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/topics/control-flow.component.ts)",
       "Bash(grep -n \"= \\\\`\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/topics/control-flow.component.ts)",
       "Bash(grep -v \"//\\\\|import\\\\|css\\\\|class\\\\|\\\\`\\\\|}\\\\|style\\\\|@\\\\|=\\\\|:\\\\|''\")",
-      "Bash(npm view @capacitor/local-notifications versions --json)"
+      "Bash(npm view @capacitor/local-notifications versions --json)",
+      "Bash(JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home ./gradlew assembleDebug)"
     ]
   }
 }

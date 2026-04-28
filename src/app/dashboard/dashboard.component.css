@@ -48,6 +48,8 @@
   --background: var(--bg);
   --color: var(--txt);
   --padding-bottom: 80px;
+  --padding-start: 0;
+  --padding-end: 0;
 }
 
 /* ─── Main content container ─── */
@@ -1123,7 +1125,9 @@
   :host { --page-px: 32px; }
 
   .dash-main {
-    max-width: 1100px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
     display: grid;
     grid-template-columns: 1fr 340px;
     column-gap: 28px;
@@ -1135,7 +1139,11 @@
     grid-column: 1 / -1;
     padding: 32px var(--page-px) 38px;
   }
-  .hero-inner { gap: 48px; }
+  .hero-inner {
+    gap: 48px;
+    max-width: 1400px;
+    margin-inline: auto;
+  }
   .hero-name { font-size: 1.5rem; }
 
   .stats-strip {
@@ -1143,6 +1151,7 @@
     padding: 18px var(--page-px);
     justify-content: flex-start;
     gap: 48px;
+    max-width: 100%;
   }
   .stat-divider { display: none; }
   .stat-item { align-items: flex-start; }
@@ -1204,7 +1213,6 @@
    ═══════════════════════════════════════════ */
 @media (min-width: 1440px) {
   .dash-main {
-    max-width: 1320px;
     grid-template-columns: 1fr 400px;
     column-gap: 40px;
   }

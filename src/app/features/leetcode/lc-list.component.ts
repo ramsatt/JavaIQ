@@ -37,76 +37,81 @@ import { DataService } from '../../data.service';
       </div>
 
       <div class="page-body">
-        
-        <!-- Progress Tracking -->
-        <div class="progress-card">
-          <div class="progress-header">
-            <i class="fa-solid fa-chart-pie section-icon"></i>
-            <span class="section-title">Your Progress</span>
-          </div>
-          <div class="progress-stats">
-            <div class="stat-box">
-              <div class="stat-num easy-text">{{ easyCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ easyTotalCount() }}</span></div>
-              <div class="stat-label">Easy</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-num medium-text">{{ mediumCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ mediumTotalCount() }}</span></div>
-              <div class="stat-label">Medium</div>
-            </div>
-            @if (hardTotalCount() > 0) {
-              <div class="stat-box">
-                <div class="stat-num hard-text">{{ hardCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ hardTotalCount() }}</span></div>
-                <div class="stat-label">Hard</div>
+        <div class="lc-desktop-grid">
+          <!-- Left column: Progress -->
+          <div class="lc-col-left">
+            <div class="progress-card">
+              <div class="progress-header">
+                <i class="fa-solid fa-chart-pie section-icon"></i>
+                <span class="section-title">Your Progress</span>
               </div>
-            }
-          </div>
-        </div>
-
-        <!-- Section Header -->
-        <div class="section-head mt-6">
-          <div class="section-head-left">
-            <i class="fa-solid fa-list-ul section-icon"></i>
-            <span class="section-title">Problem List</span>
-          </div>
-          <span class="section-count">{{ problems().length }} problems</span>
-        </div>
-
-        <!-- Problems List -->
-        <div class="problem-list">
-          @for (p of problems(); track p.number) {
-            <button (click)="openLc(p)" class="problem-card" [class.completed]="dataService.leetcodeCompletedIds().has(p.number)">
-              <div class="problem-num">
-                @if (dataService.leetcodeCompletedIds().has(p.number)) {
-                  <i class="fa-solid fa-check text-emerald-500"></i>
-                } @else {
-                  {{ p.number }}
-                }
-              </div>
-              
-              <div class="problem-content">
-                <h3 class="problem-title">{{ p.title }}</h3>
-                <div class="problem-meta">
-                  <span class="meta-chip">
-                    <i class="fa-solid fa-folder meta-chip-icon"></i>
-                    {{ p.category }}
-                  </span>
+              <div class="progress-stats">
+                <div class="stat-box">
+                  <div class="stat-num easy-text">{{ easyCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ easyTotalCount() }}</span></div>
+                  <div class="stat-label">Easy</div>
                 </div>
-              </div>
-
-              <div class="problem-actions">
-                <span class="difficulty-badge" [class]="p.difficulty.toLowerCase()">
-                  {{ p.difficulty }}
-                </span>
-                @if (!dataService.leetcodeCompletedIds().has(p.number) && !isUnlocked(p.number)) {
-                  <i class="fa-solid fa-lock" style="color: #f59e0b; font-size: 11px; margin-left: 8px;"></i>
-                } @else {
-                  <i class="fa-solid fa-chevron-right" style="color: #64748b; font-size: 11px; margin-left: 8px;"></i>
+                <div class="stat-box">
+                  <div class="stat-num medium-text">{{ mediumCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ mediumTotalCount() }}</span></div>
+                  <div class="stat-label">Medium</div>
+                </div>
+                @if (hardTotalCount() > 0) {
+                  <div class="stat-box">
+                    <div class="stat-num hard-text">{{ hardCompletedCount() }}<span class="text-[0.6rem] text-slate-500 font-normal">/{{ hardTotalCount() }}</span></div>
+                    <div class="stat-label">Hard</div>
+                  </div>
                 }
               </div>
-            </button>
-          }
-        </div>
+            </div>
+          </div><!-- /lc-col-left -->
 
+          <!-- Right column: Problem list -->
+          <div class="lc-col-right">
+            <!-- Section Header -->
+            <div class="section-head mt-6">
+              <div class="section-head-left">
+                <i class="fa-solid fa-list-ul section-icon"></i>
+                <span class="section-title">Problem List</span>
+              </div>
+              <span class="section-count">{{ problems().length }} problems</span>
+            </div>
+
+            <!-- Problems List -->
+            <div class="problem-list">
+              @for (p of problems(); track p.number) {
+                <button (click)="openLc(p)" class="problem-card" [class.completed]="dataService.leetcodeCompletedIds().has(p.number)">
+                  <div class="problem-num">
+                    @if (dataService.leetcodeCompletedIds().has(p.number)) {
+                      <i class="fa-solid fa-check text-emerald-500"></i>
+                    } @else {
+                      {{ p.number }}
+                    }
+                  </div>
+
+                  <div class="problem-content">
+                    <h3 class="problem-title">{{ p.title }}</h3>
+                    <div class="problem-meta">
+                      <span class="meta-chip">
+                        <i class="fa-solid fa-folder meta-chip-icon"></i>
+                        {{ p.category }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="problem-actions">
+                    <span class="difficulty-badge" [class]="p.difficulty.toLowerCase()">
+                      {{ p.difficulty }}
+                    </span>
+                    @if (!dataService.leetcodeCompletedIds().has(p.number) && !isUnlocked(p.number)) {
+                      <i class="fa-solid fa-lock" style="color: #f59e0b; font-size: 11px; margin-left: 8px;"></i>
+                    } @else {
+                      <i class="fa-solid fa-chevron-right" style="color: #64748b; font-size: 11px; margin-left: 8px;"></i>
+                    }
+                  </div>
+                </button>
+              }
+            </div>
+          </div><!-- /lc-col-right -->
+        </div><!-- /lc-desktop-grid -->
       </div>
     </ion-content>
   `,
@@ -127,12 +132,14 @@ import { DataService } from '../../data.service';
     }
     .tut-content {
       --background: #0b1120;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     /* ── Hero Section ── */
     .hero-section {
       position: relative;
-      padding: 0 20px 32px;
+      padding: 0 clamp(16px, 4vw, 64px) 32px;
       overflow: hidden;
     }
     .hero-glow {
@@ -231,9 +238,27 @@ import { DataService } from '../../data.service';
 
     /* ── Page Body ── */
     .page-body {
-      padding: 12px 16px 100px;
-      max-width: 600px;
-      margin: 0 auto;
+      padding: 12px clamp(16px, 4vw, 64px) 100px;
+    }
+
+    @media (min-width: 640px) {
+      .page-body { padding: 16px clamp(24px, 5vw, 72px) 100px; }
+    }
+
+    @media (min-width: 1024px) {
+      .page-body { padding: 24px clamp(32px, 5vw, 80px) 100px; }
+      .lc-desktop-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 0 32px;
+        align-items: start;
+      }
+      .lc-col-left { position: sticky; top: 0; }
+    }
+
+    @media (min-width: 1440px) {
+      .page-body { padding: 32px clamp(48px, 6vw, 96px) 100px; }
+      .lc-desktop-grid { grid-template-columns: 320px 1fr; gap: 0 48px; }
     }
 
     /* ── Progress Card ── */
@@ -289,6 +314,9 @@ import { DataService } from '../../data.service';
     }
     .section-head.mt-6 {
       margin-top: 24px;
+    }
+    @media (min-width: 1024px) {
+      .section-head.mt-6 { margin-top: 0; }
     }
     .section-head-left {
       display: flex;
@@ -424,6 +452,8 @@ import { DataService } from '../../data.service';
     }
     :host-context(html:not(.dark)) .tut-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     /* Premium green hero */

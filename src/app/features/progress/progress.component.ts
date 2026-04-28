@@ -210,15 +210,25 @@ const CATEGORIES = [
     </ion-content>
   `,
   styles: `
-    .pr-content { --background: #0b1120; }
+    .pr-content { --background: #0b1120; --padding-start: 0; --padding-end: 0; }
 
     .pr-body {
-      padding: 24px 20px 60px;
-      max-width: 540px;
-      margin: 0 auto;
+      padding: 24px clamp(16px, 4vw, 64px) 60px;
       display: flex;
       flex-direction: column;
       gap: 24px;
+    }
+
+    @media (min-width: 640px) {
+      .pr-body { padding: 24px clamp(24px, 5vw, 72px) 80px; }
+    }
+    @media (min-width: 1024px) {
+      .pr-body { padding: 32px clamp(32px, 5vw, 80px) 80px; }
+      .pr-cat-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    }
+    @media (min-width: 1440px) {
+      .pr-body { padding: 40px clamp(48px, 6vw, 96px) 80px; }
+      .pr-cat-list { grid-template-columns: repeat(3, 1fr); }
     }
 
     /* Header */
@@ -432,7 +442,7 @@ const CATEGORIES = [
     .pr-no-weak-txt  { font-size: 0.82rem; font-weight: 600; color: #34d399; }
 
     /* Light mode overrides */
-    :host-context(html:not(.dark)) .pr-content { --background: #f8fafc; }
+    :host-context(html:not(.dark)) .pr-content { --background: #f8fafc; --padding-start: 0; --padding-end: 0; }
     :host-context(html:not(.dark)) .pr-title { color: #0f172a; }
     :host-context(html:not(.dark)) .pr-sub   { color: #64748b; }
     :host-context(html:not(.dark)) .pr-hero,

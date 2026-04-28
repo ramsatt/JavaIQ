@@ -216,14 +216,22 @@ import { BookmarksService } from '../../bookmarks.service';
     }
 
     /* ── Content ── */
-    .detail-content { --background: #0f172a; }
+    .detail-content { --background: #0f172a; --padding-start: 0; --padding-end: 0; }
 
     .detail-main {
       font-family: 'Inter', sans-serif;
-      max-width: 56rem;
-      margin: 0 auto;
-      padding: 2rem 1.25rem 4rem;
+      padding: 2rem clamp(1.25rem, 4vw, 4rem) 4rem;
       line-height: 1.6;
+    }
+
+    @media (min-width: 640px) {
+      .detail-main { padding: 2rem clamp(2rem, 5vw, 5rem) 4rem; }
+    }
+    @media (min-width: 1024px) {
+      .detail-main { padding: 2rem clamp(3rem, 5vw, 6rem) 4rem; }
+    }
+    @media (min-width: 1440px) {
+      .detail-main { padding: 2rem clamp(4rem, 6vw, 8rem) 4rem; }
     }
 
     /* ── Header ── */
@@ -518,6 +526,8 @@ import { BookmarksService } from '../../bookmarks.service';
     }
     :host-context(html:not(.dark)) .detail-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     /* Header */

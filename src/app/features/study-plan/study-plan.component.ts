@@ -63,6 +63,9 @@ const DAILY_TIPS: string[] = [
           </div>
         </div>
 
+        <div class="sp-desktop-grid">
+        <div class="sp-col-left">
+
         <!-- Hero: Mission Control -->
         <div class="sp-hero">
           <div class="sp-hero-left">
@@ -174,8 +177,13 @@ const DAILY_TIPS: string[] = [
           }
         </div>
 
+        </div><!-- /sp-col-left -->
+
+        <!-- Right column: Journey + Tip -->
+        <div class="sp-col-right">
+
         <!-- 30-Day Roadmap -->
-        <div class="sp-section-label" style="margin-top:28px">YOUR JOURNEY</div>
+        <div class="sp-section-label sp-journey-label">YOUR JOURNEY</div>
         <div class="sp-calendar">
           @for (d of days30; track d) {
             <div class="sp-cal-cell"
@@ -205,13 +213,40 @@ const DAILY_TIPS: string[] = [
           <span [innerHTML]="dailyTip()"></span>
         </div>
 
+        </div><!-- /sp-col-right -->
+        </div><!-- /sp-desktop-grid -->
+
       </div>
     </ion-content>
   `,
   styles: `
     /* ═══════════════ BASE ═══════════════ */
-    .sp-content  { --background: #F5F7F2; }
-    .sp-wrap { max-width: 560px; margin: 0 auto; padding: 16px 16px 80px; }
+    .sp-content  { --background: #F5F7F2; --padding-start: 0; --padding-end: 0; }
+    .sp-wrap { padding: 16px 16px 80px; }
+
+    /* ── Tablet ── */
+    @media (min-width: 640px) {
+      .sp-wrap { padding: 16px 32px 80px; }
+    }
+
+    /* ── Desktop 2-column layout ── */
+    @media (min-width: 1024px) {
+      .sp-wrap { padding: 24px 48px 80px; }
+      .sp-desktop-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 40px;
+        align-items: start;
+      }
+      .sp-col-left { min-width: 0; }
+      .sp-col-right { min-width: 0; }
+      .sp-calendar { grid-template-columns: repeat(6, 1fr); }
+    }
+
+    @media (min-width: 1440px) {
+      .sp-wrap { padding: 32px 64px 80px; }
+      .sp-desktop-grid { gap: 0 56px; }
+    }
 
     /* ═══════════════ HEADER ═══════════════ */
     .sp-header {
@@ -484,6 +519,12 @@ const DAILY_TIPS: string[] = [
     .sp-legend-done { background: #D8F3DC; border: 1px solid #86efac; }
     .sp-legend-today { background: linear-gradient(135deg, #1B4332, #2D6A4F); }
     .sp-legend-future { background: #EDF2E7; border: 1px solid #D6DDD2; }
+
+    .sp-journey-label { margin-top: 28px; }
+    @media (min-width: 1024px) {
+      .sp-journey-label { margin-top: 0; }
+      .sp-col-right { padding-top: 8px; }
+    }
 
     /* ═══════════════ TIP ═══════════════ */
     .sp-tip {

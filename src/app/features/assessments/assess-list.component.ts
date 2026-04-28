@@ -137,12 +137,12 @@ interface Assessment {
   styles: `
     /* ── Layout ── */
     .assess-toolbar { --background: #0b1120; --color: white; --border-style: none; }
-    .assess-content { --background: #0b1120; }
+    .assess-content { --background: #0b1120; --padding-start: 0; --padding-end: 0; }
 
     /* ── Hero ── */
     .hero {
       position: relative;
-      padding: 0 20px 28px;
+      padding: 0 clamp(16px, 4vw, 64px) 28px;
       overflow: hidden;
     }
     .hero-glow {
@@ -229,7 +229,23 @@ interface Assessment {
     .stat-div { width: 1px; height: 24px; background: rgba(255,255,255,0.07); }
 
     /* ── Body ── */
-    .body { padding: 20px 16px 100px; max-width: 600px; margin: 0 auto; }
+    .body { padding: 20px clamp(16px, 4vw, 64px) 100px; }
+
+    @media (min-width: 640px) {
+      .body { padding: 20px clamp(24px, 5vw, 72px) 100px; }
+    }
+    @media (min-width: 1024px) {
+      .body { padding: 24px clamp(32px, 5vw, 80px) 100px; }
+      .card-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+    }
+    @media (min-width: 1440px) {
+      .body { padding: 32px clamp(48px, 6vw, 96px) 100px; }
+      .card-list { grid-template-columns: repeat(3, 1fr); }
+    }
 
     /* ── Filters ── */
     .filter-row {
@@ -400,6 +416,8 @@ interface Assessment {
     }
     :host-context(html:not(.dark)) .assess-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     /* Premium green hero */

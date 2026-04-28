@@ -107,12 +107,14 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
     }
     .tut-content {
       --background: #0b1120;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     /* ── Hero Section ── */
     .hero-section {
       position: relative;
-      padding: 0 20px 32px;
+      padding: 0 clamp(16px, 4vw, 64px) 32px;
       overflow: hidden;
     }
     .hero-glow {
@@ -215,9 +217,25 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
 
     /* ── Page Body ── */
     .page-body {
-      padding: 12px 16px 100px;
-      max-width: 600px;
-      margin: 0 auto;
+      padding: 12px clamp(16px, 4vw, 64px) 100px;
+    }
+
+    @media (min-width: 640px) {
+      .page-body { padding: 16px clamp(24px, 5vw, 72px) 100px; }
+    }
+
+    @media (min-width: 1024px) {
+      .page-body { padding: 24px clamp(32px, 5vw, 80px) 100px; }
+      .course-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      .page-body { padding: 32px clamp(48px, 6vw, 96px) 100px; }
+      .course-list { grid-template-columns: repeat(3, 1fr); }
     }
 
     /* ── Filter Chips ── */
@@ -418,6 +436,8 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
     }
     :host-context(html:not(.dark)) .tut-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
 
     /* Premium green hero */

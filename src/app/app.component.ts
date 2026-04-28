@@ -1,4 +1,4 @@
-import { Component, computed, effect } from '@angular/core';
+import { Component, computed, effect, signal, AfterViewInit, OnDestroy } from '@angular/core';
 import { inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -42,7 +42,7 @@ import { environment } from '../environments/environment';
   ],
   template: `
     <ion-app>
-      <ion-split-pane contentId="main-content" when="(min-width: 1024px)">
+      <ion-split-pane contentId="main-content" [when]="splitPaneWhen()">
       <ion-menu menuId="main-menu" contentId="main-content" type="overlay">
         <ion-header class="ion-no-border">
           <div class="menu-header">
@@ -818,8 +818,11 @@ import { environment } from '../environments/environment';
     }
   `]
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit, OnDestroy {
   title = 'JavaIQ';
+
+  splitPaneWhen = signal(false);
+  private readonly onResize = () => this.splitPaneWhen.set(window.innerWidth >= 1024);
 
   protected themeService = inject(ThemeService);
   protected connectivity = inject(ConnectivityService);
@@ -929,5 +932,19 @@ export class AppComponent {
 
   openSupport() {
     window.open('mailto:support@javaiq.app', '_system');
+  }
+
+  ngAfterViewInit() {
+    // Ion-split-pane evaluates its media query during connectedCallback, before
+    // Angular finishes rendering. Setting `when` via a signal in ngAfterViewInit
+    // forces re-evaluation with the correct viewport dimensions.
+    setTimeout(() => {
+      this.onResize();
+      window.addEventListener('resize', this.onResize);
+    });
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('resize', this.onResize);
   }
 }

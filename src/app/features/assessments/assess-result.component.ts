@@ -157,8 +157,12 @@ import { AchievementService } from '../../services/achievement.service';
   `,
   styles: `
     .result-toolbar { --background: #0b1120; --border-style: none; --color: white; }
-    .result-content { --background: #0b1120; }
-    .result-wrapper { max-width: 600px; margin: 0 auto; padding: 16px 16px 100px; }
+    .result-content { --background: #0b1120; --padding-start: 0; --padding-end: 0; }
+    .result-wrapper { padding: 16px clamp(16px, 4vw, 64px) 100px; }
+
+    @media (min-width: 640px) { .result-wrapper { padding: 16px clamp(24px, 5vw, 72px) 100px; } }
+    @media (min-width: 1024px) { .result-wrapper { padding: 16px clamp(32px, 5vw, 80px) 100px; } }
+    @media (min-width: 1440px) { .result-wrapper { padding: 16px clamp(48px, 6vw, 96px) 100px; } }
 
     .back-btn {
       background: rgba(255,255,255,0.06);
@@ -301,7 +305,7 @@ import { AchievementService } from '../../services/achievement.service';
 
     /* Light Mode */
     :host-context(html:not(.dark)) .result-toolbar { --background: #1B4332; }
-    :host-context(html:not(.dark)) .result-content { --background: #F5F7F2; }
+    :host-context(html:not(.dark)) .result-content { --background: #F5F7F2; --padding-start: 0; --padding-end: 0; }
     :host-context(html:not(.dark)) .back-btn { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.85); }
     :host-context(html:not(.dark)) .toolbar-title { color: #ffffff; }
     :host-context(html:not(.dark)) .score-card { background: #ffffff; border-color: #D6DDD2; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }

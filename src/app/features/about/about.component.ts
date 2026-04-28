@@ -159,12 +159,20 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
     }
     .brand-icon { font-size: 1.1rem; }
 
-    .about-page-content { --background: #0b1120; }
+    .about-page-content { --background: #0b1120; --padding-start: 0; --padding-end: 0; }
 
     .page-wrapper {
-      padding: 0 16px 100px;
-      max-width: 600px;
-      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 64px) 100px;
+    }
+
+    @media (min-width: 640px) {
+      .page-wrapper { padding: 0 clamp(24px, 5vw, 72px) 100px; }
+    }
+    @media (min-width: 1024px) {
+      .page-wrapper { padding: 0 clamp(32px, 5vw, 80px) 100px; }
+    }
+    @media (min-width: 1440px) {
+      .page-wrapper { padding: 0 clamp(48px, 6vw, 96px) 100px; }
     }
 
     /* ── Hero ── */
@@ -511,6 +519,8 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
     }
     :host-context(html:not(.dark)) .about-page-content {
       --background: #F5F7F2;
+      --padding-start: 0;
+      --padding-end: 0;
     }
     :host-context(html:not(.dark)) .hero-section {
       background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 55%, #40916C 100%);

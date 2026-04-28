@@ -143,15 +143,23 @@ type Phase = 'empty' | 'session' | 'complete';
     </ion-content>
   `,
   styles: `
-    .rv-content { --background: var(--ion-background-color, #0b1120); }
+    .rv-content { --background: var(--ion-background-color, #0b1120); --padding-start: 0; --padding-end: 0; }
 
     .rv-wrap {
       min-height: 100%;
       display: flex;
       flex-direction: column;
-      padding: 56px 20px 40px;
-      max-width: 520px;
-      margin: 0 auto;
+      padding: 56px clamp(16px, 4vw, 64px) 40px;
+    }
+
+    @media (min-width: 640px) {
+      .rv-wrap { padding: 56px clamp(24px, 5vw, 72px) 40px; }
+    }
+    @media (min-width: 1024px) {
+      .rv-wrap { padding: 56px clamp(32px, 5vw, 80px) 40px; }
+    }
+    @media (min-width: 1440px) {
+      .rv-wrap { padding: 56px clamp(48px, 6vw, 96px) 40px; }
     }
 
     /* Back button */
