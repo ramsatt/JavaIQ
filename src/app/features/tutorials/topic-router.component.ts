@@ -150,6 +150,10 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
     'dp-command': () => import('./topics/dp-command.component').then(m => m.DpCommandComponent),
     'dp-chain': () => import('./topics/dp-chain.component').then(m => m.DpChainComponent),
     'dp-state': () => import('./topics/dp-state.component').then(m => m.DpStateComponent),
+    'dp-flyweight': () => import('./topics/dp-flyweight.component').then(m => m.DpFlyweightComponent),
+    'dp-facade': () => import('./topics/dp-facade.component').then(m => m.DpFacadeComponent),
+    'dp-composite': () => import('./topics/dp-composite.component').then(m => m.DpCompositeComponent),
+    'dp-mediator': () => import('./topics/dp-mediator.component').then(m => m.DpMediatorComponent),
   }
 };
 

@@ -926,7 +926,11 @@ export class TutorialDetailComponent {
         { slug: 'dp-template', title: 'Template Method', description: 'Algorithm skeleton, hook methods, Spring usage', iconName: 'file-text', duration: '25 min' },
         { slug: 'dp-command', title: 'Command', description: 'Encapsulated requests, undo, macro commands', iconName: 'terminal', duration: '30 min' },
         { slug: 'dp-chain', title: 'Chain of Responsibility', description: 'Request pipeline, middleware, filter chains', iconName: 'filter', duration: '30 min' },
-        { slug: 'dp-state', title: 'State', description: 'State machines, context-dependent behavior', iconName: 'refresh-cw', duration: '30 min' }
+        { slug: 'dp-state', title: 'State', description: 'State machines, context-dependent behavior', iconName: 'refresh-cw', duration: '30 min' },
+        { slug: 'dp-flyweight', title: 'Flyweight', description: 'Share fine-grained objects to cut memory — intrinsic vs extrinsic state, object pools', iconName: 'zap', duration: '30 min' },
+        { slug: 'dp-facade', title: 'Facade', description: 'Unified interface over a complex subsystem — JdbcTemplate, SLF4J examples', iconName: 'layers', duration: '25 min' },
+        { slug: 'dp-composite', title: 'Composite', description: 'Treat leaves and containers uniformly — file system, UI trees, org charts', iconName: 'git-branch', duration: '30 min' },
+        { slug: 'dp-mediator', title: 'Mediator', description: 'Central coordinator to decouple colleagues — chat room, Spring event publisher', iconName: 'share-2', duration: '30 min' }
       ]
     }
   };

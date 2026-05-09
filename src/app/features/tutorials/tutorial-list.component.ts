@@ -731,7 +731,7 @@ export class TutorialListComponent {
       slug: 'design-patterns', title: 'Design Patterns',
       description: 'Creational, Structural, and Behavioral patterns with real-world Java implementations.',
       faIcon: 'fa-solid fa-puzzle-piece', accentColor: '#ec4899', iconBg: 'rgba(236,72,153,0.12)',
-      chapterCount: 12, difficulty: 'intermediate', estimatedTime: '6 hours'
+      chapterCount: 16, difficulty: 'intermediate', estimatedTime: '6 hours'
     }
   ];
 
