@@ -982,7 +982,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   openSupport() {
-    window.open('mailto:support@javaiq.app', '_system');
+    window.open('mailto:codingpullingo@gmail.com', '_system');
   }
 
   ngAfterViewInit() {
