@@ -34,9 +34,34 @@ export const sendDailyChallenge = onSchedule(
 
     if (messages.length === 0) return;
 
-    // Send in batches of 500 (FCM limit)
+    const tokens: string[] = snapshot.docs.map(d => d.data()['fcmToken'] as string);
+
+    // Send in batches of 500 (FCM limit) and clean up stale tokens
     for (let i = 0; i < messages.length; i += 500) {
-      await messaging.sendEach(messages.slice(i, i + 500));
+      const batchMessages = messages.slice(i, i + 500);
+      const batchTokens   = tokens.slice(i, i + 500);
+      const response = await messaging.sendEach(batchMessages);
+
+      // Remove invalid/unregistered tokens from Firestore
+      const staleUids: Promise<void>[] = [];
+      response.responses.forEach((res, idx) => {
+        if (!res.success) {
+          const code = (res.error as any)?.code ?? '';
+          if (
+            code === 'messaging/invalid-registration-token' ||
+            code === 'messaging/registration-token-not-registered'
+          ) {
+            const staleToken = batchTokens[idx];
+            const docRef = snapshot.docs.find(d => d.data()['fcmToken'] === staleToken)?.ref;
+            if (docRef) {
+              staleUids.push(
+                docRef.update({ fcmToken: admin.firestore.FieldValue.delete() })
+              );
+            }
+          }
+        }
+      });
+      await Promise.all(staleUids);
     }
   }
 );
