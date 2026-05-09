@@ -9,7 +9,8 @@
       "Bash(ls /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/topics/dp-*.component.ts)",
       "Bash(xargs -I{} basename {} .component.ts)",
       "Skill(update-config)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git checkout *)"
     ]
   },
   "hooks": {
@@ -37,7 +38,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "(date +%Y-%m-%dT%H:%M:%SZ && jq -r '.tool_input.command') | paste -sd ' ' >> ~/.claude/bash-log.txt 2>/dev/null || true"
+            "command": "jq -r '(now | todate) + \" \" + .tool_input.command' >> ~/.claude/bash-log.txt 2>/dev/null || true"
           }
         ]
       }
