@@ -9,54 +9,61 @@
 <ion-content>
   <main class="dash-main">
 
-    <!-- ────────── Hero Banner ────────── -->
-    <section class="hero-banner">
-      <div class="hero-inner">
-        <div class="hero-greeting">
-          <span class="hero-wave">👋</span>
-          <div>
-            <h2 class="hero-name">
-              {{ greeting() }},&nbsp;<span class="name-accent">{{ authService.user()?.displayName?.split(' ')?.[0] ||
-                'Learner' }}</span>
-            </h2>
-            <p class="hero-sub">Keep building your Java mastery</p>
-          </div>
-        </div>
+    <!-- ────────── Hero ────────── -->
+    <section class="hero">
+      <!-- Greeting -->
+      <div class="hero__top">
+        <h2 class="hero__title">{{ greeting() }},&nbsp;<span class="hero__name">{{ authService.user()?.displayName?.split(' ')?.[0] || 'Learner' }}</span></h2>
+        <p class="hero__sub">Keep building your Java mastery</p>
+      </div>
 
-        <div class="xp-section">
-          <div class="xp-row">
-            <span class="xp-lv">Level {{ gameService.level() }}</span>
-            <span class="xp-val">{{ gameService.xp() | number:'1.0-0' }} XP</span>
-          </div>
-          <div class="xp-track">
-            <div class="xp-fill" [style.width.%]="gameService.levelProgress()"></div>
-          </div>
-          <span class="xp-hint">{{ gameService.xpToNextLevel() | number:'1.0-0' }} XP to next level</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ────────── Stats Strip ────────── -->
-    <section class="stats-strip">
-      <div class="stat-item">
-        <span class="stat-val">{{ gameService.xp() | number:'1.0-0' }}</span>
-        <span class="stat-lbl">Total XP</span>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <span class="stat-val">{{ gameService.streak() }}</span>
-        <span class="stat-lbl">Day Streak</span>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <span class="stat-val">{{ overallPct() }}%</span>
-        <span class="stat-lbl">Progress</span>
-      </div>
-    </section>
-
-    <!-- ────────── Continue Learning (primary resume action, pinned high) ────────── -->
-    <section class="cl-pinned">
+      <!-- Primary resume action -->
       <app-continue-learning-card />
+
+      <!-- Level / XP strip (XP shown exactly once) -->
+      <div class="level-strip"
+           role="progressbar"
+           [attr.aria-valuenow]="gameService.xp()"
+           aria-valuemin="0"
+           aria-label="XP progress toward next level">
+        <span class="level-strip__label">Lv {{ gameService.level() }}</span>
+        <div class="level-strip__track">
+          <div class="level-strip__fill" [style.width.%]="gameService.levelProgress()"></div>
+        </div>
+        <span class="level-strip__hint">{{ gameService.xpToNextLevel() | number:'1.0-0' }} XP to go</span>
+      </div>
+
+      <!-- KPI chips — 4 key metrics, each tappable -->
+      <div class="kpi-row">
+        <button class="kpi" (click)="goToDailyChallenge()" [attr.aria-label]="gameService.streak() + ' day streak'">
+          <i class="bi bi-fire kpi__icon kpi--streak"></i>
+          <div class="kpi__body">
+            <span class="kpi__num">{{ gameService.streak() }}</span>
+            <span class="kpi__lbl">Streak</span>
+          </div>
+        </button>
+        <button class="kpi" (click)="goToProgress()" [attr.aria-label]="overallPct() + '% overall progress'">
+          <i class="bi bi-bar-chart-fill kpi__icon kpi--progress"></i>
+          <div class="kpi__body">
+            <span class="kpi__num">{{ overallPct() }}%</span>
+            <span class="kpi__lbl">Progress</span>
+          </div>
+        </button>
+        <button class="kpi" (click)="goToAchievements()" [attr.aria-label]="unlockedAchievements() + ' achievements unlocked'">
+          <i class="bi bi-trophy-fill kpi__icon kpi--ach"></i>
+          <div class="kpi__body">
+            <span class="kpi__num">{{ unlockedAchievements() }}<span class="kpi__of">/{{ achService.achievements().length }}</span></span>
+            <span class="kpi__lbl">Badges</span>
+          </div>
+        </button>
+        <button class="kpi" [attr.aria-label]="'Level ' + gameService.level() + ', ' + gameService.xp() + ' XP'">
+          <i class="bi bi-star-fill kpi__icon kpi--xp"></i>
+          <div class="kpi__body">
+            <span class="kpi__num">{{ gameService.xp() | number:'1.0-0' }}</span>
+            <span class="kpi__lbl">Total XP</span>
+          </div>
+        </button>
+      </div>
     </section>
 
     <!-- ────────── Today's Focus ────────── -->
@@ -88,26 +95,37 @@
 
     <!-- ────────── Quick Actions ────────── -->
     <section class="qa-section">
-      <div class="qa-row">
-        <button class="qa-tile" (click)="goToMockInterview()" aria-label="Mock Interview">
-          <i class="bi bi-briefcase-fill qa-icon" style="color:#40916C"></i>
-          <span class="qa-label">Interview</span>
+      <p class="qa-heading">Quick Actions</p>
+      <div class="quick-actions">
+        <button class="qa-tile qa-tile--primary" (click)="goToMockInterview()"
+                aria-label="Mock Interview — AI-powered 15-minute session">
+          <div class="qa-tile__icon"><i class="bi bi-briefcase-fill"></i></div>
+          <span class="qa-tile__title">Mock Interview</span>
+          <span class="qa-tile__meta">AI-powered · 15 min</span>
         </button>
-        <button class="qa-tile" (click)="goToStudyPlan()" aria-label="Study Plan">
-          <i class="bi bi-calendar-check-fill qa-icon" style="color:#52b788"></i>
-          <span class="qa-label">Study Plan</span>
+        <button class="qa-tile" (click)="goToStudyPlan()"
+                aria-label="Study Plan">
+          <div class="qa-tile__icon"><i class="bi bi-calendar-check-fill"></i></div>
+          <span class="qa-tile__title">Study Plan</span>
+          <span class="qa-tile__meta">{{ studyPlan.todayTasks().length }} tasks today</span>
         </button>
-        <button class="qa-tile" (click)="goToBookmarks()" aria-label="Saved bookmarks">
-          <i class="bi bi-bookmark-fill qa-icon" style="color:#f59e0b"></i>
-          <span class="qa-label">Saved</span>
+        <button class="qa-tile" (click)="goToTutorials()"
+                [attr.aria-label]="'Tutorials — ' + categories.length + ' courses'">
+          <div class="qa-tile__icon"><i class="bi bi-book-fill"></i></div>
+          <span class="qa-tile__title">Tutorials</span>
+          <span class="qa-tile__meta">{{ categories.length }} courses</span>
         </button>
-        <button class="qa-tile" (click)="goToLeaderboard()" aria-label="Leaderboard">
-          <i class="bi bi-trophy-fill qa-icon" style="color:#DAA520"></i>
-          <span class="qa-label">Leaderboard</span>
+        <button class="qa-tile" (click)="goToLeaderboard()"
+                aria-label="Leaderboard — view top learners">
+          <div class="qa-tile__icon"><i class="bi bi-trophy-fill"></i></div>
+          <span class="qa-tile__title">Leaderboard</span>
+          <span class="qa-tile__meta">Top learners</span>
         </button>
-        <button class="qa-tile" (click)="goToReview()" aria-label="Review Queue">
-          <i class="bi bi-arrow-repeat qa-icon" style="color:#f87171"></i>
-          <span class="qa-label">Review</span>
+        <button class="qa-tile" (click)="goToReview()"
+                [attr.aria-label]="'Review Queue — ' + wrongSvc.reviewCount() + ' cards due'">
+          <div class="qa-tile__icon"><i class="bi bi-arrow-repeat"></i></div>
+          <span class="qa-tile__title">Review Queue</span>
+          <span class="qa-tile__meta">{{ wrongSvc.reviewCount() > 0 ? wrongSvc.reviewCount() + ' cards due' : 'All caught up' }}</span>
         </button>
       </div>
     </section>
@@ -169,8 +187,7 @@
               </div>
               <div class="mc-prog-row">
                 <div class="mc-bar-track">
-                  <div class="mc-bar-fill" [style.width.%]="getCategoryProgress(cat.name)"
-                    [style.background]="cat.color"></div>
+                  <div class="mc-bar-fill" [style.width.%]="getCategoryProgress(cat.name)"></div>
                 </div>
                 <span class="mc-pct">{{ getCategoryProgress(cat.name) }}%</span>
               </div>

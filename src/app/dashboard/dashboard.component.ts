@@ -167,6 +167,8 @@ export class DashboardComponent implements OnDestroy {
     this.router.navigate(['/tutorials', category.slug]);
   }
 
+  goToTutorials() { this.router.navigate(['/tutorials']); }
+
   goToLeaderboard() {
     this.router.navigate(['/leaderboard']);
   }
