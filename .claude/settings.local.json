@@ -1,66 +1,56 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 /dev/stdin:*)",
-      "Bash(printf '%s' 'import os:*)",
-      "Bash(python3 /tmp/write_spring.py)",
-      "Bash(/c/Users/ramsa/AppData/Local/Microsoft/WindowsApps/python3 --version)",
-      "Bash(python3 -:*)",
-      "Bash(node --version)",
-      "Bash(powershell -Command \"Write-Host ''PS OK''\")",
-      "Bash(perl --version)",
-      "Bash(node -e \":*)",
-      "Bash(python3 -c \":*)",
-      "Bash(python3:*)",
-      "Bash(where python)",
-      "Bash(where python3)",
-      "Bash(where py)",
-      "Bash(node /tmp/write_spring_framework.js)",
-      "Bash(py --version)",
-      "Bash(node -e \"require\\(''fs''\\).writeFileSync\\(''D:/A21/JavaIQ/.claude/worktrees/awesome-proskuriakova/src/app/data/tutorials/java-fundamentals.ts'', ''test'', ''utf8''\\); console.log\\(''node write works''\\);\")",
-      "Bash(powershell -NoProfile -Command \":*)",
-      "Bash(powershell -NoProfile -Command \"Set-Content -Path ''D:/A21/JavaIQ/.claude/worktrees/awesome-proskuriakova/src/app/data/tutorials/spring-framework.ts'' -Value ''PSTEST_OK'' -Encoding UTF8; Write-Host ''PS write OK''\")",
-      "Bash(printf '%s' 'const fs = require\\(\"\"fs\"\"\\);')",
-      "Bash(printf '%s\\\\n' 'console.log\\(\"\"script loaded\"\"\\);')",
-      "Bash(node /tmp/wjf.js)",
-      "Bash(printf '%s\\\\n' \"const fs = require\\(''fs''\\);\")",
-      "Bash(printf '%s\\\\n' \"const BT = String.fromCharCode\\(96\\);\")",
-      "Bash(printf '%s\\\\n' \"const Q = ''\"\"'';\")",
-      "Bash(printf '%s\\\\n' \"const path = ''D:/A21/JavaIQ/.claude/worktrees/awesome-proskuriakova/src/app/data/tutorials/java-fundamentals.ts'';\")",
-      "Bash(node -e \"const os=require\\(''os''\\); console.log\\(os.tmpdir\\(\\)\\);\")",
-      "Bash(node \"C:/Users/ramsa/AppData/Local/Temp/test42.js\")",
-      "Bash(node -e \"const fs=require\\(''fs''\\); fs.writeFileSync\\(''C:/Users/ramsa/AppData/Local/Temp/test42.js'',''console.log\\(42\\);'',''utf8''\\); console.log\\(''wrote ok''\\);\")",
-      "Bash(printf '%s' 'test single quote heredoc')",
-      "Bash(node -e:*)",
-      "Bash(echo \"heredoc to node stdin works: $?\")",
-      "Bash(printf '%s\\\\n' 'import os')",
-      "Bash(printf '%s\\\\n' 'BT = chr\\(96\\)')",
-      "Bash(printf '%s\\\\n' 'dest = \"\"D:/A21/JavaIQ/.claude/worktrees/awesome-proskuriakova/src/app/data/tutorials/java-fundamentals.ts\"\"')",
-      "Bash(printf '%s\\\\n' 'print\\(\"\"Script loaded, path:\"\", dest\\)')",
-      "Bash(py /tmp/wjf.py)",
-      "Bash(ls -la /Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/src/app/*.ts)",
-      "Bash(grep -r \"dark\\\\|theme\\\\|color\" /Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/src/app/*.ts)",
-      "mcp__Claude_Preview__preview_start",
-      "Bash(ln -s /Users/sathishkumarramalingam/projects/JavaIQ/node_modules /Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/node_modules)",
-      "WebFetch(domain:www.linkedin.com)",
-      "WebFetch(domain:github.com)",
-      "WebFetch(domain:ramsatt.com)",
-      "Bash(curl -s \"https://api.github.com/users/ramsatt\")",
-      "Bash(curl -s \"https://api.github.com/users/ramsatt/repos?sort=updated&per_page=10\")",
-      "Bash(xargs ls -la)",
-      "Bash(npm install @capacitor/local-notifications)",
-      "Bash(npm install @capacitor/local-notifications --legacy-peer-deps)",
-      "Bash(npx ng build --configuration development)",
-      "Bash(npx cap sync)",
-      "Bash(LANG=en_US.UTF-8 npx cap sync ios)",
-      "Bash(grep -i \"deployment\\\\|platform\\\\|ios\" /Users/sathishkumarramalingam/projects/JavaIQ/.claude/worktrees/goofy-haibt/node_modules/@capacitor/local-notifications/*.podspec)",
-      "Bash(npx ng build --configuration=development)",
-      "Bash(grep -rn \"from ''../tutorial-layout.component''\" /Users/sathishkumarramalingam/projects/JavaIQ/src/)",
-      "Bash(grep -n \"from.*CommonModule\\\\|standalone: true\\\\|from ''../tutorial-layout\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/topics/control-flow.component.ts)",
-      "Bash(grep -n \"= \\\\`\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/topics/control-flow.component.ts)",
-      "Bash(grep -v \"//\\\\|import\\\\|css\\\\|class\\\\|\\\\`\\\\|}\\\\|style\\\\|@\\\\|=\\\\|:\\\\|''\")",
-      "Bash(npm view @capacitor/local-notifications versions --json)",
-      "Bash(JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home ./gradlew assembleDebug)"
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(awk \"/'core-java':/,/'spring-framework':/\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/tutorial-detail.component.ts)",
+      "Bash(awk \"/'spring-boot':/,/'hibernate':/\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/tutorial-detail.component.ts)",
+      "Bash(ls /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/topics/dp-*.component.ts)",
+      "Bash(xargs -I{} basename {} .component.ts)",
+      "Skill(update-config)",
+      "Bash(git commit -m ' *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | xargs -I {} npx prettier --write {} 2>/dev/null || true",
+            "statusMessage": "Formatting with Prettier..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | grep -qE '[.](ts|js)$' && cd /Users/sathishkumarramalingam/projects/JavaIQ && npm test -- --run 2>/dev/null || true",
+            "statusMessage": "Running tests...",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "(date +%Y-%m-%dT%H:%M:%SZ && jq -r '.tool_input.command') | paste -sd ' ' >> ~/.claude/bash-log.txt 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Done\" with title \"Claude Code\"' 2>/dev/null || true"
+          }
+        ]
+      }
     ]
   }
 }
