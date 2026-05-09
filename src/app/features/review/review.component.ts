@@ -8,6 +8,7 @@ import { DataService } from '../../data.service';
 import { WrongAnswerService } from '../../services/wrong-answer.service';
 import { GamificationService } from '../../gamification.service';
 import { AnalyticsService } from '../../analytics.service';
+import { AiExplanationService } from '../../core/ai-explanation.service';
 import { Question } from '../../data/question.model';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -87,6 +88,30 @@ type Phase = 'empty' | 'session' | 'complete';
                 <i class="bi bi-eye"></i> Reveal Answer
               </button>
             } @else {
+              <!-- AI explanation panel (Pro/trial only) -->
+              <div class="rv-ai-wrap">
+                @if (aiSvc.loading() === currentQ()!.id) {
+                  <div class="rv-ai-loading">
+                    <i class="bi bi-stars rv-ai-icon"></i>
+                    <span>Generating explanation…</span>
+                  </div>
+                } @else if (explanation()) {
+                  <div class="rv-ai-panel">
+                    <span class="rv-ai-label"><i class="bi bi-stars"></i> AI Explanation</span>
+                    <p class="rv-ai-text">{{ explanation() }}</p>
+                  </div>
+                } @else if (aiSvc.lastError() === 'pro_required') {
+                  <div class="rv-ai-upgrade">
+                    <i class="bi bi-stars rv-ai-icon"></i>
+                    <span>Upgrade to Pro for AI explanations</span>
+                  </div>
+                } @else {
+                  <button class="rv-ai-btn" (click)="fetchExplanation()">
+                    <i class="bi bi-stars"></i> Why is this correct?
+                  </button>
+                }
+              </div>
+
               <div class="rv-verdict-row">
                 <button class="rv-verdict rv-still-learning" (click)="grade(0)">
                   <i class="bi bi-arrow-repeat"></i>
@@ -349,19 +374,53 @@ type Phase = 'empty' | 'session' | 'complete';
       font-size: 0.68rem; color: #475569;
       text-align: center; margin: 0;
     }
+
+    /* ── AI Explanation ── */
+    .rv-ai-wrap { margin-bottom: 14px; }
+    .rv-ai-btn {
+      width: 100%; padding: 10px 16px; border-radius: 12px;
+      border: 1.5px solid rgba(139,92,246,0.35);
+      background: rgba(139,92,246,0.08); color: #a78bfa;
+      font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .rv-ai-btn:hover { background: rgba(139,92,246,0.14); border-color: rgba(139,92,246,0.5); }
+    .rv-ai-panel {
+      background: rgba(139,92,246,0.08); border: 1.5px solid rgba(139,92,246,0.25);
+      border-radius: 12px; padding: 12px 14px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .rv-ai-label {
+      font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #a78bfa;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .rv-ai-text { font-size: 0.82rem; color: #cbd5e1; line-height: 1.6; margin: 0; }
+    .rv-ai-loading {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px; color: #7c3aed; font-size: 0.78rem; font-weight: 600;
+    }
+    .rv-ai-icon { font-size: 1rem; }
+    .rv-ai-upgrade {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px; color: #6b7280; font-size: 0.75rem; font-style: italic;
+    }
   `
 })
 export class ReviewComponent {
-  private router = inject(Router);
+  protected router = inject(Router);
   private dataSvc = inject(DataService);
   wrongSvc = inject(WrongAnswerService);
   private gameSvc = inject(GamificationService);
   private analytics = inject(AnalyticsService);
+  aiSvc = inject(AiExplanationService);
 
   // ── State ──────────────────────────────────────────────────────────────────
 
   phase = signal<Phase>('empty');
   queue = signal<Question[]>([]);
+  explanation = signal<string | null>(null);
   currentIdx = signal(0);
   answerVisible = signal(false);
   clearedThisSession = signal(0);
@@ -395,7 +454,11 @@ export class ReviewComponent {
 
   // ── Session actions ────────────────────────────────────────────────────────
 
-  reveal() { this.answerVisible.set(true); }
+  reveal() {
+    this.answerVisible.set(true);
+    this.explanation.set(null);
+    this.aiSvc.lastError.set(null);
+  }
 
   /**
    * Grade the current card.
@@ -403,10 +466,19 @@ export class ReviewComponent {
    * 2 = Hard (reschedule with reduced ease)
    * 5 = Got It! (schedule with SM-2 interval, graduate at ≥21 days)
    */
+  async fetchExplanation() {
+    const q = this.currentQ();
+    if (!q) return;
+    const text = await this.aiSvc.getExplanation(q.id, q.question, q.answer);
+    if (text) this.explanation.set(text);
+  }
+
   grade(quality: 0 | 2 | 5) {
     const q = this.currentQ();
     if (!q) return;
 
+    this.explanation.set(null);
+    this.aiSvc.lastError.set(null);
     this.wrongSvc.applyReview(q.id, quality);
 
     if (quality === 5) {
@@ -434,6 +506,7 @@ export class ReviewComponent {
     } else {
       this.currentIdx.set(next);
       this.answerVisible.set(false);
+      this.explanation.set(null);
     }
   }
 

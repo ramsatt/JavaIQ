@@ -15,6 +15,15 @@
         { "fieldPath": "points",      "order": "DESCENDING" },
         { "fieldPath": "lastUpdated", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "experiences",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "source",    "order": "ASCENDING"  },
+        { "fieldPath": "approved",  "order": "ASCENDING"  },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

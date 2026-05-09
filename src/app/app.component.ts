@@ -31,6 +31,7 @@ import { GamificationService } from './gamification.service';
 import { environment } from '../environments/environment';
 import { OfflineCacheService } from './core/offline-cache.service';
 import { ReferralService } from './core/referral.service';
+import { LangService } from './core/lang.service';
 import { DataService } from './data.service';
 import { Capacitor } from '@capacitor/core';
 
@@ -839,6 +840,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private notifSvc = inject(NotificationService);
   private offlineCache = inject(OfflineCacheService);
   private referralSvc  = inject(ReferralService);
+  private langSvc      = inject(LangService);
   private dataSvc = inject(DataService);
 
   private navUrl = toSignal(
@@ -877,8 +879,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.checkFirstLaunch();
     this.notifSvc.initOnStartup();
     this.purchaseService.init();
+    this.langSvc.init();
     this.initOfflineCache();
     this.initDeepLinks();
+
+    // Load language preference from Firestore once the user signs in
+    effect(() => {
+      const uid = this.authSvc.user()?.uid;
+      if (uid) this.langSvc.loadFromFirestore(uid);
+    });
 
     // Scroll to top on every navigation; hide banner on onboarding
     this.router.events.pipe(

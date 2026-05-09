@@ -8,6 +8,7 @@ import { AlertService } from '../../alert.service';
 import { NotificationService } from '../../services/notification.service';
 import { PurchaseService } from '../../services/purchase.service';
 import { ReferralService } from '../../core/referral.service';
+import { LangService, AppLang } from '../../core/lang.service';
 import { ShareService } from '../../services/share.service';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { environment } from '../../../environments/environment';
@@ -84,6 +85,19 @@ const REMINDER_TIMES = [
                   </div>
                   <div class="toggle-track" [class.toggle-on]="themeService.theme() === 'dark'" (click)="$event.stopPropagation(); toggleTheme()">
                     <div class="toggle-thumb"></div>
+                  </div>
+                </div>
+                <div class="set-divider"></div>
+                <div class="set-row set-version-row">
+                  <div class="set-row-left">
+                    <div class="set-icon-wrap" style="background: rgba(16,185,129,0.12)">
+                      <i class="fa-solid fa-language" style="color:#10b981"></i>
+                    </div>
+                    <span class="set-row-label">Language</span>
+                  </div>
+                  <div class="lang-switcher">
+                    <button class="lang-btn" [class.lang-btn-sel]="langSvc.currentLang() === 'en'" (click)="setLang('en')">EN</button>
+                    <button class="lang-btn" [class.lang-btn-sel]="langSvc.currentLang() === 'hi'" (click)="setLang('hi')">हि</button>
                   </div>
                 </div>
               </div>
@@ -506,6 +520,24 @@ const REMINDER_TIMES = [
       .set-logout-btn { color: #f87171; }
     }
 
+    /* ── Language Switcher ── */
+    .lang-switcher {
+      display: flex; gap: 4px;
+      background: var(--ion-color-light, rgba(0,0,0,0.05));
+      border: 1px solid var(--ion-border-color, rgba(0,0,0,0.1));
+      border-radius: 8px; padding: 3px;
+    }
+    .lang-btn {
+      padding: 4px 12px; border-radius: 6px; border: none;
+      font-size: 0.78rem; font-weight: 700;
+      background: transparent;
+      color: var(--ion-color-medium);
+      cursor: pointer; transition: all 0.18s;
+    }
+    .lang-btn-sel {
+      background: #10b981; color: #fff;
+    }
+
     /* ── Referral ── */
     .referral-wrap { display: flex; flex-direction: column; gap: 12px; }
     .referral-desc { font-size: 0.78rem; color: var(--ion-color-medium); margin: 0; line-height: 1.5; }
@@ -541,6 +573,7 @@ export class SettingsComponent implements OnInit {
   private firestore    = inject(Firestore);
   purchaseService      = inject(PurchaseService);
   referralSvc          = inject(ReferralService);
+  langSvc              = inject(LangService);
   private shareSvc     = inject(ShareService);
 
   readonly goals         = GOALS;
@@ -556,6 +589,8 @@ export class SettingsComponent implements OnInit {
   ngOnInit() { /* signals already loaded from localStorage */ }
 
   toggleTheme() { this.themeService.toggle(); }
+
+  async setLang(lang: AppLang) { await this.langSvc.setLang(lang); }
 
   async toggleNotifications() {
     await this.notifSvc.toggle(!this.notifSvc.notificationsEnabled());

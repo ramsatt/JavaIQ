@@ -724,6 +724,19 @@ export class TutorialDetailComponent {
   readonly isCourseComplete = computed(() => this.progressPct() >= 100);
 
   constructor() {
+    this.route.paramMap.subscribe(params => {
+      const s = params.get('slug') ?? '';
+      this.slug.set(s);
+      this.courseData.set(this.courses[s] ?? {
+        badge: s.toUpperCase(),
+        title: s.replace(/-/g, ' '),
+        subtitle: 'Course content coming soon.',
+        estimatedTime: 'TBD',
+        themeColor: '#8b5cf6',
+        topics: []
+      });
+    });
+
     // Auto-open certificate when course transitions to complete for the first time
     let wasComplete = false;
     effect(() => {
@@ -962,18 +975,4 @@ export class TutorialDetailComponent {
     badge: '', title: '', subtitle: '', estimatedTime: '', topics: [], themeColor: '#8b5cf6'
   });
 
-  constructor() {
-    this.route.paramMap.subscribe(params => {
-      const s = params.get('slug') ?? '';
-      this.slug.set(s);
-      this.courseData.set(this.courses[s] ?? {
-        badge: s.toUpperCase(),
-        title: s.replace(/-/g, ' '),
-        subtitle: 'Course content coming soon.',
-        estimatedTime: 'TBD',
-        themeColor: '#8b5cf6',
-        topics: []
-      });
-    });
-  }
 }

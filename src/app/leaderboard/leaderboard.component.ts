@@ -441,7 +441,7 @@ export class LeaderboardComponent implements OnInit {
   private authService = inject(AuthService);
   private achSvc      = inject(AchievementService);
   private purchaseSvc = inject(PurchaseService);
-  private router      = inject(Router);
+  protected router    = inject(Router);
 
   readonly periods = ['alltime', 'monthly', 'weekly'] as const;
 

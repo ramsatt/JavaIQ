@@ -44,6 +44,8 @@
     "@capacitor/ios": "^7.5.0",
     "@capacitor/local-notifications": "^7.0.5",
     "@ionic/angular": "^8.7.17",
+    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^17.0.0",
     "@revenuecat/purchases-capacitor": "^13.0.0",
     "@revenuecat/purchases-capacitor-ui": "^13.0.0",
     "@tailwindcss/postcss": "^4.2.1",

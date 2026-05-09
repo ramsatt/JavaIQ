@@ -1,14 +1,23 @@
-import { ApplicationConfig, ErrorHandler, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { GlobalErrorHandler } from './global-error-handler';
 import { provideRouter, withHashLocation, withInMemoryScrolling, withPreloading, PreloadAllModules } from '@angular/router';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideAnalytics, getAnalytics, ScreenTrackingService } from '@angular/fire/analytics';
+import { provideFunctions, getFunctions } from '@angular/fire/functions';
 import { provideIonicAngular } from '@ionic/angular/standalone';
+import { provideHttpClient } from '@angular/common/http';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
+
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
+  return new TranslateHttpLoader(http, '/i18n/', '.json');
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +30,18 @@ export const appConfig: ApplicationConfig = {
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideAnalytics(() => getAnalytics()),
-    ScreenTrackingService
+    provideFunctions(() => getFunctions()),
+    ScreenTrackingService,
+    provideHttpClient(),
+    importProvidersFrom(
+      TranslateModule.forRoot({
+        defaultLanguage: 'en',
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient],
+        },
+      })
+    ),
   ]
 };

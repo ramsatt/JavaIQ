@@ -1,8 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonHeader } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, ModalController } from '@ionic/angular/standalone';
 import { AdGateService } from '../../ad-gate.service';
 import { AppHeaderComponent } from '../../shared/app-header.component';
+import { ExperiencesService } from './experiences.service';
+import { ExpSubmitComponent } from './exp-submit.component';
 
 interface ExpCard {
   id: string;
@@ -44,17 +46,17 @@ interface ExpCard {
           <!-- Stats -->
           <div class="hero-stats">
             <div class="hero-stat">
-              <span class="stat-num">{{ offerCount }}</span>
+              <span class="stat-num">{{ offerCount() }}</span>
               <span class="stat-lbl">Offers</span>
             </div>
             <div class="stat-div"></div>
             <div class="hero-stat">
-              <span class="stat-num">{{ rejectionCount }}</span>
+              <span class="stat-num">{{ rejectionCount() }}</span>
               <span class="stat-lbl">Rejections</span>
             </div>
             <div class="stat-div"></div>
             <div class="hero-stat">
-              <span class="stat-num">{{ companyCount }}+</span>
+              <span class="stat-num">{{ companyCount() }}+</span>
               <span class="stat-lbl">Companies</span>
             </div>
           </div>
@@ -718,9 +720,11 @@ interface ExpCard {
     }
   `
 })
-export class ExpListComponent {
-  private router = inject(Router);
-  private adGate = inject(AdGateService);
+export class ExpListComponent implements OnInit {
+  private router    = inject(Router);
+  private adGate    = inject(AdGateService);
+  private expSvc    = inject(ExperiencesService);
+  private modalCtrl = inject(ModalController);
 
   companies = ['All', 'Amazon', 'Google', 'Flipkart', 'Microsoft', 'Walmart', 'J.P. Morgan', 'Zomato', 'Infosys', 'Swiggy', 'PayPal', 'Uber', 'PhonePe', 'Paytm', 'TCS', 'Wipro', 'Myntra'];
   difficulties = [
@@ -740,7 +744,19 @@ export class ExpListComponent {
   selectedDiff = signal('all');
   selectedResult = signal('all');
 
-  experiences: ExpCard[] = [
+  ngOnInit() {
+    // Load community entries in the background; curated list shows immediately
+    this.expSvc.loadCommunity();
+  }
+
+  // Reactive signal alias for use in computed() and template
+  private expList = computed(() => this.expSvc.experiences() as unknown as ExpCard[]);
+
+  // Kept for backwards-compat with non-computed template bindings
+  get experiences(): ExpCard[] { return this.expList(); }
+
+  // Legacy static array removed — data now comes from ExperiencesService
+  private _legacyPlaceholder: ExpCard[] = [
     {
       id: 'exp-amazon-sde2-2024',
       company: 'Amazon',
@@ -981,23 +997,15 @@ export class ExpListComponent {
     }
   ];
 
-  get offerCount() {
-    return this.experiences.filter(e => e.result === 'offer').length;
-  }
-
-  get rejectionCount() {
-    return this.experiences.filter(e => e.result === 'rejected').length;
-  }
-
-  get companyCount() {
-    return new Set(this.experiences.map(e => e.company)).size;
-  }
+  offerCount     = computed(() => this.expList().filter(e => e.result === 'offer').length);
+  rejectionCount = computed(() => this.expList().filter(e => e.result === 'rejected').length);
+  companyCount   = computed(() => new Set(this.expList().map(e => e.company)).size);
 
   filtered = computed(() => {
     const company = this.selectedCompany();
     const diff = this.selectedDiff();
     const result = this.selectedResult();
-    return this.experiences.filter(e => {
+    return this.expList().filter(e => {
       if (company !== 'All' && e.company !== company) return false;
       if (diff !== 'all' && e.difficulty !== diff) return false;
       if (result !== 'all' && e.result !== result) return false;
@@ -1029,8 +1037,14 @@ export class ExpListComponent {
     return this.adGate.isItemUnlocked(`exp::${id}`);
   }
 
-  submitExperience() {
-    window.open('https://forms.gle/JavaIQExperience', '_blank', 'noopener,noreferrer');
+  async submitExperience() {
+    const modal = await this.modalCtrl.create({
+      component: ExpSubmitComponent,
+      breakpoints: [0, 0.6, 0.95],
+      initialBreakpoint: 0.95,
+      cssClass: 'exp-submit-modal',
+    });
+    await modal.present();
   }
 
   async openExp(exp: ExpCard) {

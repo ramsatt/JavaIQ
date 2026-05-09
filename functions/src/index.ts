@@ -10,3 +10,5 @@ export { sendReEngagement }   from './notifications/re-engagement';
 export { onLevelUp }          from './notifications/level-up';
 export { sendWeeklySummary }  from './notifications/weekly-summary';
 export { resetWeeklyXp }      from './notifications/reset-weekly-xp';
+export { getExplanation }      from './ai/get-explanation';
+export { onExperienceCreated } from './experiences/on-experience-created';

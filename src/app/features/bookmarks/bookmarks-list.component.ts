@@ -237,7 +237,7 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
 })
 export class BookmarksListComponent {
   bookmarks = inject(BookmarksService);
-  private router = inject(Router);
+  protected router = inject(Router);
 
   groups = computed(() => {
     return TYPE_ORDER
