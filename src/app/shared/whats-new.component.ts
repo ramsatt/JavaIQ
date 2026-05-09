@@ -2,17 +2,17 @@ import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Bump this key whenever you want the dialog to reappear for all users.
-const SEEN_KEY = 'whats_new_seen_v1.3';
+const SEEN_KEY = 'whats_new_seen_v1.6';
 
 const HIGHLIGHTS = [
+  { emoji: '🌱', title: 'Spring Framework Questions', desc: '30 new interview questions covering IoC, AOP, MVC, Security & more.' },
+  { emoji: '🧩', title: 'Design Patterns Questions',  desc: '25 new questions covering all 23 GoF patterns with Java examples.' },
+  { emoji: '🔍', title: 'Smarter Search',             desc: 'Filter questions by company tag — Amazon, Google, Infosys & more.' },
+  { emoji: '🔁', title: 'Spaced Repetition Review',   desc: 'SM-2 algorithm schedules your missed questions at the right time.' },
+  { emoji: '📜', title: 'Course Certificates',        desc: 'Shareable certificate when you complete a full tutorial course.' },
   { emoji: '🎯', title: 'Mock Interview Mode',        desc: 'Timed flashcard sessions across any topic with XP rewards.' },
-  { emoji: '📊', title: 'Progress Dashboard',         desc: 'Category mastery bars, 7-day activity grid, and weak areas.' },
-  { emoji: '🔁', title: 'Review Queue',               desc: 'Spaced-repetition flashcards for questions you\'ve missed.' },
-  { emoji: '📅', title: 'Adaptive Study Plan',        desc: 'Goal-based daily tasks that evolve as your streak grows.' },
-  { emoji: '🏅', title: 'Achievements & Badges',      desc: 'Unlock 10 milestones and share them with your network.' },
-  { emoji: '📜', title: 'Course Certificates',        desc: 'Print-ready certificates when you complete a category.' },
-  { emoji: '🔔', title: 'Smart Reminders',            desc: 'Daily streak notifications at your chosen time.' },
-  { emoji: '🌐', title: 'Offline Resilience',         desc: 'Writes queue and flush automatically when you\'re back online.' },
+  { emoji: '🏅', title: 'Achievements & Badges',      desc: 'Unlock 14 milestones as you learn and streak.' },
+  { emoji: '🌐', title: 'Offline Resilience',         desc: 'Top questions cached locally — study without internet.' },
 ];
 
 @Component({
@@ -33,7 +33,7 @@ const HIGHLIGHTS = [
           <span class="wn-sparkle">✨</span>
           <div>
             <h2 class="wn-title">What's New in JavaIQ</h2>
-            <p class="wn-version">Version 1.3 · 24-week journey complete</p>
+            <p class="wn-version">Version 1.6 · Spring Framework · Design Patterns · Search</p>
           </div>
         </div>
 

@@ -92,7 +92,7 @@ import { Capacitor } from '@capacitor/core';
             <span class="nav-label">LEARNING</span>
             <ion-list lines="none" class="menu-list">
               <ion-menu-toggle auto-hide="false">
-                <ion-item routerLink="/tutorials" routerLinkActive="selected" detail="false" class="nav-item">
+                <ion-item routerLink="/tutorials" routerLinkActive="selected" [routerLinkActiveOptions]="{exact: false}" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="book-outline"></ion-icon></div>
                   <ion-label>Tutorials</ion-label>
                   <div class="active-indicator"></div>
@@ -144,7 +144,7 @@ import { Capacitor } from '@capacitor/core';
             <span class="nav-label">COMMUNITY</span>
             <ion-list lines="none" class="menu-list">
               <ion-menu-toggle auto-hide="false">
-                <ion-item routerLink="/interview-questions" routerLinkActive="selected" detail="false" class="nav-item">
+                <ion-item routerLink="/interview-questions" routerLinkActive="selected" [routerLinkActiveOptions]="{exact: false}" detail="false" class="nav-item">
                   <div slot="start" class="icon-box"><ion-icon name="chatbubbles-outline"></ion-icon></div>
                   <ion-label>Interview Questions</ion-label>
                   <div class="active-indicator"></div>
@@ -533,8 +533,10 @@ import { Capacitor } from '@capacitor/core';
     .footer-nav-row:hover { background: rgba(255,255,255,0.05); }
     .footer-nav-icon { font-size: 1.1rem; color: #64748b; flex-shrink: 0; }
     .footer-nav-label { font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 600; color: #94a3b8; }
-    .footer-logout .footer-nav-icon { color: #f87171; }
-    .footer-logout .footer-nav-label { color: #f87171; }
+    .footer-logout .footer-nav-icon { color: #94a3b8; }
+    .footer-logout .footer-nav-label { color: #94a3b8; }
+    .footer-logout:hover .footer-nav-icon,
+    .footer-logout:hover .footer-nav-label { color: #f87171; }
     .footer-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 0; width: 100%; }
 
     /* Footer Branding */
@@ -664,8 +666,10 @@ import { Capacitor } from '@capacitor/core';
     :host-context(html:not(.dark)) .footer-nav-row:hover { background: rgba(27,67,50,0.06); }
     :host-context(html:not(.dark)) .footer-nav-icon { color: #52665A; }
     :host-context(html:not(.dark)) .footer-nav-label { color: #2D4A38; }
-    :host-context(html:not(.dark)) .footer-logout .footer-nav-icon { color: #dc2626; }
-    :host-context(html:not(.dark)) .footer-logout .footer-nav-label { color: #dc2626; }
+    :host-context(html:not(.dark)) .footer-logout .footer-nav-icon { color: #64748b; }
+    :host-context(html:not(.dark)) .footer-logout .footer-nav-label { color: #64748b; }
+    :host-context(html:not(.dark)) .footer-logout:hover .footer-nav-icon,
+    :host-context(html:not(.dark)) .footer-logout:hover .footer-nav-label { color: #dc2626; }
     :host-context(html:not(.dark)) .footer-divider { background: #D6DDD2; }
     :host-context(html:not(.dark)) .theme-row {
       border-bottom-color: #D6DDD2;

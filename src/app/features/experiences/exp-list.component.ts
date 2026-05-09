@@ -145,7 +145,7 @@ interface ExpCard {
                   <div class="exp-meta">
                     <span class="meta-pill">
                       <i class="fa-solid fa-rotate meta-icon"></i>
-                      {{ exp.rounds }} rounds
+                      {{ roundsCount(exp) }} rounds
                     </span>
                     <span class="meta-pill">
                       <i class="fa-solid fa-user-tie meta-icon"></i>
@@ -1020,6 +1020,12 @@ export class ExpListComponent implements OnInit {
     this.selectedCompany.set('All');
     this.selectedDiff.set('all');
     this.selectedResult.set('all');
+  }
+
+  /** Handles both `rounds: number` (legacy inline data) and `rounds: Round[]` (curated/Firestore data) */
+  roundsCount(exp: ExpCard): number {
+    const r = (exp as any).rounds;
+    return Array.isArray(r) ? r.length : (typeof r === 'number' ? r : 0);
   }
 
   resultLabel(r: string): string {

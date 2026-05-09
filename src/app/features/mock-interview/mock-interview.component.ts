@@ -284,6 +284,7 @@ function grade(pct: number): { letter: string; color: string } {
   `,
   styles: `
     .mi-content { --background: #0b1120; --padding-start: 0; --padding-end: 0; }
+    :host-context(html:not(.dark)) .mi-content { --background: #f8fafc; }
 
     .mi-wrap {
       min-height: 100%;
@@ -645,6 +646,51 @@ function grade(pct: number): { letter: string; color: string } {
       transition: all 0.18s;
     }
     .mi-dashboard-btn:hover { background: rgba(255,255,255,0.04); color: #94a3b8; }
+
+    /* ── Light Mode Overrides ── */
+    :host-context(html:not(.dark)) .mi-page-title,
+    :host-context(html:not(.dark)) .mi-result-title { color: #1B1B1B; }
+
+    :host-context(html:not(.dark)) .mi-page-sub,
+    :host-context(html:not(.dark)) .mi-result-sub,
+    :host-context(html:not(.dark)) .mi-q-counter,
+    :host-context(html:not(.dark)) .mi-score-pct-label,
+    :host-context(html:not(.dark)) .mi-stat-lbl,
+    :host-context(html:not(.dark)) .mi-bd-frac { color: #52665A; }
+
+    :host-context(html:not(.dark)) .mi-section-label,
+    :host-context(html:not(.dark)) .mi-section-hint,
+    :host-context(html:not(.dark)) .mi-bd-cat { color: #64748b; }
+
+    :host-context(html:not(.dark)) .mi-cat-btn {
+      background: #ffffff;
+      border-color: #D6DDD2;
+      color: #1B1B1B;
+    }
+    :host-context(html:not(.dark)) .mi-cat-btn:hover { border-color: #40916C; }
+    :host-context(html:not(.dark)) .mi-cat-btn.selected {
+      background: rgba(64,145,108,0.1) !important;
+      border-color: #40916C !important;
+    }
+    :host-context(html:not(.dark)) .mi-cat-name { color: #1B1B1B; }
+    :host-context(html:not(.dark)) .mi-chip {
+      background: #f1f5f2; border-color: #D6DDD2; color: #374151;
+    }
+    :host-context(html:not(.dark)) .mi-chip.selected {
+      background: rgba(64,145,108,0.12) !important; border-color: #40916C !important; color: #1B4332 !important;
+    }
+    :host-context(html:not(.dark)) .mi-q-card {
+      background: #ffffff; border-color: #D6DDD2;
+    }
+    :host-context(html:not(.dark)) .mi-q-text { color: #1B1B1B; }
+    :host-context(html:not(.dark)) .mi-reveal-btn { color: #64748b; border-color: #D6DDD2; }
+    :host-context(html:not(.dark)) .mi-answer-box { background: #f1f5f2; border-color: #D6DDD2; }
+    :host-context(html:not(.dark)) .mi-answer-text { color: #374151; }
+    :host-context(html:not(.dark)) .mi-score-pct-val { color: #1B4332; }
+    :host-context(html:not(.dark)) .mi-stat-val { color: #1B4332; }
+    :host-context(html:not(.dark)) .mi-breakdown-row { border-color: #D6DDD2; }
+    :host-context(html:not(.dark)) .mi-dashboard-btn { border-color: #D6DDD2; color: #52665A; }
+    :host-context(html:not(.dark)) .mi-dashboard-btn:hover { background: #f1f5f2; color: #1B4332; }
   `
 })
 export class MockInterviewComponent implements OnDestroy {

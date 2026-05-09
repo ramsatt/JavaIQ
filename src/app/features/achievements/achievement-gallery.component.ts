@@ -42,7 +42,10 @@ const RARITY_COLOR: Record<string, string> = {
       <!-- Badge grid -->
       <div class="badge-grid">
         @for (a of achievements(); track a.id) {
-          <div class="badge-card" [class.badge-locked]="!a.unlockedAt">
+          <div class="badge-card"
+               [class.badge-locked]="!a.unlockedAt"
+               [style.--rarity-color]="rarityColor(a)"
+               [class.badge-unlocked]="!!a.unlockedAt">
             <div class="badge-icon-wrap" [style.border-color]="a.unlockedAt ? a.iconColor : 'transparent'">
               <i class="bi" [class]="a.icon"
                  [style.color]="a.unlockedAt ? a.iconColor : '#94a3b8'"></i>
@@ -161,9 +164,27 @@ const RARITY_COLOR: Record<string, string> = {
     }
 
     .badge-card.badge-locked {
-      opacity: 0.5;
-      filter: grayscale(1);
+      opacity: 0.55;
+      filter: grayscale(0.7);
     }
+
+    .badge-card.badge-unlocked {
+      border-color: color-mix(in srgb, var(--rarity-color) 35%, transparent);
+      box-shadow: 0 2px 12px color-mix(in srgb, var(--rarity-color) 15%, transparent);
+    }
+
+    /* Rarity top-edge accent for locked cards */
+    .badge-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 12px; right: 12px;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--rarity-color, transparent);
+      opacity: 0.35;
+    }
+    .badge-card.badge-unlocked::before { opacity: 0.8; }
+    .badge-card { position: relative; overflow: hidden; }
 
     .badge-icon-wrap {
       position: relative;

@@ -385,13 +385,19 @@ interface Assessment {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      color: var(--accent, #8b5cf6);
-      opacity: 1;
+      color: #ffffff;
+      background: #1B4332;
+      padding: 5px 11px;
+      border-radius: 20px;
       flex-shrink: 0;
+      transition: background 0.18s;
     }
-    .start-hint i { font-size: 0.75rem; }
+    a:hover .start-hint { background: #2D6A4F; }
+    .start-hint i { font-size: 0.7rem; }
+    :host-context(html:not(.dark)) .start-hint { background: #1B4332; }
+    :host-context(html:not(.dark)) a:hover .start-hint { background: #2D6A4F; }
 
     /* ── Info Card ── */
     .info-card {

@@ -822,6 +822,28 @@
 ───────────────────────────────────────── */
 .qa-section {
   padding: 16px 0 0 var(--page-px);
+  position: relative;
+}
+
+/* Right-edge fade to signal more items */
+.qa-section::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 16px;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(to right, transparent, var(--bg-base, #0b1120));
+  pointer-events: none;
+  z-index: 1;
+}
+
+:host-context(html:not(.dark)) .qa-section::after {
+  background: linear-gradient(to right, transparent, #F5F7F2);
+}
+
+@media (min-width: 1024px) {
+  .qa-section::after { display: none; }
 }
 
 .qa-row {
@@ -831,6 +853,7 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding-bottom: 2px;
+  padding-right: 40px;
 }
 
 .qa-row::-webkit-scrollbar {

@@ -213,6 +213,24 @@ export class ContinueLearningCardComponent {
     // Track completions signal for reactivity
     this.dataService.completedTopicIds();
 
+    // ── Priority 0: Brand-new user (0 completions, no last-visited) → Start Here ─
+    const totalCompleted = this.dataService.completedTopicIds().size;
+    const lastVisited    = this.notifications.getLastVisited();
+    if (totalCompleted === 0 && !lastVisited) {
+      const coreJava = COURSE_TOPICS.find(c => c.slug === 'core-java');
+      if (coreJava && coreJava.topics.length > 0) {
+        return {
+          courseSlug:  coreJava.slug,
+          courseTitle: coreJava.title,
+          topicSlug:   coreJava.topics[0].slug,
+          topicTitle:  coreJava.topics[0].title,
+          progressPct: 0,
+          themeColor:  coreJava.themeColor,
+          badgeLabel:  '🚀 Start Your Journey'
+        };
+      }
+    }
+
     // ── Priority 1: Today's study-plan tutorial task is not yet done ──────────
     if (!this.studyPlan.isTaskDone('tutorial')) {
       const tutorialTask = this.studyPlan.todayTasks().find(t => t.type === 'tutorial');

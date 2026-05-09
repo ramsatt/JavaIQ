@@ -14,14 +14,16 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-  { name: 'Core Java', emoji: '☕', color: '#f97316' },
-  { name: 'Spring Boot', emoji: '🌿', color: '#22c55e' },
-  { name: 'Microservices', emoji: '🔗', color: '#38bdf8' },
-  { name: 'Hibernate', emoji: '🗄️', color: '#a855f7' },
-  { name: 'Multithreading', emoji: '🧵', color: '#ec4899' },
-  { name: 'Spring Reactive', emoji: '⚡', color: '#eab308' },
+  { name: 'Core Java',            emoji: '☕', color: '#f97316' },
+  { name: 'Spring Boot',          emoji: '🌿', color: '#22c55e' },
+  { name: 'Spring Framework',     emoji: '🌱', color: '#16a34a' },
+  { name: 'Microservices',        emoji: '🔗', color: '#38bdf8' },
+  { name: 'Hibernate',            emoji: '🗄️', color: '#a855f7' },
+  { name: 'Multithreading',       emoji: '🧵', color: '#ec4899' },
+  { name: 'Spring Reactive',      emoji: '⚡', color: '#eab308' },
   { name: 'Reactive Programming', emoji: '📡', color: '#fb923c' },
-  { name: 'Coding Questions', emoji: '💻', color: '#10b981' },
+  { name: 'Coding Questions',     emoji: '💻', color: '#10b981' },
+  { name: 'Design Patterns',      emoji: '🧩', color: '#8b5cf6' },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
