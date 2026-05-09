@@ -89,25 +89,25 @@
     <!-- ────────── Quick Actions ────────── -->
     <section class="qa-section">
       <div class="qa-row">
-        <button class="qa-tile" (click)="goToMockInterview()">
+        <button class="qa-tile" (click)="goToMockInterview()" aria-label="Mock Interview">
           <i class="bi bi-briefcase-fill qa-icon" style="color:#40916C"></i>
-          <span class="qa-label">Mock<br>Interview</span>
+          <span class="qa-label">Interview</span>
         </button>
-        <button class="qa-tile" (click)="goToStudyPlan()">
+        <button class="qa-tile" (click)="goToStudyPlan()" aria-label="Study Plan">
           <i class="bi bi-calendar-check-fill qa-icon" style="color:#52b788"></i>
-          <span class="qa-label">Study<br>Plan</span>
+          <span class="qa-label">Study Plan</span>
         </button>
-        <button class="qa-tile" (click)="goToBookmarks()">
+        <button class="qa-tile" (click)="goToBookmarks()" aria-label="Saved bookmarks">
           <i class="bi bi-bookmark-fill qa-icon" style="color:#f59e0b"></i>
           <span class="qa-label">Saved</span>
         </button>
-        <button class="qa-tile" (click)="goToLeaderboard()">
+        <button class="qa-tile" (click)="goToLeaderboard()" aria-label="Leaderboard">
           <i class="bi bi-trophy-fill qa-icon" style="color:#DAA520"></i>
-          <span class="qa-label">Leader-<br>board</span>
+          <span class="qa-label">Leaderboard</span>
         </button>
-        <button class="qa-tile" (click)="goToReview()">
+        <button class="qa-tile" (click)="goToReview()" aria-label="Review Queue">
           <i class="bi bi-arrow-repeat qa-icon" style="color:#f87171"></i>
-          <span class="qa-label">Review<br>Queue</span>
+          <span class="qa-label">Review</span>
         </button>
       </div>
     </section>
@@ -150,7 +150,11 @@
                 <h4 class="mc-name">{{ cat.name }}</h4>
                 <span class="mc-meta">{{ getQuestionCount(cat.name) }} Topics</span>
               </div>
+              @if (isLocked(cat.name)) {
+              <span class="mc-locked-chip">LOCKED</span>
+              } @else {
               <span class="mc-arrow">›</span>
+              }
             </div>
 
             @if (!isLocked(cat.name)) {
@@ -173,6 +177,7 @@
             </div>
             } @else {
             <div class="mc-locked">
+              <i class="bi bi-lock-fill mc-lock-icon"></i>
               Complete <strong>{{ categories[i - 1]?.name }}</strong> to unlock
             </div>
             }

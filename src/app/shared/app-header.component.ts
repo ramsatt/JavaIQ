@@ -26,7 +26,7 @@ import { PurchaseService } from '../services/purchase.service';
       </div>
 
       <div class="header-right">
-        <button class="icon-btn search-btn" (click)="openSearch()" title="Search">🔍</button>
+        <button class="icon-btn search-btn" (click)="openSearch()" title="Search" aria-label="Search">🔍</button>
 
         <div class="streak-badge" [class.streak-on]="gameService.streak() > 0">
           🔥 <span>{{ gameService.streak() }}</span>
@@ -172,6 +172,8 @@ import { PurchaseService } from '../services/purchase.service';
     /* Hide hamburger when the split-pane sidebar is pinned (≥1024px) */
     @media (min-width: 1024px) {
       .menu-btn { display: none; }
+      /* Sidebar already shows the wordmark — hide duplicate in header */
+      .wordmark { display: none; }
     }
   `]
 })

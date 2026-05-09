@@ -168,6 +168,22 @@ import { GamificationService } from '../gamification.service';
 
     .btn-answer:active { transform: translateY(0); }
 
+    :host-context(html.dark) .btn-answer {
+      background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 50%, #40916C 100%);
+      color: #ffffff;
+      border: 1px solid rgba(116,198,157,0.35);
+      box-shadow:
+        0 4px 18px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(116,198,157,0.12);
+    }
+
+    :host-context(html.dark) .btn-answer:hover {
+      background: linear-gradient(135deg, #2D6A4F 0%, #40916C 50%, #52b788 100%);
+      box-shadow:
+        0 8px 24px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(116,198,157,0.18);
+    }
+
     .qotd-answer-reveal {
       background: rgba(27,67,50,0.05);
       border-radius: 12px;

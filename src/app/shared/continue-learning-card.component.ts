@@ -191,16 +191,29 @@ interface ResumeTarget {
     }
 
     .continue-cta {
-      font-size: 0.83rem;
+      font-size: 0.82rem;
       font-weight: 800;
-      color: #1B4332;
-      text-align: right;
-      transition: letter-spacing 0.2s ease;
+      color: #ffffff;
+      background: #1B4332;
+      border-radius: 10px;
+      padding: 8px 16px;
+      text-align: center;
+      transition: background 0.2s ease, letter-spacing 0.2s ease;
     }
 
-    .continue-card:hover .continue-cta { letter-spacing: 0.02em; }
+    .continue-card:hover .continue-cta {
+      background: #2D6A4F;
+      letter-spacing: 0.02em;
+    }
 
-    :host-context(html.dark) .continue-cta { color: #52b788; }
+    :host-context(html.dark) .continue-cta {
+      background: #1B4332;
+      color: #74c69d;
+    }
+
+    :host-context(html.dark) .continue-card:hover .continue-cta {
+      background: #2D6A4F;
+    }
   `]
 })
 export class ContinueLearningCardComponent {

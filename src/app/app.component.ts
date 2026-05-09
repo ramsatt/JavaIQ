@@ -399,7 +399,7 @@ import { Capacitor } from '@capacitor/core';
       font-size: 1.2rem;
     }
     .profile-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-    .user-name { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+    .user-name { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
     .user-level { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; color: #94a3b8; }
     .profile-chevron { font-size: 1rem; color: #475569; flex-shrink: 0; margin-left: auto; }
 

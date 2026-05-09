@@ -136,7 +136,7 @@ import { DailyEngagementService } from '../services/daily-engagement.service';
 
     .goal-task.task-done .task-label {
       text-decoration: line-through;
-      opacity: 0.45;
+      opacity: 0.65;
     }
 
     .task-check {
