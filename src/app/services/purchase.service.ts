@@ -35,6 +35,17 @@ export class PurchaseService {
    */
   isProOrTrial = computed((): boolean => this.isPro() || this.trialActive());
 
+  /** Days remaining in the free trial (0 when no trial active) */
+  trialDaysLeft = computed((): number => {
+    const end = this.trialEndsDate();
+    if (!end) return 0;
+    const diff = end.getTime() - Date.now();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  });
+
+  /** Which plan the user chose before hitting the paywall ('monthly' | 'annual') */
+  selectedPlan = signal<'monthly' | 'annual'>('annual');
+
   /** True while a restore network call is in-flight */
   purchasing = signal<boolean>(false);
 

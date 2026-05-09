@@ -202,5 +202,18 @@ export const COURSE_TOPICS: CourseEntry[] = [
       { slug: 'dp-chain',     title: 'Chain of Responsibility',          duration: '30 min' },
       { slug: 'dp-state',     title: 'State',                            duration: '30 min' }
     ]
+  },
+  {
+    slug: 'modern-java',
+    title: 'Modern Java 17–21',
+    badge: 'MODERN JAVA',
+    themeColor: '#0d9488',
+    topics: [
+      { slug: 'mj-text-blocks',      title: 'Text Blocks',              duration: '20 min' },
+      { slug: 'mj-records-sealed',   title: 'Records & Sealed Classes', duration: '25 min' },
+      { slug: 'mj-pattern-matching', title: 'Pattern Matching',         duration: '30 min' },
+      { slug: 'mj-switch-expr',      title: 'Switch Expressions',       duration: '25 min' },
+      { slug: 'mj-virtual-threads',  title: 'Virtual Threads',          duration: '25 min' }
+    ]
   }
 ];

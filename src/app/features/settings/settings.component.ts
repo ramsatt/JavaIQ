@@ -218,17 +218,15 @@ const REMINDER_TIMES = [
             <!-- Pro -->
             <div class="set-section">
               <span class="set-section-label">Pro</span>
-              <div class="set-card">
-                @if (purchaseService.isPro()) {
-                  <div class="set-row set-version-row">
-                    <div class="set-row-left">
-                      <div class="set-icon-wrap" style="background:rgba(250,204,21,0.12)">
-                        <i class="fa-solid fa-crown" style="color:#fbbf24"></i>
-                      </div>
-                      <div>
-                        <span class="set-row-label">JavaIQ Pro</span>
-                        <span class="set-row-sub">You're a Pro member — ad-free forever</span>
-                      </div>
+
+              @if (purchaseService.isPro()) {
+                <!-- Active Pro subscriber -->
+                <div class="set-card">
+                  <div class="pro-active-header">
+                    <div class="pro-active-crown"><i class="fa-solid fa-crown"></i></div>
+                    <div>
+                      <span class="pro-active-title">JavaIQ Pro</span>
+                      <span class="pro-active-sub">Ad-free · Unlimited access · AI explanations</span>
                     </div>
                     <span class="pro-badge-active">PRO</span>
                   </div>
@@ -252,28 +250,90 @@ const REMINDER_TIMES = [
                     </div>
                     <i class="fa-solid fa-chevron-right set-chevron"></i>
                   </div>
-                } @else {
-                  <button class="pro-upgrade-btn" [disabled]="purchaseService.purchasing()" (click)="upgradeToPro()">
+                </div>
+
+              } @else if (purchaseService.trialActive()) {
+                <!-- Active trial -->
+                <div class="set-card">
+                  <div class="trial-active-banner">
+                    <div class="trial-active-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                    <div>
+                      <span class="trial-active-title">Free Trial Active</span>
+                      <span class="trial-active-sub">{{ purchaseService.trialDaysLeft() }} day{{ purchaseService.trialDaysLeft() === 1 ? '' : 's' }} remaining — all Pro features unlocked</span>
+                    </div>
+                  </div>
+                  <div class="set-divider"></div>
+                  <div class="set-row" (click)="upgradeToPro()">
+                    <div class="set-row-left">
+                      <div class="set-icon-wrap" style="background:rgba(250,204,21,0.12)">
+                        <i class="fa-solid fa-crown" style="color:#fbbf24"></i>
+                      </div>
+                      <div>
+                        <span class="set-row-label">Upgrade to Keep Pro</span>
+                        <span class="set-row-sub">Don't lose access when trial ends</span>
+                      </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right set-chevron"></i>
+                  </div>
+                </div>
+
+              } @else {
+                <!-- Paywall card -->
+                <div class="paywall-card">
+                  <!-- Header -->
+                  <div class="paywall-header">
+                    <div class="paywall-crown"><i class="fa-solid fa-crown"></i></div>
+                    <div>
+                      <span class="paywall-title">JavaIQ Pro</span>
+                      <span class="paywall-sub">Crack your next Java interview</span>
+                    </div>
+                  </div>
+
+                  <!-- Benefits -->
+                  <ul class="paywall-benefits">
+                    <li><i class="fa-solid fa-ban"></i> Ad-free experience</li>
+                    <li><i class="fa-solid fa-infinity"></i> Unlimited topic unlocks</li>
+                    <li><i class="fa-solid fa-robot"></i> AI wrong-answer explanations</li>
+                    <li><i class="fa-solid fa-brain"></i> Spaced repetition review queue</li>
+                    <li><i class="fa-solid fa-bookmark"></i> Unlimited bookmarks</li>
+                    <li><i class="fa-solid fa-certificate"></i> Shareable course certificates</li>
+                  </ul>
+
+                  <!-- Plan toggle -->
+                  <div class="plan-toggle">
+                    <button class="plan-card" [class.plan-card-sel]="purchaseService.selectedPlan() === 'monthly'"
+                      (click)="purchaseService.selectedPlan.set('monthly')">
+                      <span class="plan-name">Monthly</span>
+                      <span class="plan-price">₹199<span class="plan-period">/mo</span></span>
+                      <span class="plan-billed">Billed monthly</span>
+                    </button>
+                    <button class="plan-card plan-card-annual" [class.plan-card-sel]="purchaseService.selectedPlan() === 'annual'"
+                      (click)="purchaseService.selectedPlan.set('annual')">
+                      <span class="plan-save-badge">SAVE 58%</span>
+                      <span class="plan-name">Annual</span>
+                      <span class="plan-price">₹999<span class="plan-period">/yr</span></span>
+                      <span class="plan-billed">₹83/mo · billed yearly</span>
+                    </button>
+                  </div>
+
+                  <!-- Trial CTA -->
+                  <button class="paywall-cta" [disabled]="purchaseService.purchasing()" (click)="upgradeToPro()">
                     @if (purchaseService.purchasing()) {
                       <i class="fa-solid fa-spinner fa-spin"></i>
                       Processing...
                     } @else {
                       <i class="fa-solid fa-crown"></i>
-                      Upgrade to Pro — Ad-Free Forever
+                      Start 7-Day Free Trial
                     }
                   </button>
-                  <div class="set-divider"></div>
-                  <div class="set-row" (click)="restorePurchases()">
-                    <div class="set-row-left">
-                      <div class="set-icon-wrap" style="background:rgba(99,102,241,0.1)">
-                        <i class="fa-solid fa-rotate" style="color:#818cf8"></i>
-                      </div>
-                      <span class="set-row-label">Restore Purchase</span>
-                    </div>
-                    <i class="fa-solid fa-chevron-right set-chevron"></i>
-                  </div>
-                }
-              </div>
+                  <p class="paywall-trial-note">No charge for 7 days · Cancel anytime</p>
+
+                  <!-- Restore -->
+                  <button class="paywall-restore" (click)="restorePurchases()">
+                    <i class="fa-solid fa-rotate"></i> Restore Purchase
+                  </button>
+                </div>
+              }
             </div>
 
             <!-- Refer a Friend -->
@@ -469,20 +529,19 @@ const REMINDER_TIMES = [
     .time-chip:hover { background: rgba(99,102,241,0.12); color: #818cf8; }
     .time-chip-sel { background: rgba(99,102,241,0.15) !important; border-color: #818cf8 !important; color: #6366f1 !important; }
 
-    /* Pro */
-    .pro-upgrade-btn {
-      width: 100%; padding: 15px;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      border: none;
-      color: #0b1120;
-      font-size: 0.9rem; font-weight: 800;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      cursor: pointer;
-      transition: opacity 0.2s;
-      border-radius: 16px 16px 0 0;
+    /* Pro — active subscriber */
+    .pro-active-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px;
     }
-    .pro-upgrade-btn:hover { opacity: 0.88; }
-    .pro-upgrade-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pro-active-crown {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: rgba(251,191,36,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: #fbbf24; flex-shrink: 0;
+    }
+    .pro-active-title { display: block; font-size: 0.9rem; font-weight: 700; color: var(--ion-text-color); }
+    .pro-active-sub { display: block; font-size: 0.65rem; color: var(--ion-color-medium); margin-top: 2px; }
     .pro-badge-active {
       font-size: 0.62rem; font-weight: 800;
       color: #d97706;
@@ -491,7 +550,119 @@ const REMINDER_TIMES = [
       border-radius: 6px;
       padding: 2px 7px;
       letter-spacing: 0.06em;
+      margin-left: auto;
     }
+
+    /* Trial active banner */
+    .trial-active-banner {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px;
+      background: rgba(99,102,241,0.07);
+    }
+    .trial-active-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: rgba(99,102,241,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: #818cf8; flex-shrink: 0;
+    }
+    .trial-active-title { display: block; font-size: 0.9rem; font-weight: 700; color: var(--ion-text-color); }
+    .trial-active-sub { display: block; font-size: 0.65rem; color: var(--ion-color-medium); margin-top: 2px; }
+
+    /* Paywall card */
+    .paywall-card {
+      border: 1.5px solid rgba(251,191,36,0.35);
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--ion-card-background, var(--ion-item-background));
+      box-shadow: 0 4px 20px rgba(251,191,36,0.1);
+    }
+    .paywall-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 16px 12px;
+      background: linear-gradient(135deg, rgba(251,191,36,0.12), rgba(245,158,11,0.06));
+      border-bottom: 1px solid rgba(251,191,36,0.15);
+    }
+    .paywall-crown {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: #0b1120; flex-shrink: 0;
+    }
+    .paywall-title { display: block; font-size: 1rem; font-weight: 800; color: var(--ion-text-color); }
+    .paywall-sub { display: block; font-size: 0.7rem; color: var(--ion-color-medium); margin-top: 2px; }
+
+    .paywall-benefits {
+      list-style: none; margin: 0; padding: 12px 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px;
+    }
+    .paywall-benefits li {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 0.75rem; font-weight: 600; color: var(--ion-text-color);
+    }
+    .paywall-benefits li i { color: #10b981; font-size: 0.7rem; flex-shrink: 0; }
+
+    /* Plan toggle */
+    .plan-toggle {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      padding: 8px 12px 12px;
+    }
+    .plan-card {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 2px; padding: 12px 8px;
+      border-radius: 14px;
+      border: 2px solid var(--ion-border-color, rgba(0,0,0,0.1));
+      background: var(--ion-color-light, rgba(0,0,0,0.03));
+      cursor: pointer; transition: all 0.2s;
+      position: relative;
+    }
+    .plan-card-sel {
+      border-color: #f59e0b !important;
+      background: rgba(245,158,11,0.08) !important;
+      box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+    }
+    .plan-card-annual { }
+    .plan-name { font-size: 0.72rem; font-weight: 700; color: var(--ion-color-medium); text-transform: uppercase; letter-spacing: 0.08em; }
+    .plan-price { font-size: 1.3rem; font-weight: 900; color: var(--ion-text-color); line-height: 1.2; margin: 4px 0 2px; }
+    .plan-period { font-size: 0.7rem; font-weight: 600; color: var(--ion-color-medium); }
+    .plan-billed { font-size: 0.62rem; color: var(--ion-color-medium); }
+    .plan-save-badge {
+      position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(90deg, #10b981, #059669);
+      color: #fff; font-size: 0.55rem; font-weight: 800;
+      padding: 2px 8px; border-radius: 20px; letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    /* Paywall CTA */
+    .paywall-cta {
+      width: calc(100% - 24px); margin: 0 12px;
+      padding: 14px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: none; border-radius: 14px;
+      color: #0b1120; font-size: 0.92rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .paywall-cta:hover { opacity: 0.88; }
+    .paywall-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .paywall-trial-note {
+      text-align: center; font-size: 0.65rem; color: var(--ion-color-medium);
+      margin: 8px 0 4px; padding: 0 16px;
+    }
+
+    .paywall-restore {
+      width: 100%; padding: 12px;
+      background: none; border: none;
+      color: var(--ion-color-medium);
+      font-size: 0.75rem; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      cursor: pointer;
+      border-top: 1px solid var(--ion-border-color, rgba(0,0,0,0.07));
+      margin-top: 8px;
+      transition: color 0.2s;
+    }
+    .paywall-restore:hover { color: var(--ion-text-color); }
 
     /* Logout */
     .set-logout-btn {

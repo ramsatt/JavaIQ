@@ -137,6 +137,13 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
     'mt-atomic': () => import('./topics/mt-atomic.component').then(m => m.MtAtomicComponent),
     'mt-virtual': () => import('./topics/mt-virtual.component').then(m => m.MtVirtualComponent),
   },
+  'modern-java': {
+    'mj-text-blocks':      () => import('./topics/text-blocks.component').then(m => m.TextBlocksComponent),
+    'mj-records-sealed':   () => import('./topics/records-sealed.component').then(m => m.RecordsSealedComponent),
+    'mj-pattern-matching': () => import('./topics/pattern-matching.component').then(m => m.PatternMatchingComponent),
+    'mj-switch-expr':      () => import('./topics/mj-switch-expr.component').then(m => m.MjSwitchExprComponent),
+    'mj-virtual-threads':  () => import('./topics/mt-virtual.component').then(m => m.MtVirtualComponent),
+  },
   'design-patterns': {
     'dp-singleton': () => import('./topics/dp-singleton.component').then(m => m.DpSingletonComponent),
     'dp-factory': () => import('./topics/dp-factory.component').then(m => m.DpFactoryComponent),

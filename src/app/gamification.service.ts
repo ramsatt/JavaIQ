@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { NotificationService } from './services/notification.service';
 import { RatingService } from './services/rating.service';
 import { PurchaseService } from './services/purchase.service';
+import { ShareService } from './services/share.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class GamificationService {
   private notifService = inject(NotificationService);
   private ratingSvc = inject(RatingService);
   private purchaseSvc = inject(PurchaseService);
+  private shareSvc = inject(ShareService);
 
   // --- Signals for State ---
   xp = signal<number>(0);
@@ -21,6 +23,15 @@ export class GamificationService {
   bestStreak = signal<number>(0);
   lastActiveDate = signal<string | null>(null);
   activeDays = signal<Set<string>>(new Set());
+
+  /** Number of available streak freezes */
+  streakFreezes = signal<number>(0);
+
+  /** True for the current session when a freeze was auto-applied on startup */
+  streakFrozenToday = signal<boolean>(false);
+
+  /** Set to the milestone day count (7/14/30/60/100) briefly when just reached, then back to 0 */
+  streakMilestoneJustHit = signal<number>(0);
 
   // --- Computed Values ---
   level = computed(() => Math.floor(Math.sqrt(this.xp() / 100)) + 1);
@@ -41,6 +52,7 @@ export class GamificationService {
 
   constructor() {
     this.loadState();
+    this.refillFreezesIfNewWeek();
     this.checkStreak();
 
     // Listen for auth changes to sync cloud data
@@ -64,11 +76,46 @@ export class GamificationService {
 
     const lastDate = new Date(last);
     const currentDate = new Date(today);
-    const diffTime = Math.abs(currentDate.getTime() - lastDate.getTime());
+    const diffTime = currentDate.getTime() - lastDate.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays > 1) {
-      this.streak.set(0);
+      // Exactly 1 missed day — try to save with a freeze
+      if (diffDays === 2 && this.streakFreezes() > 0) {
+        this.streakFreezes.update(f => f - 1);
+        this.streakFrozenToday.set(true);
+        // Advance lastActiveDate to yesterday so updateStreak() increments normally
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        this.lastActiveDate.set(yesterday.toISOString().split('T')[0]);
+      } else {
+        this.streak.set(0);
+      }
+    }
+  }
+
+  /**
+   * Returns the ISO week number for a given date (or today).
+   * Used to track per-week freeze quota resets.
+   */
+  private getISOWeek(date = new Date()): number {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil(((d.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
+  }
+
+  /**
+   * Refills freezes at the start of a new ISO week.
+   * Free users: 1 freeze/week. Pro users: 7 freezes/week (effectively unlimited).
+   */
+  private refillFreezesIfNewWeek(): void {
+    const thisWeek = this.getISOWeek();
+    const storedWeek = parseInt(localStorage.getItem('freeze_week') ?? '0', 10);
+    if (thisWeek !== storedWeek) {
+      const max = this.purchaseSvc.isProOrTrial() ? 7 : 1;
+      this.streakFreezes.set(max);
+      localStorage.setItem('freeze_week', String(thisWeek));
     }
   }
 
@@ -130,6 +177,12 @@ export class GamificationService {
     }
     // In-app review prompt at 7-day streak milestone
     this.ratingSvc.checkAfterStreak(this.streak());
+
+    // Streak milestone share nudge at 7, 14, 30, 60, 100-day boundaries
+    const SHARE_MILESTONES = [7, 14, 30, 60, 100];
+    if (SHARE_MILESTONES.includes(this.streak())) {
+      this.streakMilestoneJustHit.set(this.streak());
+    }
   }
 
   // --- Persistence ---
@@ -148,6 +201,8 @@ export class GamificationService {
     if (storedDays) {
       try { this.activeDays.set(new Set(JSON.parse(storedDays))); } catch { /* ignore */ }
     }
+    const storedFreezes = localStorage.getItem('streak_freezes');
+    if (storedFreezes) this.streakFreezes.set(parseInt(storedFreezes, 10));
   }
 
   private saveState() {
@@ -158,6 +213,7 @@ export class GamificationService {
       localStorage.setItem('game_last_active', this.lastActiveDate()!);
     }
     localStorage.setItem('game_active_days', JSON.stringify([...this.activeDays()]));
+    localStorage.setItem('streak_freezes', this.streakFreezes().toString());
   }
 
   private async syncWithCloud(uid: string) {
@@ -174,6 +230,9 @@ export class GamificationService {
         const cloudBest = data['bestStreak'] || 0;
         if (cloudBest > this.bestStreak()) this.bestStreak.set(cloudBest);
         this.lastActiveDate.set(data['lastActiveDate'] || null);
+        if (data['streakFreezes'] !== undefined) {
+          this.streakFreezes.set(data['streakFreezes']);
+        }
 
         // Merge activeDays: union of local and cloud sets
         const cloudDays: string[] = data['activeDays'] || [];
@@ -202,6 +261,7 @@ export class GamificationService {
         bestStreak: this.bestStreak(),
         lastActiveDate: this.lastActiveDate(),
         activeDays: [...this.activeDays()],
+        streakFreezes: this.streakFreezes(),
         lastUpdated: new Date()
       }, { merge: true });
 

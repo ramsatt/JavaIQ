@@ -732,6 +732,12 @@ export class TutorialListComponent {
       description: 'Creational, Structural, and Behavioral patterns with real-world Java implementations.',
       faIcon: 'fa-solid fa-puzzle-piece', accentColor: '#ec4899', iconBg: 'rgba(236,72,153,0.12)',
       chapterCount: 21, difficulty: 'intermediate', estimatedTime: '8 hours'
+    },
+    {
+      slug: 'modern-java', title: 'Modern Java 17–21',
+      description: 'Text Blocks, Records, Sealed Classes, Pattern Matching, Switch Expressions, and Virtual Threads.',
+      faIcon: 'fa-solid fa-wand-magic-sparkles', accentColor: '#0d9488', iconBg: 'rgba(13,148,136,0.12)',
+      chapterCount: 5, difficulty: 'intermediate', estimatedTime: '2 hours'
     }
   ];
 

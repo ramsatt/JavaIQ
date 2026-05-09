@@ -60,4 +60,36 @@ export class ShareService {
       `I just completed "${courseName}" on JavaIQ and earned my certificate! 🎓\n#JavaIQ #Java #Learning`
     );
   }
+
+  /**
+   * Share a streak milestone, prioritising WhatsApp.
+   * On native, opens the system share sheet (user picks WhatsApp).
+   * On web, falls back to wa.me deep link then Web Share API.
+   */
+  async shareStreakMilestone(streak: number): Promise<void> {
+    const emoji = streak >= 30 ? '🏆' : streak >= 14 ? '🔥🔥' : '🔥';
+    const text = `${emoji} I'm on a ${streak}-day Java learning streak on JavaIQ! Think you can keep up? Download the app and challenge me. 💪\n#JavaIQ #Java #LearningStreak`;
+    const url = 'https://javaiq.app';
+
+    // 1. Native — opens system share sheet (includes WhatsApp)
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const { Share } = await dynamicImport('@capacitor/share');
+        await Share.share({ title: `${streak}-Day Streak!`, text, url, dialogTitle: 'Share your streak' });
+        return;
+      } catch { /* fall through */ }
+    }
+
+    // 2. WhatsApp web deep link
+    try {
+      const waText = encodeURIComponent(`${text}\n${url}`);
+      window.open(`https://wa.me/?text=${waText}`, '_blank', 'noopener,noreferrer');
+      return;
+    } catch { /* fall through */ }
+
+    // 3. Web Share API fallback
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try { await navigator.share({ title: `${streak}-Day Streak!`, text, url }); } catch { /* cancelled */ }
+    }
+  }
 }

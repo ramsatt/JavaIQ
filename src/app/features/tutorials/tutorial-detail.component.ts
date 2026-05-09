@@ -968,6 +968,20 @@ export class TutorialDetailComponent {
         { slug: 'dp-memento', title: 'Memento', description: 'Capture & restore state without breaking encapsulation — undo/redo, snapshots', iconName: 'save', duration: '30 min' },
         { slug: 'dp-visitor', title: 'Visitor', description: 'Add operations to objects without modifying them — double dispatch, Java 21 pattern matching', iconName: 'eye', duration: '30 min' }
       ]
+    },
+    'modern-java': {
+      badge: 'MODERN JAVA',
+      title: 'Modern Java 17–21',
+      subtitle: 'Master the features that dominate interview questions: Text Blocks, Records, Pattern Matching, Switch Expressions, and Virtual Threads.',
+      estimatedTime: '2 hours',
+      themeColor: '#0d9488',
+      topics: [
+        { slug: 'mj-text-blocks',      title: 'Text Blocks',              description: 'Multi-line string literals without escaping — JSON, HTML, SQL snippets in Java code (Java 15+)',         iconName: 'file-text', duration: '20 min' },
+        { slug: 'mj-records-sealed',   title: 'Records & Sealed Classes', description: 'Immutable data carriers (Records) and controlled inheritance hierarchies (Sealed Classes) — Java 16/17', iconName: 'box',       duration: '25 min' },
+        { slug: 'mj-pattern-matching', title: 'Pattern Matching',         description: 'instanceof pattern, switch patterns, deconstruction patterns — eliminate casting boilerplate (Java 16+)',  iconName: 'zap',       duration: '30 min' },
+        { slug: 'mj-switch-expr',      title: 'Switch Expressions',       description: 'Arrow syntax, yield, exhaustive switches, and guarded patterns — no more fall-through bugs (Java 14+)',    iconName: 'git-branch', duration: '25 min' },
+        { slug: 'mj-virtual-threads',  title: 'Virtual Threads',          description: 'Project Loom: million-scale concurrency, structured concurrency, pinning gotchas — Java 21 GA',            iconName: 'cloud',     duration: '25 min' }
+      ]
     }
   };
 
