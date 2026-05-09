@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonHeader } from '@ionic/angular/standalone';
 import { AppHeaderComponent } from '../../shared/app-header.component';
@@ -27,32 +27,38 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
           <!-- Premium Search Bar -->
           <div class="search-wrapper">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input class="search-input" placeholder="Search problems (e.g. Two Sum)..." />
+            <input class="search-input" placeholder="Search categories (e.g. Arrays, Trees)..."
+                   [value]="searchQuery()"
+                   (input)="onSearch($event)" />
+            @if (searchQuery()) {
+              <button class="search-clear" (click)="clearSearch()" aria-label="Clear search">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            }
           </div>
         </div>
       </div>
 
       <div class="page-body">
-        <!-- Quick Category Filters -->
-        <div class="filter-row">
-          <button class="filter-chip filter-active">All</button>
-          <button class="filter-chip">Easy</button>
-          <button class="filter-chip">Medium</button>
-          <button class="filter-chip">Hard</button>
-        </div>
-
         <!-- Section Header -->
         <div class="section-head">
           <div class="section-head-left">
             <i class="fa-solid fa-folder-open section-icon"></i>
             <span class="section-title">Categories</span>
           </div>
-          <span class="section-count">{{ categories.length }} topics</span>
+          <span class="section-count">{{ filteredCategories().length }} topics</span>
         </div>
+
+        @if (filteredCategories().length === 0) {
+          <div class="cq-no-results">
+            <i class="fa-solid fa-face-frown" style="font-size:1.6rem;color:#64748b;margin-bottom:8px"></i>
+            <p>No categories match "{{ searchQuery() }}"</p>
+          </div>
+        }
 
         <!-- Course Cards / Lists -->
         <div class="course-list">
-          @for (cat of categories; track cat.key) {
+          @for (cat of filteredCategories(); track cat.key) {
             <a [routerLink]="['/coding-questions', cat.key]" class="course-card" [style.--accent]="cat.accentColor">
               <!-- Accent top border -->
               <div class="course-accent-top"></div>
@@ -214,6 +220,28 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
       color: #64748b;
       font-weight: 400;
     }
+    .search-clear {
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 4px 6px;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    .search-clear:hover { color: #f87171; }
+
+    /* No results */
+    .cq-no-results {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 24px;
+      color: #475569;
+      font-size: 0.82rem;
+    }
+    .cq-no-results p { margin: 0; }
 
     /* ── Page Body ── */
     .page-body {
@@ -238,43 +266,6 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
       .course-list { grid-template-columns: repeat(3, 1fr); }
     }
 
-    /* ── Filter Chips ── */
-    .filter-row {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      margin-bottom: 28px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .filter-row::-webkit-scrollbar { display: none; }
-    .filter-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      color: #94a3b8;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 600;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .filter-chip:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.15);
-      color: #e2e8f0;
-    }
-    .filter-active {
-      background: rgba(16,185,129,0.15) !important;
-      border-color: rgba(16,185,129,0.3) !important;
-      color: #34d399 !important;
-    }
 
     /* ── Section Head ── */
     .section-head {
@@ -496,33 +487,31 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
     :host-context(html:not(.dark)) .section-icon { color: #1B4332; }
     :host-context(html:not(.dark)) .footer-text { color: #8A9B8F; }
 
-    /* Filter chips */
-    :host-context(html:not(.dark)) .filter-chip {
-      background: #ffffff !important;
-      border-color: #D6DDD2 !important;
-      color: #52665A !important;
-    }
-    :host-context(html:not(.dark)) .filter-chip:hover {
-      background: #F5F7F2 !important;
-      border-color: #B7CCBB !important;
-      color: #1B4332 !important;
-    }
-    :host-context(html:not(.dark)) .filter-active {
-      background: #1B4332 !important;
-      color: white !important;
-      border-color: #1B4332 !important;
-    }
   `
 })
 export class CqListComponent {
-  categories = [
-    { key: 'arrays', title: 'Arrays & Strings', faIcon: 'fa-solid fa-chart-bar', accentColor: '#3b82f6', iconBg: 'rgba(59,130,246,0.12)', count: 15 },
-    { key: 'linked-lists', title: 'Linked Lists', faIcon: 'fa-solid fa-link', accentColor: '#06b6d4', iconBg: 'rgba(6,182,212,0.12)', count: 10 },
-    { key: 'trees', title: 'Trees & Graphs', faIcon: 'fa-solid fa-network-wired', accentColor: '#10b981', iconBg: 'rgba(16,185,129,0.12)', count: 12 },
-    { key: 'dp', title: 'Dynamic Programming', faIcon: 'fa-solid fa-calculator', accentColor: '#0891b2', iconBg: 'rgba(8,145,178,0.12)', count: 15 },
-    { key: 'sorting', title: 'Sorting & Searching', faIcon: 'fa-solid fa-sort-amount-down', accentColor: '#f59e0b', iconBg: 'rgba(245,158,11,0.12)', count: 8 },
-    { key: 'stacks', title: 'Stacks & Queues', faIcon: 'fa-solid fa-layer-group', accentColor: '#f97316', iconBg: 'rgba(249,115,22,0.12)', count: 8 },
-    { key: 'recursion', title: 'Recursion & Backtracking', faIcon: 'fa-solid fa-rotate', accentColor: '#ec4899', iconBg: 'rgba(236,72,153,0.12)', count: 10 },
-    { key: 'hashing', title: 'Hashing', faIcon: 'fa-solid fa-hashtag', accentColor: '#0369a1', iconBg: 'rgba(3,105,161,0.12)', count: 7 }
+  private allCategories = [
+    { key: 'arrays',       title: 'Arrays & Strings',           faIcon: 'fa-solid fa-chart-bar',        accentColor: '#3b82f6', iconBg: 'rgba(59,130,246,0.12)',  count: 15 },
+    { key: 'linked-lists', title: 'Linked Lists',                faIcon: 'fa-solid fa-link',              accentColor: '#06b6d4', iconBg: 'rgba(6,182,212,0.12)',   count: 10 },
+    { key: 'trees',        title: 'Trees & Graphs',              faIcon: 'fa-solid fa-network-wired',     accentColor: '#10b981', iconBg: 'rgba(16,185,129,0.12)',  count: 12 },
+    { key: 'dp',           title: 'Dynamic Programming',         faIcon: 'fa-solid fa-calculator',        accentColor: '#0891b2', iconBg: 'rgba(8,145,178,0.12)',   count: 15 },
+    { key: 'sorting',      title: 'Sorting & Searching',         faIcon: 'fa-solid fa-sort-amount-down',  accentColor: '#f59e0b', iconBg: 'rgba(245,158,11,0.12)',  count: 8  },
+    { key: 'stacks',       title: 'Stacks & Queues',             faIcon: 'fa-solid fa-layer-group',       accentColor: '#f97316', iconBg: 'rgba(249,115,22,0.12)',  count: 8  },
+    { key: 'recursion',    title: 'Recursion & Backtracking',    faIcon: 'fa-solid fa-rotate',            accentColor: '#ec4899', iconBg: 'rgba(236,72,153,0.12)', count: 10 },
+    { key: 'hashing',      title: 'Hashing',                     faIcon: 'fa-solid fa-hashtag',           accentColor: '#0369a1', iconBg: 'rgba(3,105,161,0.12)',   count: 7  }
   ];
+
+  searchQuery = signal('');
+
+  filteredCategories = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+    if (!q) return this.allCategories;
+    return this.allCategories.filter(c => c.title.toLowerCase().includes(q) || c.key.includes(q));
+  });
+
+  onSearch(e: Event): void {
+    this.searchQuery.set((e.target as HTMLInputElement).value);
+  }
+
+  clearSearch(): void { this.searchQuery.set(''); }
 }

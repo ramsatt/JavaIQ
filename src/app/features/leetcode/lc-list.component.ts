@@ -7,6 +7,8 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
 import { LeetCodeProblem, LEETCODE_PROBLEMS } from '../../data/leetcode-problems';
 import { DataService } from '../../data.service';
 
+type DiffFilter = 'All' | 'Easy' | 'Medium' | 'Hard';
+
 @Component({
   selector: 'app-lc-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,7 +33,22 @@ import { DataService } from '../../data.service';
           <!-- Premium Search Bar -->
           <div class="search-wrapper">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input class="search-input" placeholder="Search by number or title..." />
+            <input class="search-input" placeholder="Search by number or title..."
+                   [value]="searchQuery()"
+                   (input)="onSearch($event)" />
+            @if (searchQuery()) {
+              <button class="search-clear" (click)="clearSearch()" aria-label="Clear search">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            }
+          </div>
+
+          <!-- Difficulty filter chips -->
+          <div class="diff-chips">
+            @for (d of diffOptions; track d) {
+              <button class="diff-chip" [class.diff-chip-active]="diffFilter() === d"
+                      (click)="setDiff(d)">{{ d }}</button>
+            }
           </div>
         </div>
       </div>
@@ -72,12 +89,20 @@ import { DataService } from '../../data.service';
                 <i class="fa-solid fa-list-ul section-icon"></i>
                 <span class="section-title">Problem List</span>
               </div>
-              <span class="section-count">{{ problems().length }} problems</span>
+              <span class="section-count">{{ filteredProblems().length }} problems</span>
             </div>
+
+            <!-- No-results hint -->
+            @if (filteredProblems().length === 0) {
+              <div class="lc-no-results">
+                <i class="fa-solid fa-face-frown" style="font-size:1.6rem;color:#334155;margin-bottom:8px"></i>
+                <p>No problems match "{{ searchQuery() }}"</p>
+              </div>
+            }
 
             <!-- Problems List -->
             <div class="problem-list">
-              @for (p of problems(); track p.number) {
+              @for (p of filteredProblems(); track p.number) {
                 <button (click)="openLc(p)" class="problem-card" [class.completed]="dataService.leetcodeCompletedIds().has(p.number)">
                   <div class="problem-num">
                     @if (dataService.leetcodeCompletedIds().has(p.number)) {
@@ -235,6 +260,48 @@ import { DataService } from '../../data.service';
       color: #64748b;
       font-weight: 400;
     }
+    .search-clear {
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 4px 6px;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    .search-clear:hover { color: #f87171; }
+
+    /* Difficulty filter chips */
+    .diff-chips {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .diff-chip {
+      padding: 5px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .diff-chip:hover { border-color: rgba(255,255,255,0.25); color: #e2e8f0; }
+    .diff-chip-active { background: rgba(16,185,129,0.15); border-color: #10b981; color: #10b981; }
+
+    /* No results */
+    .lc-no-results {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 20px;
+      color: #475569;
+      font-size: 0.82rem;
+    }
+    .lc-no-results p { margin: 0; }
 
     /* ── Page Body ── */
     .page-body {
@@ -528,23 +595,46 @@ export class LcListComponent {
   private router = inject(Router);
   private adGate = inject(AdGateService);
 
-  problems = signal<LeetCodeProblem[]>(LEETCODE_PROBLEMS);
+  readonly diffOptions: DiffFilter[] = ['All', 'Easy', 'Medium', 'Hard'];
 
-  // Computeds for totals
-  easyTotalCount = computed(() => this.problems().filter(p => p.difficulty === 'Easy').length);
-  mediumTotalCount = computed(() => this.problems().filter(p => p.difficulty === 'Medium').length);
-  hardTotalCount = computed(() => this.problems().filter(p => p.difficulty === 'Hard').length);
+  searchQuery  = signal('');
+  diffFilter   = signal<DiffFilter>('All');
 
-  // Computeds for completed counts
+  private allProblems = LEETCODE_PROBLEMS;
+
+  filteredProblems = computed(() => {
+    const q    = this.searchQuery().toLowerCase().trim();
+    const diff = this.diffFilter();
+    return this.allProblems.filter(p => {
+      const matchesDiff  = diff === 'All' || p.difficulty === diff;
+      const matchesQuery = !q
+        || String(p.number).includes(q)
+        || p.title.toLowerCase().includes(q)
+        || p.category?.toLowerCase().includes(q);
+      return matchesDiff && matchesQuery;
+    });
+  });
+
+  // Progress stats always against the full list
+  easyTotalCount = computed(() => this.allProblems.filter(p => p.difficulty === 'Easy').length);
+  mediumTotalCount = computed(() => this.allProblems.filter(p => p.difficulty === 'Medium').length);
+  hardTotalCount = computed(() => this.allProblems.filter(p => p.difficulty === 'Hard').length);
+
   easyCompletedCount = computed(() =>
-    this.problems().filter(p => p.difficulty === 'Easy' && this.dataService.leetcodeCompletedIds().has(p.number)).length
+    this.allProblems.filter(p => p.difficulty === 'Easy' && this.dataService.leetcodeCompletedIds().has(p.number)).length
   );
   mediumCompletedCount = computed(() =>
-    this.problems().filter(p => p.difficulty === 'Medium' && this.dataService.leetcodeCompletedIds().has(p.number)).length
+    this.allProblems.filter(p => p.difficulty === 'Medium' && this.dataService.leetcodeCompletedIds().has(p.number)).length
   );
   hardCompletedCount = computed(() =>
-    this.problems().filter(p => p.difficulty === 'Hard' && this.dataService.leetcodeCompletedIds().has(p.number)).length
+    this.allProblems.filter(p => p.difficulty === 'Hard' && this.dataService.leetcodeCompletedIds().has(p.number)).length
   );
+
+  onSearch(e: Event): void {
+    this.searchQuery.set((e.target as HTMLInputElement).value);
+  }
+  clearSearch(): void { this.searchQuery.set(''); }
+  setDiff(d: DiffFilter): void { this.diffFilter.set(d); }
 
   isUnlocked(id: number): boolean {
     this.adGate.unlockedItems();
