@@ -8,16 +8,11 @@ import { provideAnalytics, getAnalytics, ScreenTrackingService } from '@angular/
 import { provideFunctions, getFunctions } from '@angular/fire/functions';
 import { provideIonicAngular } from '@ionic/angular/standalone';
 import { provideHttpClient } from '@angular/common/http';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HttpClient } from '@angular/common/http';
+import { provideTranslateService, TranslateModule } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
-
-export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
-  return new TranslateHttpLoader(http, '/i18n/', '.json');
-}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,15 +28,8 @@ export const appConfig: ApplicationConfig = {
     provideFunctions(() => getFunctions()),
     ScreenTrackingService,
     provideHttpClient(),
-    importProvidersFrom(
-      TranslateModule.forRoot({
-        defaultLanguage: 'en',
-        loader: {
-          provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
-          deps: [HttpClient],
-        },
-      })
-    ),
+    importProvidersFrom(TranslateModule.forRoot()),
+    provideTranslateService({ defaultLanguage: 'en' }),
+    ...provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
   ]
 };
