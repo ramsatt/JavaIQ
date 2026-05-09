@@ -154,6 +154,11 @@ const TOPIC_MAP: Record<string, Record<string, () => Promise<Type<unknown>>>> = 
     'dp-facade': () => import('./topics/dp-facade.component').then(m => m.DpFacadeComponent),
     'dp-composite': () => import('./topics/dp-composite.component').then(m => m.DpCompositeComponent),
     'dp-mediator': () => import('./topics/dp-mediator.component').then(m => m.DpMediatorComponent),
+    'dp-prototype': () => import('./topics/dp-prototype.component').then(m => m.DpPrototypeComponent),
+    'dp-bridge': () => import('./topics/dp-bridge.component').then(m => m.DpBridgeComponent),
+    'dp-iterator': () => import('./topics/dp-iterator.component').then(m => m.DpIteratorComponent),
+    'dp-memento': () => import('./topics/dp-memento.component').then(m => m.DpMementoComponent),
+    'dp-visitor': () => import('./topics/dp-visitor.component').then(m => m.DpVisitorComponent),
   }
 };
 

@@ -930,7 +930,12 @@ export class TutorialDetailComponent {
         { slug: 'dp-flyweight', title: 'Flyweight', description: 'Share fine-grained objects to cut memory — intrinsic vs extrinsic state, object pools', iconName: 'zap', duration: '30 min' },
         { slug: 'dp-facade', title: 'Facade', description: 'Unified interface over a complex subsystem — JdbcTemplate, SLF4J examples', iconName: 'layers', duration: '25 min' },
         { slug: 'dp-composite', title: 'Composite', description: 'Treat leaves and containers uniformly — file system, UI trees, org charts', iconName: 'git-branch', duration: '30 min' },
-        { slug: 'dp-mediator', title: 'Mediator', description: 'Central coordinator to decouple colleagues — chat room, Spring event publisher', iconName: 'share-2', duration: '30 min' }
+        { slug: 'dp-mediator', title: 'Mediator', description: 'Central coordinator to decouple colleagues — chat room, Spring event publisher', iconName: 'share-2', duration: '30 min' },
+        { slug: 'dp-prototype', title: 'Prototype', description: 'Clone objects instead of rebuilding — shallow vs deep copy, copy constructor, registry', iconName: 'copy', duration: '30 min' },
+        { slug: 'dp-bridge', title: 'Bridge', description: 'Decouple abstraction from implementation — avoid class explosion, JDBC example', iconName: 'link', duration: '30 min' },
+        { slug: 'dp-iterator', title: 'Iterator', description: 'Sequential access without exposing structure — custom iterators, Iterable, for-each internals', iconName: 'list', duration: '25 min' },
+        { slug: 'dp-memento', title: 'Memento', description: 'Capture & restore state without breaking encapsulation — undo/redo, snapshots', iconName: 'save', duration: '30 min' },
+        { slug: 'dp-visitor', title: 'Visitor', description: 'Add operations to objects without modifying them — double dispatch, Java 21 pattern matching', iconName: 'eye', duration: '30 min' }
       ]
     }
   };
