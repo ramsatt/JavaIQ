@@ -10,18 +10,22 @@ import { MICROSERVICES_QUESTIONS } from './data/microservices';
 import { MULTITHREADING_QUESTIONS } from './data/multithreading';
 import { REACTIVE_PROGRAMMING_QUESTIONS } from './data/reactive-programming';
 import { CODING_QUESTIONS } from './data/coding-questions';
+import { SPRING_FRAMEWORK_QUESTIONS } from './data/spring-framework';
+import { DESIGN_PATTERNS_QUESTIONS } from './data/design-patterns';
 
 export type { Question } from './data/question.model';
 
 const QUESTION_MAP: Record<string, Question[]> = {
   'Core Java': CORE_JAVA_QUESTIONS,
   'Spring Boot': SPRING_BOOT_QUESTIONS,
+  'Spring Framework': SPRING_FRAMEWORK_QUESTIONS,
   'Hibernate': HIBERNATE_QUESTIONS,
   'Spring Reactive': SPRING_REACTIVE_QUESTIONS,
   'Microservices': MICROSERVICES_QUESTIONS,
   'Multithreading': MULTITHREADING_QUESTIONS,
   'Reactive Programming': REACTIVE_PROGRAMMING_QUESTIONS,
-  'Coding Questions': CODING_QUESTIONS
+  'Coding Questions': CODING_QUESTIONS,
+  'Design Patterns': DESIGN_PATTERNS_QUESTIONS
 };
 
 @Injectable({
@@ -252,12 +256,14 @@ export class DataService {
     const titleMap: Record<string, string> = {
       'core-java': 'Core Java',
       'spring-boot': 'Spring Boot',
+      'spring-framework': 'Spring Framework',
       'hibernate': 'Hibernate',
       'microservices': 'Microservices',
       'multithreading': 'Multithreading',
       'spring-reactive': 'Spring Reactive',
       'reactive-prog': 'Reactive Programming',
-      'coding-patterns': 'Coding Questions'
+      'coding-patterns': 'Coding Questions',
+      'design-patterns': 'Design Patterns'
     };
     return titleMap[slug] || slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }

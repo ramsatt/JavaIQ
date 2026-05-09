@@ -1,6 +1,6 @@
 export interface Question {
   id: number;
-  category: 'Core Java' | 'Spring Boot' | 'Hibernate' | 'Spring Reactive' | 'Microservices' | 'Multithreading' | 'Reactive Programming' | 'Coding Questions';
+  category: 'Core Java' | 'Spring Boot' | 'Spring Framework' | 'Hibernate' | 'Spring Reactive' | 'Microservices' | 'Multithreading' | 'Reactive Programming' | 'Coding Questions' | 'Design Patterns';
   question: string;
   answer: string;
   asked_metadata: string;

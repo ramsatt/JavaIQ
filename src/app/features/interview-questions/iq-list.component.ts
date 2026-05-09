@@ -505,6 +505,16 @@ export class IqListComponent {
       iconBg: 'rgba(16,185,129,0.12)'
     },
     {
+      key: 'spring-framework', title: 'Spring Framework', categoryName: 'Spring Framework', questionCount: 30,
+      faIcon: 'fa-solid fa-seedling', accentColor: '#22c55e',
+      iconBg: 'rgba(34,197,94,0.12)'
+    },
+    {
+      key: 'design-patterns', title: 'Design Patterns', categoryName: 'Design Patterns', questionCount: 25,
+      faIcon: 'fa-solid fa-puzzle-piece', accentColor: '#ec4899',
+      iconBg: 'rgba(236,72,153,0.12)'
+    },
+    {
       key: 'microservices', title: 'Microservices', categoryName: 'Microservices', questionCount: 35,
       faIcon: 'fa-solid fa-cubes', accentColor: '#06b6d4',
       iconBg: 'rgba(6,182,212,0.12)'
