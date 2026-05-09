@@ -3,11 +3,17 @@ import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { AuthService } from '../auth.service';
 import { Question } from '../data/question.model';
 import { PurchaseService } from './purchase.service';
+import { SpacedRepetitionService, SRCard, today } from '../features/review/spaced-repetition.service';
 
-interface WrongEntry {
-  id: number;
+export interface WrongEntry {
+  id:       number;
   missedAt: string;   // ISO date
   missCount: number;
+  // SM-2 spaced-repetition fields (defaulted for pre-SR entries on load)
+  nextReviewDate: string;
+  interval:       number;
+  easeFactor:     number;
+  repetitions:    number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -16,6 +22,7 @@ export class WrongAnswerService {
   private firestore = inject(Firestore);
   private authService = inject(AuthService);
   private purchaseSvc = inject(PurchaseService);
+  private srSvc = inject(SpacedRepetitionService);
 
   /** Map of questionId → WrongEntry for questions answered incorrectly */
   private entries = signal<Map<number, WrongEntry>>(this.loadFromStorage());
@@ -53,19 +60,51 @@ export class WrongAnswerService {
   recordMiss(questionId: number): void {
     const map = new Map(this.entries());
     const existing = map.get(questionId);
+    const srDefaults = SpacedRepetitionService.defaults();
     if (existing) {
       map.set(questionId, {
         ...existing,
         missedAt: new Date().toISOString(),
-        missCount: existing.missCount + 1
+        missCount: existing.missCount + 1,
+        // Reset SR interval to review soon again
+        nextReviewDate: today(),
+        interval:       1,
       });
     } else {
       map.set(questionId, {
         id: questionId,
         missedAt: new Date().toISOString(),
-        missCount: 1
+        missCount: 1,
+        ...srDefaults,
       });
     }
+    this.entries.set(map);
+    this.persist();
+    this.saveToFirestore();
+  }
+
+  /**
+   * Apply an SM-2 quality grade to a card after a review session.
+   * quality: 0 = Still Learning, 2 = Hard, 5 = Got It
+   */
+  applyReview(questionId: number, quality: 0 | 2 | 5): void {
+    const map = new Map(this.entries());
+    const entry = map.get(questionId);
+    if (!entry) return;
+
+    if (quality === 5) {
+      // Perfect recall — if interval pushes past 21 days, graduate out of queue
+      const result = this.srSvc.review(entry, quality);
+      if (result.interval >= 21) {
+        map.delete(questionId);
+      } else {
+        map.set(questionId, { ...entry, ...result });
+      }
+    } else {
+      const result = this.srSvc.review(entry, quality);
+      map.set(questionId, { ...entry, ...result });
+    }
+
     this.entries.set(map);
     this.persist();
     this.saveToFirestore();
@@ -86,10 +125,29 @@ export class WrongAnswerService {
    * Filter a question pool to only those in the review queue.
    * Useful for surfacing a "Review Mode" challenge.
    */
+  /**
+   * Filter a question pool to only those due for review today (SR-aware).
+   * Lite users capped at 20; Pro/trial users see all due cards.
+   */
   filterReviewQuestions(pool: Question[]): Question[] {
-    const ids = new Set(this.reviewIds());
+    const t = today();
+    const dueEntries = [...this.entries().values()]
+      .filter(e => e.nextReviewDate <= t)
+      .sort((a, b) => a.nextReviewDate.localeCompare(b.nextReviewDate));
+
+    const limited = this.purchaseSvc.isProOrTrial()
+      ? dueEntries
+      : dueEntries.slice(0, 20);
+
+    const ids = new Set(limited.map(e => e.id));
     return pool.filter(q => ids.has(q.id));
   }
+
+  /** Count of cards due for review today. */
+  dueTodayCount = computed((): number => {
+    const t = today();
+    return [...this.entries().values()].filter(e => e.nextReviewDate <= t).length;
+  });
 
   /**
    * Is this question in the review queue?
@@ -113,8 +171,13 @@ export class WrongAnswerService {
     try {
       const raw = localStorage.getItem(this.LS_KEY);
       if (!raw) return new Map();
-      const arr: WrongEntry[] = JSON.parse(raw);
-      return new Map(arr.map(e => [e.id, e]));
+      const arr: Partial<WrongEntry>[] = JSON.parse(raw);
+      // Migrate: fill SR defaults for entries that predate spaced repetition
+      const migrated: WrongEntry[] = arr.map(e => ({
+        ...SpacedRepetitionService.defaults(),
+        ...e,
+      } as WrongEntry));
+      return new Map(migrated.map(e => [e.id, e]));
     } catch {
       return new Map();
     }
@@ -129,7 +192,12 @@ export class WrongAnswerService {
     try {
       const snap = await getDoc(doc(this.firestore, `wrong_answers/${uid}`));
       if (!snap.exists()) return;
-      const cloudEntries: WrongEntry[] = snap.data()['entries'] || [];
+      const raw: Partial<WrongEntry>[] = snap.data()['entries'] || [];
+      // Migrate: fill SR defaults for entries that predate spaced repetition
+      const cloudEntries: WrongEntry[] = raw.map(e => ({
+        ...SpacedRepetitionService.defaults(),
+        ...e,
+      } as WrongEntry));
       // Union merge: take max missCount between local and cloud
       const merged = new Map(this.entries());
       cloudEntries.forEach(ce => {

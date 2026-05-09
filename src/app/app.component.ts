@@ -30,6 +30,7 @@ import { AuthService } from './auth.service';
 import { GamificationService } from './gamification.service';
 import { environment } from '../environments/environment';
 import { OfflineCacheService } from './core/offline-cache.service';
+import { ReferralService } from './core/referral.service';
 import { DataService } from './data.service';
 import { Capacitor } from '@capacitor/core';
 
@@ -837,6 +838,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private menuCtrl = inject(MenuController);
   private notifSvc = inject(NotificationService);
   private offlineCache = inject(OfflineCacheService);
+  private referralSvc  = inject(ReferralService);
   private dataSvc = inject(DataService);
 
   private navUrl = toSignal(
@@ -942,7 +944,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
           if (path.startsWith('/ref/')) {
             // Referral deep link — store code for post-auth processing
             const code = path.split('/ref/')[1];
-            if (code) localStorage.setItem('pending_referral_code', code);
+            if (code) this.referralSvc.storeReferralCode(code);
           } else {
             // Standard deep link — route to path
             this.router.navigateByUrl(path);

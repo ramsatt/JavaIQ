@@ -9,3 +9,4 @@ export { sendStreakReminder }  from './notifications/streak-reminder';
 export { sendReEngagement }   from './notifications/re-engagement';
 export { onLevelUp }          from './notifications/level-up';
 export { sendWeeklySummary }  from './notifications/weekly-summary';
+export { resetWeeklyXp }      from './notifications/reset-weekly-xp';

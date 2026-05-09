@@ -7,6 +7,8 @@ import { AuthService } from '../../auth.service';
 import { AlertService } from '../../alert.service';
 import { NotificationService } from '../../services/notification.service';
 import { PurchaseService } from '../../services/purchase.service';
+import { ReferralService } from '../../core/referral.service';
+import { ShareService } from '../../services/share.service';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { environment } from '../../../environments/environment';
 
@@ -260,6 +262,30 @@ const REMINDER_TIMES = [
               </div>
             </div>
 
+            <!-- Refer a Friend -->
+            @if (auth.user()) {
+              <div class="set-section">
+                <span class="set-section-label">Refer a Friend</span>
+                <div class="set-card">
+                  <div class="referral-wrap">
+                    <p class="referral-desc">Share JavaIQ with friends and earn bonus XP when they join!</p>
+                    @if (referralSvc.referralCode()) {
+                      <div class="referral-code-row">
+                        <span class="referral-code">{{ referralSvc.referralCode() }}</span>
+                        <button class="referral-copy-btn" (click)="copyReferralCode()">
+                          <i class="fa-solid fa-copy"></i>
+                        </button>
+                      </div>
+                    }
+                    <button class="referral-share-btn" (click)="shareReferral()">
+                      <i class="fa-solid fa-share-nodes"></i>
+                      Share Invite Link
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+
             <!-- Sign Out -->
             @if (auth.user()) {
               <div class="set-section">
@@ -479,6 +505,31 @@ const REMINDER_TIMES = [
       .pro-badge-active { color: #fbbf24; }
       .set-logout-btn { color: #f87171; }
     }
+
+    /* ── Referral ── */
+    .referral-wrap { display: flex; flex-direction: column; gap: 12px; }
+    .referral-desc { font-size: 0.78rem; color: var(--ion-color-medium); margin: 0; line-height: 1.5; }
+    .referral-code-row {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(16,185,129,0.08); border: 1.5px solid rgba(16,185,129,0.25);
+      border-radius: 10px; padding: 8px 12px;
+    }
+    .referral-code {
+      flex: 1; font-family: monospace; font-size: 1rem; font-weight: 800;
+      letter-spacing: 0.12em; color: #10b981;
+    }
+    .referral-copy-btn {
+      background: none; border: none; cursor: pointer;
+      color: #10b981; font-size: 1rem; padding: 2px 6px;
+    }
+    .referral-share-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px 18px; border-radius: 11px; border: none; cursor: pointer;
+      font-size: 0.85rem; font-weight: 700;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff; transition: opacity 0.2s;
+    }
+    .referral-share-btn:hover { opacity: 0.88; }
   `
 })
 export class SettingsComponent implements OnInit {
@@ -489,6 +540,8 @@ export class SettingsComponent implements OnInit {
   private router       = inject(Router);
   private firestore    = inject(Firestore);
   purchaseService      = inject(PurchaseService);
+  referralSvc          = inject(ReferralService);
+  private shareSvc     = inject(ShareService);
 
   readonly goals         = GOALS;
   readonly reminderTimes = REMINDER_TIMES;
@@ -541,6 +594,23 @@ export class SettingsComponent implements OnInit {
   async restorePurchases() {
     const uid = this.auth.user()?.uid;
     if (uid) await this.purchaseService.restorePurchases(uid);
+  }
+
+  shareReferral() {
+    const code = this.referralSvc.referralCode();
+    if (!code) return;
+    const url  = `https://javaiq.app/ref/${code}`;
+    this.shareSvc.shareText(
+      'Join me on JavaIQ!',
+      `I've been using JavaIQ to master Java interview skills. Join with my referral link and we both get bonus XP! 🚀`,
+      url
+    );
+  }
+
+  copyReferralCode() {
+    const code = this.referralSvc.referralCode();
+    if (!code) return;
+    navigator.clipboard.writeText(`https://javaiq.app/ref/${code}`).catch(() => {});
   }
 
   async confirmLogout() {

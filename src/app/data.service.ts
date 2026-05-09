@@ -297,26 +297,32 @@ export class DataService {
     const leaderRef = collection(this.firestore, 'leaderboard');
 
     let q;
-    if (period === 'alltime') {
-      q = query(leaderRef, orderBy('points', 'desc'), limit(limitCount));
-    } else {
+    if (period === 'weekly') {
+      // Weekly tab: rank by weeklyXp field (reset every Sunday by Cloud Function)
+      q = query(leaderRef, orderBy('weeklyXp', 'desc'), limit(limitCount));
+    } else if (period === 'monthly') {
       const now = new Date();
-      let cutoff: Date;
-      if (period === 'weekly') {
-        cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
-      } else {
-        cutoff = new Date(now.getFullYear(), now.getMonth(), 1);
-      }
+      const cutoff = new Date(now.getFullYear(), now.getMonth(), 1);
       q = query(
         leaderRef,
         where('lastUpdated', '>=', Timestamp.fromDate(cutoff)),
         orderBy('lastUpdated', 'desc'),
         limit(limitCount)
       );
+    } else {
+      q = query(leaderRef, orderBy('points', 'desc'), limit(limitCount));
     }
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(d => ({ id: d.id, ...d.data() } as { id: string; displayName: string; photoURL?: string | null; points: number; isPro?: boolean }));
+    return querySnapshot.docs.map(d => {
+      const data = d.data() as { displayName: string; photoURL?: string | null; points: number; weeklyXp?: number; isPro?: boolean };
+      return {
+        id: d.id,
+        ...data,
+        // For weekly tab, surface weeklyXp as the display "points"
+        points: period === 'weekly' ? (data.weeklyXp ?? 0) : data.points,
+      };
+    });
   }
 
   // Legacy support for older components (can be removed once all components are updated)

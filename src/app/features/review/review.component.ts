@@ -88,17 +88,21 @@ type Phase = 'empty' | 'session' | 'complete';
               </button>
             } @else {
               <div class="rv-verdict-row">
-                <button class="rv-verdict rv-still-learning" (click)="stillLearning()">
+                <button class="rv-verdict rv-still-learning" (click)="grade(0)">
                   <i class="bi bi-arrow-repeat"></i>
                   Still Learning
                 </button>
-                <button class="rv-verdict rv-got-it" (click)="gotIt()">
+                <button class="rv-verdict rv-hard" (click)="grade(2)">
+                  <i class="bi bi-exclamation-circle"></i>
+                  Hard
+                </button>
+                <button class="rv-verdict rv-got-it" (click)="grade(5)">
                   <i class="bi bi-check-lg"></i>
                   Got It!
                 </button>
               </div>
               <p class="rv-hint">
-                "Got It" removes this from your review queue (+5 XP)
+                "Got It!" schedules next review · "Still Learning" requeues for tomorrow
               </p>
             }
 
@@ -322,6 +326,12 @@ type Phase = 'empty' | 'session' | 'complete';
       cursor: pointer;
       transition: all 0.2s;
     }
+    .rv-hard {
+      border-color: rgba(245,158,11,0.35);
+      color: #f59e0b;
+      flex: 1;
+    }
+    .rv-hard:hover { background: rgba(245,158,11,0.12); }
     .rv-still-learning {
       background: rgba(100,116,139,0.12);
       color: #94a3b8;
@@ -387,18 +397,28 @@ export class ReviewComponent {
 
   reveal() { this.answerVisible.set(true); }
 
-  gotIt() {
+  /**
+   * Grade the current card.
+   * 0 = Still Learning (requeue for tomorrow)
+   * 2 = Hard (reschedule with reduced ease)
+   * 5 = Got It! (schedule with SM-2 interval, graduate at ≥21 days)
+   */
+  grade(quality: 0 | 2 | 5) {
     const q = this.currentQ();
     if (!q) return;
-    this.wrongSvc.clearMiss(q.id);
-    this.gameSvc.addXp(5);
-    this.clearedThisSession.update(n => n + 1);
-    this.earnedXp.update(n => n + 5);
-    this._advance();
-  }
 
-  stillLearning() {
-    // Keep in queue — just move to next card
+    this.wrongSvc.applyReview(q.id, quality);
+
+    if (quality === 5) {
+      this.gameSvc.addXp(5);
+      this.clearedThisSession.update(n => n + 1);
+      this.earnedXp.update(n => n + 5);
+    } else if (quality === 2) {
+      // Hard — partial XP for effort
+      this.gameSvc.addXp(2);
+      this.earnedXp.update(n => n + 2);
+    }
+
     this._advance();
   }
 

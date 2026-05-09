@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
-import { Firestore, doc, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, setDoc, updateDoc, increment } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import { NotificationService } from './services/notification.service';
 import { RatingService } from './services/rating.service';
@@ -74,9 +74,13 @@ export class GamificationService {
 
   // --- Core Logic ---
 
+  /** Accumulates XP delta between cloud saves so weeklyXp can be incremented correctly. */
+  private _pendingXpDelta = 0;
+
   addXp(amount: number) {
     // Pro users earn 1.5× XP
     const earned = this.purchaseSvc.isProOrTrial() ? Math.round(amount * 1.5) : amount;
+    this._pendingXpDelta += earned;
     const prevLevel = this.level();
     this.xp.update(val => val + earned);
     // Level 10 soft paywall — trigger once when crossing this milestone
@@ -202,21 +206,24 @@ export class GamificationService {
       }, { merge: true });
 
       // Also update global leaderboard
-      this.updateLeaderboard(user);
+      this.updateLeaderboard(user, this._pendingXpDelta);
+      this._pendingXpDelta = 0;
     } catch (e) {
       // Silent fail for offline
     }
   }
 
-  private async updateLeaderboard(user: any) {
+  private async updateLeaderboard(user: any, xpDelta = 0) {
     const leaderRef = doc(this.firestore, `leaderboard/${user.uid}`);
     try {
       await setDoc(leaderRef, {
         displayName: user.displayName || 'Anonymous',
         photoURL: user.photoURL || null,
-        points: this.xp(), // Using XP as 'points' for leaderboard
-        isPro: this.purchaseSvc.isProOrTrial(),
-        lastUpdated: new Date()
+        points:    this.xp(),
+        isPro:     this.purchaseSvc.isProOrTrial(),
+        lastUpdated: new Date(),
+        // Increment weeklyXp; Cloud Function resets to 0 every Sunday midnight IST
+        weeklyXp: increment(xpDelta > 0 ? xpDelta : 0),
       }, { merge: true });
     } catch (e) {
       console.error("Leaderboard sync failed", e);

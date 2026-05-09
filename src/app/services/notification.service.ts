@@ -117,19 +117,30 @@ export class NotificationService {
       scheduledAt.setDate(scheduledAt.getDate() + 1);
       scheduledAt.setHours(this.reminderHour(), 0, 0, 0);
 
-      // Build context-aware body & deep-link route
-      const last = this.getLastVisited();
+      // Build lifecycle-aware body & deep-link route
+      const last            = this.getLastVisited();
+      const daysSinceInstall = this.getDaysSinceInstall();
       let body: string;
       let route: string;
 
-      if (last) {
+      if (streak > 1) {
+        // Active streak — motivate to keep it alive
+        body  = `🔥 Your ${streak}-day streak is waiting! Keep it alive.`;
+        route = '/daily-challenge';
+      } else if (last) {
+        // Has browsed content — contextual "continue" message
         body  = `📖 Continue where you left off: "${last.topicTitle}"`;
         route = `/tutorials/${last.courseSlug}/${last.topicSlug}`;
-      } else if (streak > 1) {
-        body  = `🔥 Your ${streak}-day streak is waiting! Keep the momentum going.`;
+      } else if (daysSinceInstall === 3) {
+        // D3 re-engagement — soft nudge
+        body  = `You were building a streak! Don't break it now 🔥`;
+        route = '/daily-challenge';
+      } else if (daysSinceInstall === 7) {
+        // D7 re-engagement — stronger nudge
+        body  = `It's been a week. Your Java skills are waiting.`;
         route = '/tutorials';
       } else {
-        body  = `☕ Ready to level up your Java skills? Pick up where you left off!`;
+        body  = `☕ Ready to level up your Java skills?`;
         route = '/tutorials';
       }
 
@@ -161,6 +172,23 @@ export class NotificationService {
   }
 
   /** Toggle notifications on/off from settings. */
+  /**
+   * Returns the number of days since the app was first installed (first launched).
+   * Uses a localStorage timestamp set on first app open.
+   */
+  private getDaysSinceInstall(): number {
+    const LS_INSTALL = 'app_install_date';
+    let installDate = localStorage.getItem(LS_INSTALL);
+    if (!installDate) {
+      installDate = new Date().toISOString().split('T')[0];
+      localStorage.setItem(LS_INSTALL, installDate);
+    }
+    const install = new Date(installDate);
+    const now = new Date();
+    const diffMs = now.getTime() - install.getTime();
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  }
+
   async toggle(enabled: boolean): Promise<void> {
     this.notificationsEnabled.set(enabled);
     localStorage.setItem(this.LS_KEY, enabled ? 'true' : 'false');
