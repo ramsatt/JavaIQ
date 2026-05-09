@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   adMobTesting: false,
-  appVersion: '1.5.0',
+  appVersion: '1.6.0',
   // RevenueCat API keys from app.revenuecat.com
   revenueCatApiKeyAndroid: 'test_MteMokPRExnQIBaThNKJBZiZaXk',
   revenueCatApiKeyIos: 'test_MteMokPRExnQIBaThNKJBZiZaXk',
