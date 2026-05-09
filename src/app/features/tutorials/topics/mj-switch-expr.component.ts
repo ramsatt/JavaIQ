@@ -31,7 +31,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
       <section class="section">
         <h2 class="section-heading"><app-icon name="code" [size]="28" css="icon-teal" /> yield in Block Arms</h2>
         <div class="prose">
-          <p>When a case needs multiple statements, use a block <code>{ }</code> and return the value with <code>yield</code>:</p>
+          <p>When a case needs multiple statements, use a block <code>&#123; &#125;</code> and return the value with <code>yield</code>:</p>
           <app-code-block [code]="codeYield" language="java" />
         </div>
       </section>
