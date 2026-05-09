@@ -44,17 +44,17 @@ interface ExpCard {
           <!-- Stats -->
           <div class="hero-stats">
             <div class="hero-stat">
-              <span class="stat-num">{{ experiences.length }}</span>
-              <span class="stat-lbl">Stories</span>
-            </div>
-            <div class="stat-div"></div>
-            <div class="hero-stat">
               <span class="stat-num">{{ offerCount }}</span>
               <span class="stat-lbl">Offers</span>
             </div>
             <div class="stat-div"></div>
             <div class="hero-stat">
-              <span class="stat-num">8+</span>
+              <span class="stat-num">{{ rejectionCount }}</span>
+              <span class="stat-lbl">Rejections</span>
+            </div>
+            <div class="stat-div"></div>
+            <div class="hero-stat">
+              <span class="stat-num">{{ companyCount }}+</span>
               <span class="stat-lbl">Companies</span>
             </div>
           </div>
@@ -983,6 +983,14 @@ export class ExpListComponent {
 
   get offerCount() {
     return this.experiences.filter(e => e.result === 'offer').length;
+  }
+
+  get rejectionCount() {
+    return this.experiences.filter(e => e.result === 'rejected').length;
+  }
+
+  get companyCount() {
+    return new Set(this.experiences.map(e => e.company)).size;
   }
 
   filtered = computed(() => {

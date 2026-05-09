@@ -18,6 +18,9 @@ const TYPE_LABELS: Record<ResultType, string> = {
 
 const TYPE_ORDER: ResultType[] = ['tutorial', 'interview', 'coding', 'leetcode', 'experience'];
 
+// Popular companies to show as quick-filter chips
+const COMPANY_CHIPS = ['Amazon', 'Google', 'Microsoft', 'Infosys', 'TCS', 'Wipro', 'Flipkart'];
+
 @Component({
   selector: 'app-search-modal',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,12 +78,23 @@ const TYPE_ORDER: ResultType[] = ['tutorial', 'interview', 'coding', 'leetcode',
               </div>
             }
 
+            <!-- Company filter chips -->
+            <div class="sm-chips">
+              @for (chip of companyChips; track chip) {
+                <button class="sm-chip"
+                        [class.sm-chip-active]="activeCompanyFilter() === chip"
+                        (click)="toggleCompanyFilter(chip)">
+                  {{ chip }}
+                </button>
+              }
+            </div>
+
             <!-- Results -->
-            @if (query()) {
+            @if (query() || activeCompanyFilter()) {
               @if (grouped().length === 0) {
                 <div class="sm-hint">
                   <i class="fa-solid fa-face-frown sm-hint-icon"></i>
-                  <p>No results for "{{ query() }}"</p>
+                  <p>No results for "{{ activeCompanyFilter() ? activeCompanyFilter() + ' questions' : query() }}"</p>
                 </div>
               } @else {
                 @for (group of grouped(); track group.type) {
@@ -262,6 +276,30 @@ const TYPE_ORDER: ResultType[] = ['tutorial', 'interview', 'coding', 'leetcode',
       flex-shrink: 0;
     }
 
+    /* Company filter chips */
+    .sm-chips {
+      display: flex;
+      gap: 8px;
+      padding: 10px 16px 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .sm-chips::-webkit-scrollbar { display: none; }
+    .sm-chip {
+      flex-shrink: 0;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: #94a3b8;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .sm-chip:hover { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: #10b981; }
+    .sm-chip-active { background: rgba(16,185,129,0.15); border-color: #10b981; color: #10b981; }
+
     /* Hint / empty */
     .sm-hint {
       display: flex;
@@ -284,8 +322,15 @@ export class SearchModalComponent implements AfterViewInit {
   isOpen = signal(false);
   query = signal('');
   recentSearches = signal<string[]>([]);
+  activeCompanyFilter = signal<string | null>(null);
 
-  results = computed(() => this.searchService.search(this.query()));
+  readonly companyChips = COMPANY_CHIPS;
+
+  results = computed(() => {
+    const company = this.activeCompanyFilter();
+    if (company) return this.searchService.searchByCompany(company);
+    return this.searchService.search(this.query());
+  });
 
   grouped = computed(() => {
     const map = new Map<ResultType, SearchResult[]>();
@@ -308,6 +353,13 @@ export class SearchModalComponent implements AfterViewInit {
   close() {
     this.isOpen.set(false);
     this.query.set('');
+    this.activeCompanyFilter.set(null);
+  }
+
+  toggleCompanyFilter(company: string) {
+    this.activeCompanyFilter.set(
+      this.activeCompanyFilter() === company ? null : company
+    );
   }
 
   onDidPresent() {

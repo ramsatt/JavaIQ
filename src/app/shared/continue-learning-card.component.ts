@@ -2,6 +2,30 @@ import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/c
 import { Router } from '@angular/router';
 import { DataService } from '../data.service';
 import { COURSE_TOPICS } from '../data/course-topics.const';
+import { StudyPlanService } from '../services/study-plan.service';
+import { NotificationService } from '../services/notification.service';
+
+// Maps study-plan category labels → course slugs in COURSE_TOPICS
+const CATEGORY_TO_SLUG: Record<string, string> = {
+  'Core Java':           'core-java',
+  'Spring Boot':         'spring-boot',
+  'Spring Framework':    'spring-framework',
+  'Hibernate':           'hibernate',
+  'Microservices':       'microservices',
+  'Multithreading':      'multithreading',
+  'Data Structures':     'core-java',
+  'Algorithms':          'core-java',
+  'System Design':       'microservices',
+  'Spring Reactive':     'spring-framework',
+  'Reactive Programming':'spring-framework',
+};
+
+const GOAL_LABELS: Record<string, string> = {
+  faang:   'Crack FAANG',
+  switch:  'Switch Job',
+  first:   'First Job',
+  upskill: 'Upskill',
+};
 
 interface ResumeTarget {
   courseSlug:  string;
@@ -10,6 +34,7 @@ interface ResumeTarget {
   topicTitle:  string;
   progressPct: number;
   themeColor:  string;
+  badgeLabel:  string;
 }
 
 @Component({
@@ -22,7 +47,7 @@ interface ResumeTarget {
            [style.--course-color]="t.themeColor"
            (keydown.enter)="resume(t)" (keydown.space)="resume(t)">
         <div class="continue-header">
-          <span class="continue-badge">▶ Continue Learning</span>
+          <span class="continue-badge">▶ {{ t.badgeLabel }}</span>
           <span class="continue-pct">{{ t.progressPct }}% Complete</span>
         </div>
 
@@ -179,20 +204,74 @@ interface ResumeTarget {
   `]
 })
 export class ContinueLearningCardComponent {
-  private dataService = inject(DataService);
-  private router      = inject(Router);
+  private dataService    = inject(DataService);
+  private router         = inject(Router);
+  private studyPlan      = inject(StudyPlanService);
+  private notifications  = inject(NotificationService);
 
   resumeTarget = computed((): ResumeTarget | null => {
-    // Track the signal for reactivity
+    // Track completions signal for reactivity
     this.dataService.completedTopicIds();
 
+    // ── Priority 1: Today's study-plan tutorial task is not yet done ──────────
+    if (!this.studyPlan.isTaskDone('tutorial')) {
+      const tutorialTask = this.studyPlan.todayTasks().find(t => t.type === 'tutorial');
+      if (tutorialTask) {
+        // Extract category from label "Study Core Java" → "Core Java"
+        const category = tutorialTask.label.replace(/^Study\s+/i, '').trim();
+        const courseSlug = CATEGORY_TO_SLUG[category];
+        if (courseSlug) {
+          const course = COURSE_TOPICS.find(c => c.slug === courseSlug);
+          if (course) {
+            const nextTopic = course.topics.find(
+              t => !this.dataService.isTopicComplete(`${course.slug}::${t.slug}`)
+            );
+            if (nextTopic) {
+              const goalLabel = GOAL_LABELS[this.studyPlan.goal()] ?? 'Your Plan';
+              return {
+                courseSlug:  course.slug,
+                courseTitle: course.title,
+                topicSlug:   nextTopic.slug,
+                topicTitle:  nextTopic.title,
+                progressPct: this.dataService.getCourseProgress(course.slug, course.topics.length),
+                themeColor:  course.themeColor,
+                badgeLabel:  `${goalLabel}: Continue`
+              };
+            }
+          }
+        }
+      }
+    }
+
+    // ── Priority 2: Resume last-visited topic ─────────────────────────────────
+    const last = this.notifications.getLastVisited();
+    if (last) {
+      const course = COURSE_TOPICS.find(c => c.slug === last.courseSlug);
+      if (course) {
+        const topicInCourse = course.topics.find(t => t.slug === last.topicSlug);
+        const total = course.topics.length;
+        const completed = this.dataService.getCourseCompletedCount(course.slug);
+        if (topicInCourse && completed < total) {
+          return {
+            courseSlug:  course.slug,
+            courseTitle: course.title,
+            topicSlug:   last.topicSlug,
+            topicTitle:  last.topicTitle,
+            progressPct: this.dataService.getCourseProgress(course.slug, total),
+            themeColor:  course.themeColor,
+            badgeLabel:  'Continue Learning'
+          };
+        }
+      }
+    }
+
+    // ── Priority 3: First incomplete topic across all courses (original logic) ─
     for (const course of COURSE_TOPICS) {
-      const completed  = this.dataService.getCourseCompletedCount(course.slug);
-      const total      = course.topics.length;
+      const completed = this.dataService.getCourseCompletedCount(course.slug);
+      const total     = course.topics.length;
 
-      if (completed >= total) continue;  // this course is fully done
+      if (completed >= total) continue;
 
-      // Find first incomplete topic
       const nextTopic = course.topics.find(
         t => !this.dataService.isTopicComplete(`${course.slug}::${t.slug}`)
       );
@@ -204,11 +283,12 @@ export class ContinueLearningCardComponent {
         topicSlug:   nextTopic.slug,
         topicTitle:  nextTopic.title,
         progressPct: this.dataService.getCourseProgress(course.slug, total),
-        themeColor:  course.themeColor
+        themeColor:  course.themeColor,
+        badgeLabel:  'Continue Learning'
       };
     }
 
-    return null;  // all courses complete — hide the card
+    return null;
   });
 
   resume(t: ResumeTarget): void {

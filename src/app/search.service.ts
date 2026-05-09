@@ -19,6 +19,7 @@ export interface SearchResult {
   icon: string;
   color: string;
   route: string[];
+  companies?: string[];
 }
 
 const RECENT_KEY = 'search_recent';
@@ -27,12 +28,14 @@ const MAX_RECENT = 5;
 @Injectable({ providedIn: 'root' })
 export class SearchService {
   private index: SearchResult[] = [];
+  private indexReady = false;
 
-  constructor() {
-    this.buildIndex();
-  }
+  constructor() {}
 
   private buildIndex() {
+    if (this.indexReady) return;
+    this.indexReady = true;
+
     // Interview questions
     const allIq = [
       ...CORE_JAVA_QUESTIONS, ...SPRING_BOOT_QUESTIONS, ...HIBERNATE_QUESTIONS,
@@ -49,7 +52,8 @@ export class SearchService {
         subtitle: q.category,
         icon: 'fa-solid fa-circle-question',
         color: '#6366f1',
-        route: ['/interview-questions', slug, String(q.id)]
+        route: ['/interview-questions', slug, String(q.id)],
+        companies: this.parseCompanies(q.asked_metadata)
       });
     }
 
@@ -96,6 +100,7 @@ export class SearchService {
   }
 
   search(query: string): SearchResult[] {
+    this.buildIndex();
     if (!query.trim()) return [];
     const q = query.toLowerCase();
     const matched = this.index.filter(
@@ -116,6 +121,24 @@ export class SearchService {
     return results;
   }
 
+  /** Returns sorted unique company names found across all interview questions. */
+  getCompanyTags(): string[] {
+    this.buildIndex();
+    const companies = new Set<string>();
+    for (const r of this.index) {
+      if (r.companies) r.companies.forEach(c => companies.add(c));
+    }
+    return Array.from(companies).sort();
+  }
+
+  /** Filters interview results to those asked at the given company. */
+  searchByCompany(company: string): SearchResult[] {
+    this.buildIndex();
+    return this.index.filter(
+      r => r.type === 'interview' && r.companies?.includes(company)
+    );
+  }
+
   getRecentSearches(): string[] {
     try {
       return JSON.parse(localStorage.getItem(RECENT_KEY) ?? '[]');
@@ -133,6 +156,17 @@ export class SearchService {
 
   clearRecentSearches() {
     localStorage.removeItem(RECENT_KEY);
+  }
+
+  /** Extracts company names from asked_metadata strings like "6x Amazon, 5x Google". */
+  private parseCompanies(metadata: string): string[] {
+    // Match patterns like "3x Amazon" or "10x Google"
+    const matches = metadata.matchAll(/\d+x\s+([A-Za-z][A-Za-z0-9& .]+?)(?:,|$)/g);
+    const companies: string[] = [];
+    for (const m of matches) {
+      companies.push(m[1].trim());
+    }
+    return companies;
   }
 
   private categoryToSlug(category: string): string {

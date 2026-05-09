@@ -5,6 +5,7 @@ import { AssessService } from './assess.service';
 import { AuthService } from '../../auth.service';
 import { CertificateComponent } from '../../shared/certificate.component';
 import { AchievementService } from '../../services/achievement.service';
+import { RatingService } from '../../services/rating.service';
 
 @Component({
   selector: 'app-assess-result',
@@ -332,8 +333,9 @@ import { AchievementService } from '../../services/achievement.service';
 export class AssessResultComponent {
   private router   = inject(Router);
   private svc      = inject(AssessService);
-  private auth     = inject(AuthService);
-  private achSvc   = inject(AchievementService);
+  private auth      = inject(AuthService);
+  private achSvc    = inject(AchievementService);
+  private ratingSvc = inject(RatingService);
 
   readonly letters  = ['A', 'B', 'C', 'D'];
   readonly result   = this.svc.result;
@@ -341,10 +343,13 @@ export class AssessResultComponent {
   readonly userName = computed(() => this.auth.user()?.displayName ?? 'Java Developer');
 
   constructor() {
-    // Check achievements whenever a result lands
+    // Check achievements and trigger review prompt whenever a result lands
     effect(() => {
       const r = this.result();
-      if (r) this.achSvc.checkAssessmentAchievements(r.score);
+      if (r) {
+        this.achSvc.checkAssessmentAchievements(r.score);
+        this.ratingSvc.checkAfterAssessment(r.score);
+      }
     });
   }
 

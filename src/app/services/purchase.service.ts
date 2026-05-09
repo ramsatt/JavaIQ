@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Purchases, LOG_LEVEL } from '@revenuecat/purchases-capacitor';
 import { RevenueCatUI, PAYWALL_RESULT } from '@revenuecat/purchases-capacitor-ui';
@@ -16,9 +16,24 @@ export class PurchaseService {
 
   private readonly isNative = Capacitor.isNativePlatform();
 
-  /** True when the current user has an active Pro entitlement */
-  // Pro gate disabled — all users treated as Pro until next phase
-  isPro = signal<boolean>(true);
+  /** True when the current user has an active RevenueCat Pro entitlement */
+  isPro = signal<boolean>(false);
+
+  /** True while the user has an active 7-day free trial */
+  trialEndsDate = signal<Date | null>(null);
+
+  /** True when the trial is active and has not expired */
+  trialActive = computed((): boolean => {
+    const end = this.trialEndsDate();
+    return end !== null && new Date() < end;
+  });
+
+  /**
+   * True when the user should receive Pro-level access —
+   * either through a paid subscription or an active free trial.
+   * Use this instead of `isPro()` for all feature gating.
+   */
+  isProOrTrial = computed((): boolean => this.isPro() || this.trialActive());
 
   /** True while a restore network call is in-flight */
   purchasing = signal<boolean>(false);
@@ -77,19 +92,50 @@ export class PurchaseService {
   }
 
   /**
-   * Fast status load: read isPro from Firestore first (no RevenueCat round-trip).
-   * Falls back to RevenueCat if Firestore says false (handles reinstalls / cross-device).
+   * Fast status load: read isPro + trialStartDate from Firestore first
+   * (no RevenueCat round-trip). Falls back to RevenueCat if Firestore says
+   * false (handles reinstalls / cross-device).
    */
   async loadProStatus(uid: string): Promise<void> {
     try {
       const snap = await getDoc(doc(this.firestore, `users/${uid}`));
-      if (snap.exists() && snap.data()['isPro'] === true) {
-        this.isPro.set(true);
-        return;
+      if (snap.exists()) {
+        const data = snap.data();
+        if (data['isPro'] === true) {
+          this.isPro.set(true);
+          return;
+        }
+        // Restore trial state from Firestore
+        const trialStart: { toDate?: () => Date } | undefined = data['trialStartDate'];
+        if (trialStart?.toDate) {
+          const end = new Date(trialStart.toDate());
+          end.setDate(end.getDate() + 7);
+          this.trialEndsDate.set(end);
+          if (this.trialActive()) return; // still in trial — no RC round-trip needed
+        }
       }
     } catch { /* offline — fall through to RevenueCat */ }
 
     await this.syncProFromRevenueCat(uid);
+  }
+
+  /**
+   * Activate a free trial for the given user.
+   * Writes trialStartDate to Firestore and updates the local signal.
+   * @param uid   Firebase UID
+   * @param days  Trial length in days (default: 7)
+   */
+  async activateTrial(uid: string, days = 7): Promise<void> {
+    const now = new Date();
+    const end = new Date(now);
+    end.setDate(end.getDate() + days);
+    this.trialEndsDate.set(end);
+    try {
+      await updateDoc(doc(this.firestore, `users/${uid}`), {
+        trialStartDate: now,
+        trialEndsDate: end
+      });
+    } catch { /* offline — trial still active locally */ }
   }
 
   /**
@@ -229,7 +275,8 @@ export class PurchaseService {
 
   /** Reset RevenueCat user on sign-out. */
   async resetUser(): Promise<void> {
-    // Pro gate disabled — keep isPro true until next phase
+    this.isPro.set(false);
+    this.trialEndsDate.set(null);
     if (!this.rcInitialized) return;
     try { await Purchases.logOut(); } catch { /* ignore */ }
   }

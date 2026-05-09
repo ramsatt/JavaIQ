@@ -34,11 +34,15 @@ export class AdGateService {
     /** Minimum gap (ms) between interstitial ads */
     private readonly INTERSTITIAL_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
+    /** Number of topics a new user may open for free before ads kick in */
+    private readonly FREE_UNLOCK_LIMIT = 2;
+
     // ── Storage keys ────────────────────────────────────────────────────────
     private readonly STORAGE_KEY_UNLOCKED = 'adgate_unlocked_items';
     private readonly STORAGE_KEY_INTERSTITIAL = 'adgate_interstitial_time';
     private readonly STORAGE_KEY_VISITED = 'adgate_visited_items';
     private readonly STORAGE_KEY_DAILY_UNLOCKS = 'adgate_daily_unlocks';
+    private readonly STORAGE_KEY_FREE_UNLOCKS = 'adgate_free_unlocks';
 
     // ── State ────────────────────────────────────────────────────────────────
     /**
@@ -82,7 +86,7 @@ export class AdGateService {
      * @param itemId  Unique ID for the item (e.g. "core-java::arrays", "iq::123")
      */
     isItemUnlocked(itemId: string): boolean {
-        if (this.purchaseService.isPro()) return true;
+        if (this.purchaseService.isProOrTrial()) return true;
         return this.unlockedItems().has(itemId);
     }
 
@@ -93,14 +97,30 @@ export class AdGateService {
      * @returns Promise<boolean>  true → item was unlocked; false → user cancelled
      */
     async unlockItemWithAd(itemId: string, itemTitle = 'this content'): Promise<boolean> {
-        // Pro users get instant access — no ad required
-        if (this.purchaseService.isPro()) {
+        // Pro/trial users get instant access — no ad required
+        if (this.purchaseService.isProOrTrial()) {
             this.persistUnlock(itemId);
             return true;
         }
 
         // Already unlocked this session — no ad needed
         if (this.isItemUnlocked(itemId)) return true;
+
+        // First FREE_UNLOCK_LIMIT topic opens are always free (no ad required).
+        // Keyed by UID so shared-device users don't share each other's quota.
+        const uid = this.authService.user()?.uid ?? 'anon';
+        const freeUsed = parseInt(
+            localStorage.getItem(`${this.STORAGE_KEY_FREE_UNLOCKS}_${uid}`) ?? '0', 10
+        );
+        if (freeUsed < this.FREE_UNLOCK_LIMIT) {
+            localStorage.setItem(
+                `${this.STORAGE_KEY_FREE_UNLOCKS}_${uid}`,
+                String(freeUsed + 1)
+            );
+            this.persistUnlock(itemId);
+            this.markVisited(itemId);
+            return true;
+        }
 
         const isReturnVisit = this.visitedItems.has(itemId);
 
@@ -118,7 +138,7 @@ export class AdGateService {
             this.markVisited(itemId);
             this.persistUnlock(itemId);
             // Soft paywall: show upgrade prompt on the 4th free unlock of the day
-            if (!this.purchaseService.isPro()) {
+            if (!this.purchaseService.isProOrTrial()) {
                 const count = this.incrementDailyUnlockCount();
                 if (count >= 4) {
                     const uid = this.authService.user()?.uid;
@@ -180,8 +200,8 @@ export class AdGateService {
      * Shows an interstitial if the cooldown has passed.
      */
     async onContentCompleted(): Promise<void> {
-        // Pro users never see interstitials
-        if (this.purchaseService.isPro()) return;
+        // Pro/trial users never see interstitials
+        if (this.purchaseService.isProOrTrial()) return;
 
         const currentUrl = this.router.url;
         if (NO_INTERSTITIAL_ROUTES.some(r => currentUrl.startsWith(r))) {
@@ -211,5 +231,7 @@ export class AdGateService {
         this.visitedItems = new Set();
         localStorage.removeItem(this.STORAGE_KEY_INTERSTITIAL);
         localStorage.removeItem(this.STORAGE_KEY_VISITED);
+        const uid = this.authService.user()?.uid ?? 'anon';
+        localStorage.removeItem(`${this.STORAGE_KEY_FREE_UNLOCKS}_${uid}`);
     }
 }

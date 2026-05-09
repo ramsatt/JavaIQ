@@ -165,7 +165,7 @@ export class AchievementService {
 
     // ── Reactive Pro watcher ── unlock pro-subscriber + pro-streak badges when eligible ──
     effect(() => {
-      if (this.purchaseSvc.isPro()) {
+      if (this.purchaseSvc.isProOrTrial()) {
         this.unlockById('pro-subscriber');
         const streak = this.gamService.streak();
         if (streak >= 7)  this.unlockById('pro-streak-7');
@@ -187,7 +187,7 @@ export class AchievementService {
     if (streak >= 30)  this.unlockById('streak-30');
     if (streak >= 100) this.unlockById('streak-100');
     // Pro streak badges
-    if (this.purchaseSvc.isPro()) {
+    if (this.purchaseSvc.isProOrTrial()) {
       if (streak >= 7)  this.unlockById('pro-streak-7');
       if (streak >= 30) this.unlockById('pro-streak-30');
     }

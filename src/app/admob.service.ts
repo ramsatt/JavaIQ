@@ -59,7 +59,7 @@ export class AdMobService {
   }
 
   // ── Frequency cap guard ─────────────────────────────────────────────────
-  canShowInterstitial(): boolean {    if (this.purchaseService.isPro()) return false;    this.navigationCount++;
+  canShowInterstitial(): boolean {    if (this.purchaseService.isProOrTrial()) return false;    this.navigationCount++;
     if (this.navigationCount <= INTERSTITIAL_MIN_NAVIGATIONS) return false;
     const now = Date.now();
     if (now - this.lastInterstitialTime < INTERSTITIAL_COOLDOWN_MS) return false;
@@ -67,7 +67,7 @@ export class AdMobService {
   }
 
   // ── Initialization ──────────────────────────────────────────────────────
-  async initialize() {    if (this.purchaseService.isPro()) return;    try {
+  async initialize() {    if (this.purchaseService.isProOrTrial()) return;    try {
       await AdMob.initialize({
         testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'],
         initializeForTesting: environment.adMobTesting,
@@ -115,7 +115,7 @@ export class AdMobService {
 
   // ── Banner ────────────────────────────────────────────────────────────
   async showBanner() {
-    if (!this.isNative || this.purchaseService.isPro()) return;
+    if (!this.isNative || this.purchaseService.isProOrTrial()) return;
     try {
       // When banner renders, get its actual height and expose it as a CSS variable.
       // All fixed-bottom UI (nav-bar, buttons) use var(--admob-banner-height)

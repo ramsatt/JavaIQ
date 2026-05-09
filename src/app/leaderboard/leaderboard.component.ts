@@ -152,6 +152,7 @@ const PERIOD_LABELS: Record<string, string> = {
             <div class="lb-empty">
               <span style="font-size:2.5rem">🏅</span>
               <p>No activity yet — be the first!</p>
+              <button class="lb-empty-cta" (click)="router.navigate(['/tutorials'])">Start Learning</button>
             </div>
           }
         }
@@ -395,6 +396,13 @@ const PERIOD_LABELS: Record<string, string> = {
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .lb-empty p { font-size: 0.82rem; margin: 0; }
+    .lb-empty-cta {
+      padding: 10px 24px; border-radius: 10px; border: none; cursor: pointer;
+      font-size: 0.82rem; font-weight: 700;
+      background: #d4a853; color: #0b0e14;
+      transition: opacity 0.2s;
+    }
+    .lb-empty-cta:hover { opacity: 0.85; }
 
     /* ── Invite prompt ── */
     .lb-invite {

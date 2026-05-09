@@ -50,6 +50,14 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
             <i class="fa-solid fa-bookmark empty-icon"></i>
             <p class="empty-title">Nothing saved yet</p>
             <p class="empty-sub">Tap the bookmark icon on any question, tutorial, or experience to save it here</p>
+            <div class="empty-actions">
+              <button class="empty-cta" (click)="router.navigate(['/tutorials'])">
+                <i class="fa-solid fa-book-open"></i> Browse Tutorials
+              </button>
+              <button class="empty-cta empty-cta-secondary" (click)="router.navigate(['/interview-questions'])">
+                <i class="fa-solid fa-circle-question"></i> Try Interview Questions
+              </button>
+            </div>
           </div>
         } @else {
           @for (group of groups(); track group.type) {
@@ -210,9 +218,21 @@ const TYPE_ORDER: BookmarkType[] = ['tutorial', 'interview', 'coding', 'leetcode
       display: flex; flex-direction: column; align-items: center;
       padding: 80px 24px; text-align: center; gap: 12px;
     }
-    .empty-icon { font-size: 2.5rem; color: #334155; }
-    .empty-title { font-size: 1rem; font-weight: 700; color: #94a3b8; margin: 0; }
-    .empty-sub { font-size: 0.78rem; color: #475569; line-height: 1.6; margin: 0; max-width: 260px; }
+    .empty-icon { font-size: 2.5rem; color: #334155; animation: fadeInUp 0.4s ease both; }
+    .empty-title { font-size: 1rem; font-weight: 700; color: #94a3b8; margin: 0; animation: fadeInUp 0.4s 0.05s ease both; }
+    .empty-sub { font-size: 0.78rem; color: #475569; line-height: 1.6; margin: 0; max-width: 260px; animation: fadeInUp 0.4s 0.1s ease both; }
+    .empty-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 240px; margin-top: 4px; animation: fadeInUp 0.4s 0.15s ease both; }
+    .empty-cta {
+      padding: 11px 18px; border-radius: 12px; border: none; cursor: pointer;
+      font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: #10b981; color: #fff; transition: opacity 0.2s;
+    }
+    .empty-cta:hover { opacity: 0.88; }
+    .empty-cta-secondary { background: rgba(255,255,255,0.06); color: #94a3b8; }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
   `
 })
 export class BookmarksListComponent {

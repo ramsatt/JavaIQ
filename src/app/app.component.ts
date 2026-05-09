@@ -1,8 +1,7 @@
-import { Component, computed, effect, signal, AfterViewInit, OnDestroy } from '@angular/core';
-import { inject } from '@angular/core';
+import { Component, computed, effect, signal, AfterViewInit, OnDestroy, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs/operators';
 import {
   IonApp, IonRouterOutlet, IonMenu, IonHeader, IonSplitPane,
@@ -30,6 +29,9 @@ import { NotificationService } from './services/notification.service';
 import { AuthService } from './auth.service';
 import { GamificationService } from './gamification.service';
 import { environment } from '../environments/environment';
+import { OfflineCacheService } from './core/offline-cache.service';
+import { DataService } from './data.service';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-root',
@@ -834,6 +836,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private router = inject(Router);
   private menuCtrl = inject(MenuController);
   private notifSvc = inject(NotificationService);
+  private offlineCache = inject(OfflineCacheService);
+  private dataSvc = inject(DataService);
 
   private navUrl = toSignal(
     this.router.events.pipe(
@@ -871,10 +875,13 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.checkFirstLaunch();
     this.notifSvc.initOnStartup();
     this.purchaseService.init();
+    this.initOfflineCache();
+    this.initDeepLinks();
 
     // Scroll to top on every navigation; hide banner on onboarding
     this.router.events.pipe(
-      filter(e => e instanceof NavigationEnd)
+      filter(e => e instanceof NavigationEnd),
+      takeUntilDestroyed()
     ).subscribe((e) => {
       window.scrollTo({ top: 0 });
       // Wait for Ionic's page transition to complete, then scroll all ion-content to top
@@ -882,7 +889,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         document.querySelectorAll('ion-content').forEach((el: any) => el.scrollToTop(0));
       }, 50);
       const url = (e as NavigationEnd).urlAfterRedirects;
-      if (url.startsWith('/onboarding') || this.purchaseService.isPro()) {
+      if (url.startsWith('/onboarding') || this.purchaseService.isProOrTrial()) {
         this.adMobService.hideBanner();
       } else {
         this.adMobService.showBanner();
@@ -898,9 +905,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       }
     });
 
-    // Immediately hide the ad banner the moment a user becomes Pro
+    // Immediately hide the ad banner the moment a user becomes Pro or starts a trial
     effect(() => {
-      if (this.purchaseService.isPro()) {
+      if (this.purchaseService.isProOrTrial()) {
         this.adMobService.hideBanner();
       }
     });
@@ -910,6 +917,39 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     if (!localStorage.getItem('onboarding_done')) {
       this.router.navigate(['/onboarding'], { replaceUrl: true });
     }
+  }
+
+  private initOfflineCache() {
+    if (this.offlineCache.isOnline() && this.offlineCache.isCacheStale()) {
+      // Run warm-up after a short delay so it doesn't block startup rendering
+      setTimeout(() => {
+        const questions = this.dataSvc.getAllQuestionsStable();
+        this.offlineCache.warmCache(questions);
+      }, 3000);
+    }
+  }
+
+  private initDeepLinks() {
+    if (!Capacitor.isNativePlatform()) return;
+    // Lazy import to keep specifier hidden from Vite static analysis
+    const dynamicImport = new Function('specifier', 'return import(specifier)');
+    dynamicImport('@capacitor/app').then(({ App }: any) => {
+      App.addListener('appUrlOpen', (event: { url: string }) => {
+        try {
+          const url = new URL(event.url);
+          const path = url.pathname;
+
+          if (path.startsWith('/ref/')) {
+            // Referral deep link — store code for post-auth processing
+            const code = path.split('/ref/')[1];
+            if (code) localStorage.setItem('pending_referral_code', code);
+          } else {
+            // Standard deep link — route to path
+            this.router.navigateByUrl(path);
+          }
+        } catch { /* malformed URL — ignore */ }
+      });
+    }).catch(() => { /* @capacitor/app not available — ignore */ });
   }
 
   async upgradeToPro() {

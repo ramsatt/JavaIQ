@@ -41,7 +41,7 @@ export class NotificationService {
     localStorage.setItem(this.LS_LAST_VISITED, JSON.stringify(info));
   }
 
-  private getLastVisited(): LastVisited | null {
+  getLastVisited(): LastVisited | null {
     const raw = localStorage.getItem(this.LS_LAST_VISITED);
     if (!raw) return null;
     try { return JSON.parse(raw); } catch { return null; }

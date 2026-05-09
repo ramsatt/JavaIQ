@@ -40,7 +40,7 @@ type Phase = 'empty' | 'session' | 'complete';
               You have no questions in your review queue.<br>
               Missed answers from challenges and mock interviews appear here.
             </p>
-            <button class="rv-cta-btn" (click)="back()">Go Practice</button>
+            <button class="rv-cta-btn" (click)="router.navigate(['/daily-challenge'])">Practice Now</button>
           </div>
         }
 

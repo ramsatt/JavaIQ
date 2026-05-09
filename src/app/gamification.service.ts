@@ -76,12 +76,12 @@ export class GamificationService {
 
   addXp(amount: number) {
     // Pro users earn 1.5× XP
-    const earned = this.purchaseSvc.isPro() ? Math.round(amount * 1.5) : amount;
+    const earned = this.purchaseSvc.isProOrTrial() ? Math.round(amount * 1.5) : amount;
     const prevLevel = this.level();
     this.xp.update(val => val + earned);
     // Level 10 soft paywall — trigger once when crossing this milestone
     const newLevel = this.level();
-    if (!this.purchaseSvc.isPro() && prevLevel < 10 && newLevel >= 10) {
+    if (!this.purchaseSvc.isProOrTrial() && prevLevel < 10 && newLevel >= 10) {
       const uid = this.authService.user()?.uid;
       if (uid) this.purchaseSvc.presentPaywallIfNeeded(uid).catch(() => {});
     }
@@ -120,10 +120,12 @@ export class GamificationService {
     this.notifService.requestPermissionAndSchedule(this.streak());
 
     // 7-day streak soft paywall (fires the first time streak hits 7)
-    if (!this.purchaseSvc.isPro() && this.streak() === 7) {
+    if (!this.purchaseSvc.isProOrTrial() && this.streak() === 7) {
       const uid = this.authService.user()?.uid;
       if (uid) this.purchaseSvc.presentPaywallIfNeeded(uid).catch(() => {});
     }
+    // In-app review prompt at 7-day streak milestone
+    this.ratingSvc.checkAfterStreak(this.streak());
   }
 
   // --- Persistence ---
@@ -213,7 +215,7 @@ export class GamificationService {
         displayName: user.displayName || 'Anonymous',
         photoURL: user.photoURL || null,
         points: this.xp(), // Using XP as 'points' for leaderboard
-        isPro: this.purchaseSvc.isPro(),
+        isPro: this.purchaseSvc.isProOrTrial(),
         lastUpdated: new Date()
       }, { merge: true });
     } catch (e) {

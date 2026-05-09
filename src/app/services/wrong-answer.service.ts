@@ -29,12 +29,12 @@ export class WrongAnswerService {
     const all = [...this.entries().values()]
       .sort((a, b) => b.missedAt.localeCompare(a.missedAt))
       .map(e => e.id);
-    return this.purchaseSvc.isPro() ? all : all.slice(0, 20);
+    return this.purchaseSvc.isProOrTrial() ? all : all.slice(0, 20);
   });
 
   /** Number of review items hidden behind the Pro paywall for Lite users. */
   hiddenReviewCount = computed((): number => {
-    if (this.purchaseSvc.isPro()) return 0;
+    if (this.purchaseSvc.isProOrTrial()) return 0;
     return Math.max(0, this.entries().size - 20);
   });
 

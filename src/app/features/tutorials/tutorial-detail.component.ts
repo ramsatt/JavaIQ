@@ -1,10 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle } from '@ionic/angular/standalone';
 import { DataService } from '../../data.service';
 import { AdGateService } from '../../ad-gate.service';
 import { AuthService } from '../../auth.service';
 import { CertificateComponent } from '../../shared/certificate.component';
+import { RatingService } from '../../services/rating.service';
 
 interface Topic {
   slug: string;
@@ -716,9 +717,26 @@ export class TutorialDetailComponent {
   });
 
   private auth = inject(AuthService);
+  private ratingSvc = inject(RatingService);
+
   showCert = signal(false);
   readonly userName = computed(() => this.auth.user()?.displayName ?? 'Java Developer');
   readonly isCourseComplete = computed(() => this.progressPct() >= 100);
+
+  constructor() {
+    // Auto-open certificate when course transitions to complete for the first time
+    let wasComplete = false;
+    effect(() => {
+      const complete = this.isCourseComplete();
+      if (complete && !wasComplete) {
+        wasComplete = true;
+        this.showCert.set(true);
+        this.ratingSvc.checkAfterCourseComplete();
+      } else if (!complete) {
+        wasComplete = false;
+      }
+    });
+  }
 
   isComplete(courseSlug: string, topicSlug: string): boolean {
     return this.dataService.isTopicComplete(`${courseSlug}::${topicSlug}`);

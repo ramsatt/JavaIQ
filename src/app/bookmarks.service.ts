@@ -46,7 +46,7 @@ export class BookmarksService {
       updated = this.bookmarks().filter(b => b.id !== bookmark.id);
     } else {
       // Lite users: max 30 bookmarks
-      if (!this.purchaseSvc.isPro() && this.bookmarks().length >= 30) {
+      if (!this.purchaseSvc.isProOrTrial() && this.bookmarks().length >= 30) {
         const uid = this.authService.user()?.uid;
         if (uid) await this.purchaseSvc.presentPaywallIfNeeded(uid);
         return false;

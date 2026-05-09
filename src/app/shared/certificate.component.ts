@@ -3,6 +3,7 @@ import {
   signal, effect, ViewChild, ElementRef, AfterViewInit, inject
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ShareService } from '../services/share.service';
 
 @Component({
   selector: 'app-certificate',
@@ -36,11 +37,17 @@ import { FormsModule } from '@angular/forms';
           />
         </div>
 
-        <!-- Print button (screen-only) -->
-        <button class="print-btn no-print" (click)="print()">
-          <i class="fa-solid fa-print"></i>
-          Print / Save as PDF
-        </button>
+        <!-- Action buttons (screen-only) -->
+        <div class="cert-actions no-print">
+          <button class="print-btn" (click)="print()">
+            <i class="fa-solid fa-print"></i>
+            Print / Save as PDF
+          </button>
+          <button class="share-btn" (click)="share()">
+            <i class="fa-solid fa-share-nodes"></i>
+            Share
+          </button>
+        </div>
 
         <!-- ═══════════════════════════════════════════════════ -->
         <!-- THE CERTIFICATE — this is what prints             -->
@@ -265,28 +272,46 @@ import { FormsModule } from '@angular/forms';
     }
     :host-context(html.dark) .name-input:focus { border-color: #40916C; }
 
-    /* Print button */
-    .print-btn {
+    /* Action buttons row */
+    .cert-actions {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    /* Print / Share buttons */
+    .print-btn, .share-btn {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 12px 24px;
+      padding: 12px 20px;
       border-radius: 12px;
       border: none;
       cursor: pointer;
       font-size: 0.88rem;
       font-weight: 700;
+      transition: all 0.2s ease;
+      letter-spacing: 0.02em;
+    }
+    .print-btn {
       background: linear-gradient(135deg, #1B4332, #2D6A4F);
       color: #d4a853;
       box-shadow: 0 4px 14px rgba(27, 67, 50, 0.4);
-      transition: all 0.2s ease;
-      letter-spacing: 0.02em;
-      align-self: flex-start;
     }
     .print-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 22px rgba(27, 67, 50, 0.45);
+    }
+    .share-btn {
+      background: linear-gradient(135deg, #0077b5, #005983);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(0, 119, 181, 0.35);
+    }
+    .share-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(0, 119, 181, 0.4);
     }
 
     /* ═══════════════════════════════════════════════════════════
@@ -584,6 +609,8 @@ import { FormsModule } from '@angular/forms';
   `
 })
 export class CertificateComponent implements AfterViewInit {
+  private shareSvc = inject(ShareService);
+
   type          = input.required<'course' | 'assessment'>();
   title         = input.required<string>();
   category      = input<string>('');
@@ -628,5 +655,10 @@ export class CertificateComponent implements AfterViewInit {
 
   print(): void {
     window.print();
+  }
+
+  share(): void {
+    const courseName = this.title();
+    this.shareSvc.shareCertificate(courseName);
   }
 }

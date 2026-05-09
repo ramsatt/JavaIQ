@@ -37,6 +37,22 @@ export class RatingService {
     if (totalCompleted >= this.DC_GATE) this.tryPrompt();
   }
 
+  /** Call from GamificationService.updateStreak() — fires at exactly 7 days. */
+  checkAfterStreak(streak: number): void {
+    if (streak === 7) this.tryPrompt();
+  }
+
+  /** Call from AssessResultComponent after score is computed.
+   *  @param scorePercent  0–100 */
+  checkAfterAssessment(scorePercent: number): void {
+    if (scorePercent >= 70) this.tryPrompt();
+  }
+
+  /** Call when a user completes all topics in a course. */
+  checkAfterCourseComplete(): void {
+    this.tryPrompt();
+  }
+
   private async tryPrompt(): Promise<void> {
     if (this.alreadyPrompted) return;
     if (!Capacitor.isNativePlatform()) return;

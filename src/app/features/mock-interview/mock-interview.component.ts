@@ -728,7 +728,7 @@ export class MockInterviewComponent implements OnDestroy {
 
   async startSession() {
     // Lite users: max 2 mock interview sessions per day
-    if (!this.purchaseSvc.isPro() && this.engagementSvc.dailyMockCount >= 2) {
+    if (!this.purchaseSvc.isProOrTrial() && this.engagementSvc.dailyMockCount >= 2) {
       const uid = this.authSvc.user()?.uid;
       if (uid) await this.purchaseSvc.presentPaywallIfNeeded(uid);
       return;
