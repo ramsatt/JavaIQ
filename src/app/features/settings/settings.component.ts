@@ -790,7 +790,7 @@ export class SettingsComponent implements OnInit {
 
   async upgradeToPro() {
     const uid = this.auth.user()?.uid ?? 'anonymous';
-    await this.purchaseService.presentPaywall(uid);
+    await this.purchaseService.purchasePlan(uid, this.purchaseService.selectedPlan());
   }
 
   async openCustomerCenter() {

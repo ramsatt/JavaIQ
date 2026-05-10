@@ -15,6 +15,8 @@ PODS:
     - FirebaseAuth (~> 11.7.0)
   - CapacitorLocalNotifications (7.0.5):
     - Capacitor
+  - CapacitorPluginCdvPurchase (13.15.4):
+    - Capacitor
   - FirebaseAppCheckInterop (11.15.0)
   - FirebaseAuth (11.7.0):
     - FirebaseAppCheckInterop (~> 11.0)
@@ -67,6 +69,7 @@ DEPENDENCIES:
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorFirebaseAuthentication (from `../../node_modules/@capacitor-firebase/authentication`)"
   - "CapacitorLocalNotifications (from `../../node_modules/@capacitor/local-notifications`)"
+  - CapacitorPluginCdvPurchase (from `../../node_modules/capacitor-plugin-cdv-purchase`)
 
 SPEC REPOS:
   trunk:
@@ -93,6 +96,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor-firebase/authentication"
   CapacitorLocalNotifications:
     :path: "../../node_modules/@capacitor/local-notifications"
+  CapacitorPluginCdvPurchase:
+    :path: "../../node_modules/capacitor-plugin-cdv-purchase"
 
 SPEC CHECKSUMS:
   Capacitor: 0a78ec6b54580fa055c11744a4e83cd7942d98ca
@@ -100,6 +105,7 @@ SPEC CHECKSUMS:
   CapacitorCordova: ae35646a9b46cfd00d637f195509c86594026aad
   CapacitorFirebaseAuthentication: c5d02225dc97a1192f3b615f8c0df2ef910c40b7
   CapacitorLocalNotifications: 77dd7681c558eaee278a1fcec812dcad0c741a98
+  CapacitorPluginCdvPurchase: 33f9ae7872c71e7fdf3a40d29f204c61a00d6262
   FirebaseAppCheckInterop: 06fe5a3799278ae4667e6c432edd86b1030fa3df
   FirebaseAuth: 77e25aa24f3e1c626c5babd3338551fc1669ee0e
   FirebaseAuthInterop: 7087d7a4ee4bc4de019b2d0c240974ed5d89e2fd
@@ -112,6 +118,6 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: fc75fc972958dceedee61cb662ae1da7a83a91cf
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
 
-PODFILE CHECKSUM: 917f055c44af46975a3f6e0c3c72fb9a51d33c84
+PODFILE CHECKSUM: 79480ecfdb7b133ecf33256ca561b12d9cbe4a8e
 
 COCOAPODS: 1.16.2

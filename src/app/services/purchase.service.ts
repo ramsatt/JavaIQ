@@ -1,140 +1,252 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, signal, computed, inject, NgZone } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
-import { Purchases, LOG_LEVEL } from '@revenuecat/purchases-capacitor';
-import { RevenueCatUI, PAYWALL_RESULT } from '@revenuecat/purchases-capacitor-ui';
 import { Firestore, doc, updateDoc, getDoc } from '@angular/fire/firestore';
+import { ModalController } from '@ionic/angular/standalone';
 import { AlertService } from '../alert.service';
 import { environment } from '../../environments/environment';
 
-/** Entitlement identifier as configured in the RevenueCat dashboard */
-const PRO_ENTITLEMENT_ID = 'JavaIQ Pro';
+// ── CdvPurchase types (the plugin writes to window.CdvPurchase after deviceready) ──
+declare const CdvPurchase: {
+  store: CdvStore;
+  ProductType: { PAID_SUBSCRIPTION: string; NON_CONSUMABLE: string; CONSUMABLE: string };
+  Platform: { GOOGLE_PLAY: string; APPLE_APPSTORE: string };
+};
+
+interface CdvProduct {
+  id: string;
+  type: string;
+  platform: string;
+  title: string;
+  description: string;
+  offers: CdvOffer[];
+  owned: boolean;
+}
+
+interface CdvOffer {
+  id: string;
+  product: CdvProduct;
+  pricingPhases: CdvPricingPhase[];
+  order(): Promise<void>;
+}
+
+interface CdvPricingPhase {
+  price: string;
+  currency: string;
+  paymentMode: string;
+  billingPeriod?: string;
+}
+
+interface CdvTransaction {
+  transactionId: string;
+  verify(): void;
+  finish(): void;
+}
+
+interface CdvReceipt {
+  finish(): void;
+}
+
+interface CdvVerifiedReceipt {
+  id: string;
+  products: Array<{ id: string }>;
+  expiryDate: Date | null;
+  isExpired(): boolean;
+  finish(): void;
+}
+
+interface CdvWhenAPI {
+  productUpdated(cb: (p: CdvProduct) => void): CdvWhenAPI;
+  approved(cb: (t: CdvTransaction) => void): CdvWhenAPI;
+  verified(cb: (r: CdvVerifiedReceipt) => void): CdvWhenAPI;
+  unverified(cb: (r: CdvReceipt) => void): CdvWhenAPI;
+  finished(cb: (t: CdvTransaction) => void): CdvWhenAPI;
+}
+
+interface CdvStore {
+  register(products: Array<{ id: string; type: string; platform: string }>): void;
+  initialize(platforms: string[]): Promise<void>;
+  get(id: string, platform?: string): CdvProduct | undefined;
+  order(offer: CdvOffer): Promise<{ isError: boolean; code?: number; message?: string }>;
+  restore(): void;
+  update(): void;
+  when(): CdvWhenAPI;
+  verifiedPurchases: CdvVerifiedReceipt[];
+  localReceipts: CdvReceipt[];
+  log: { level: number };
+  verbosity: number;
+}
+
+/** Maps plan key → product ID from environment */
+const PRODUCT_IDS = {
+  monthly: environment.iap.monthlyId,
+  annual:  environment.iap.annualId,
+} as const;
 
 @Injectable({ providedIn: 'root' })
 export class PurchaseService {
-  private firestore = inject(Firestore);
+  private firestore    = inject(Firestore);
   private alertService = inject(AlertService);
+  private modalCtrl    = inject(ModalController);
+  private ngZone       = inject(NgZone);
 
   private readonly isNative = Capacitor.isNativePlatform();
+  private storeReady        = false;
+  private currentUid: string | null = null;
 
-  /** True when the current user has an active RevenueCat Pro entitlement */
+  // ── Public signals (keep same API so all consumers need no changes) ──────────
+
+  /** True when the user has an active paid subscription */
   isPro = signal<boolean>(false);
 
-  /** True while the user has an active 7-day free trial */
+  /** True while an active 7-day free trial is running (Firestore-tracked) */
   trialEndsDate = signal<Date | null>(null);
 
-  /** True when the trial is active and has not expired */
   trialActive = computed((): boolean => {
     const end = this.trialEndsDate();
     return end !== null && new Date() < end;
   });
 
-  /**
-   * True when the user should receive Pro-level access —
-   * either through a paid subscription or an active free trial.
-   * Use this instead of `isPro()` for all feature gating.
-   */
+  /** Feature gate — use this everywhere instead of isPro() directly */
   isProOrTrial = computed((): boolean => this.isPro() || this.trialActive());
 
-  /** Days remaining in the free trial (0 when no trial active) */
   trialDaysLeft = computed((): number => {
     const end = this.trialEndsDate();
     if (!end) return 0;
-    const diff = end.getTime() - Date.now();
-    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+    return Math.max(0, Math.ceil((end.getTime() - Date.now()) / 86_400_000));
   });
 
-  /** Which plan the user chose before hitting the paywall ('monthly' | 'annual') */
+  /** Plan selected in the paywall UI */
   selectedPlan = signal<'monthly' | 'annual'>('annual');
 
   /** True while a restore network call is in-flight */
   purchasing = signal<boolean>(false);
 
-  /** Whether RevenueCat SDK was successfully initialized */
-  private rcInitialized = false;
+  /**
+   * Loaded product metadata from the platform store.
+   * Each entry exposes `.offers[0].pricingPhases[0].price` for display.
+   */
+  products = signal<CdvProduct[]>([]);
 
-  // ── Initialization ────────────────────────────────────────────────────────
+  // ── Initialization ─────────────────────────────────────────────────────────
 
   /**
-   * Configure the RevenueCat SDK. Call once at app startup (before any other method).
-   * Safe to call on web — silently skips on non-native platforms.
-   * Skips gracefully if API keys have not been configured yet.
+   * Boot the IAP layer. Call once at app startup.
+   * Silently no-ops on web.
    */
   async init(): Promise<void> {
     if (!this.isNative) return;
 
-    const apiKey = Capacitor.getPlatform() === 'ios'
-      ? environment.revenueCatApiKeyIos
-      : environment.revenueCatApiKeyAndroid;
-
-    // Skip placeholder keys to prevent native SDK crash
-    if (!apiKey || apiKey.includes('PLACEHOLDER') || apiKey.trim() === '') {
-      console.warn('[PurchaseService] RevenueCat API key not configured — IAP disabled');
+    // CdvPurchase is injected into window by the Capacitor plugin after load
+    const cdv: typeof CdvPurchase | undefined = (window as any)['CdvPurchase'];
+    if (!cdv?.store) {
+      console.warn('[PurchaseService] CdvPurchase not available yet');
       return;
     }
 
-    try {
-      await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
-      await Purchases.configure({ apiKey });
-      this.rcInitialized = true;
+    const { store, ProductType, Platform } = cdv;
 
-      // React to subscription changes in real time (e.g., paywall purchase, renewal)
-      await Purchases.addCustomerInfoUpdateListener((customerInfo) => {
-        const isActive = !!customerInfo.entitlements.active[PRO_ENTITLEMENT_ID];
-        this.isPro.set(isActive);
+    // Reduce log noise in production
+    store.verbosity = 1; // ERROR only
+
+    // Register both products on both platforms
+    const platforms = [Platform.GOOGLE_PLAY, Platform.APPLE_APPSTORE];
+    const registrations = Object.values(PRODUCT_IDS).flatMap(id =>
+      platforms.map(platform => ({ id, type: ProductType.PAID_SUBSCRIPTION, platform }))
+    );
+    store.register(registrations);
+
+    // ── Event pipeline ──────────────────────────────────────────────────────
+    store.when()
+      // Update local product catalog for paywall price display
+      .productUpdated((product) => {
+        this.ngZone.run(() => {
+          this.products.update(prev => {
+            const others = prev.filter(p => !(p.id === product.id && p.platform === product.platform));
+            return [...others, product];
+          });
+        });
+      })
+      // Step 1: store approved the transaction → request verification
+      .approved((transaction) => {
+        // Without a server validator, CdvPurchase accepts the receipt locally.
+        // Call verify() so the plugin moves the transaction to "verified" state.
+        transaction.verify();
+      })
+      // Step 2: receipt verified → grant Pro access, finish transaction
+      .verified((receipt) => {
+        this.ngZone.run(() => {
+          const hasProProduct = receipt.products.some(p =>
+            Object.values(PRODUCT_IDS).includes(p.id as any)
+          );
+          if (hasProProduct && !receipt.isExpired()) {
+            this.isPro.set(true);
+            if (this.currentUid) this.saveProToFirestore(this.currentUid);
+          }
+        });
+        receipt.finish();
+      })
+      // Unverified (e.g. network error during verification)
+      .unverified(() => {
+        console.warn('[PurchaseService] receipt unverified — will retry on next launch');
       });
+
+    try {
+      await store.initialize(platforms);
+      this.storeReady = true;
+      // Reflect any existing active purchases (reinstalls, cross-device)
+      this.reflectVerifiedPurchases(store);
     } catch (e) {
-      console.error('[PurchaseService] init failed', e);
+      console.error('[PurchaseService] store.initialize failed', e);
     }
   }
 
   // ── User Identity ─────────────────────────────────────────────────────────
 
   /**
-   * Link RevenueCat's anonymous user to the authenticated Firebase UID.
-   * Call after the user signs in so purchases are tied to their account.
+   * Store the current UID so the service can persist Pro status to Firestore
+   * after a purchase completes. Call after the user signs in.
    */
   async identifyUser(uid: string): Promise<void> {
-    if (!this.rcInitialized) return;
-    try {
-      await Purchases.logIn({ appUserID: uid });
-    } catch {
-      // Ignore — user will be identified by anonymous ID
-    }
+    this.currentUid = uid;
   }
 
   /**
-   * Fast status load: read isPro + trialStartDate from Firestore first
-   * (no RevenueCat round-trip). Falls back to RevenueCat if Firestore says
-   * false (handles reinstalls / cross-device).
+   * Load Pro status: Firestore first (fast), then fall back to live store check.
+   * Call after sign-in and after store initialization.
    */
   async loadProStatus(uid: string): Promise<void> {
+    this.currentUid = uid;
+
     try {
       const snap = await getDoc(doc(this.firestore, `users/${uid}`));
       if (snap.exists()) {
         const data = snap.data();
+
         if (data['isPro'] === true) {
           this.isPro.set(true);
           return;
         }
         // Restore trial state from Firestore
-        const trialStart: { toDate?: () => Date } | undefined = data['trialStartDate'];
+        const trialStart = data['trialStartDate'] as { toDate?: () => Date } | undefined;
         if (trialStart?.toDate) {
           const end = new Date(trialStart.toDate());
           end.setDate(end.getDate() + 7);
           this.trialEndsDate.set(end);
-          if (this.trialActive()) return; // still in trial — no RC round-trip needed
+          if (this.trialActive()) return;
         }
       }
-    } catch { /* offline — fall through to RevenueCat */ }
+    } catch { /* offline — fall through to store check */ }
 
-    await this.syncProFromRevenueCat(uid);
+    // Cross-device / reinstall fallback: query live store
+    if (this.storeReady) {
+      const cdv: typeof CdvPurchase | undefined = (window as any)['CdvPurchase'];
+      if (cdv?.store) this.reflectVerifiedPurchases(cdv.store);
+    }
   }
 
   /**
-   * Activate a free trial for the given user.
-   * Writes trialStartDate to Firestore and updates the local signal.
-   * @param uid   Firebase UID
-   * @param days  Trial length in days (default: 7)
+   * Activate a local 7-day free trial (Firestore-persisted).
+   * Does NOT create a store-level subscription — used for soft trial gating only.
    */
   async activateTrial(uid: string, days = 7): Promise<void> {
     const now = new Date();
@@ -144,137 +256,135 @@ export class PurchaseService {
     try {
       await updateDoc(doc(this.firestore, `users/${uid}`), {
         trialStartDate: now,
-        trialEndsDate: end
+        trialEndsDate: end,
       });
-    } catch { /* offline — trial still active locally */ }
+    } catch { /* offline — trial active locally */ }
   }
 
+  // ── Purchase flow ──────────────────────────────────────────────────────────
+
   /**
-   * Fetch latest CustomerInfo from RevenueCat and update the isPro signal + Firestore.
+   * Purchase the given plan directly (used by the Settings paywall card
+   * which already has its own plan-toggle UI).
+   * Returns true if the purchase completed successfully.
    */
-  private async syncProFromRevenueCat(uid?: string): Promise<boolean> {
-    if (!this.rcInitialized) return false;
-    try {
-      const { customerInfo } = await Purchases.getCustomerInfo();
-      const isActive = !!customerInfo.entitlements.active[PRO_ENTITLEMENT_ID];
-      this.isPro.set(isActive);
-      if (isActive && uid) await this.saveProToFirestore(uid);
-      return isActive;
-    } catch {
+  async purchasePlan(uid: string, plan: 'monthly' | 'annual'): Promise<boolean> {
+    if (!this.isNative || !this.storeReady) {
+      this.showWebAlert();
       return false;
     }
-  }
 
-  // ── Paywall ───────────────────────────────────────────────────────────────
+    const cdv: typeof CdvPurchase | undefined = (window as any)['CdvPurchase'];
+    if (!cdv?.store) return false;
 
-  /**
-   * Present the native RevenueCat Paywall for the current offering.
-   * Handles all products (Lifetime, Yearly, Monthly) configured in the RC dashboard.
-   * Returns true if the user purchased or restored Pro.
-   */
-  async presentPaywall(uid: string): Promise<boolean> {
-    if (!this.isNative || !this.rcInitialized) {
-      await this.alertService.showAlert({
-        title: '📱 Not Available',
-        message: 'In-app purchases are only available on the Android and iOS apps.',
-        confirmText: 'OK',
-        showCancel: false,
-        type: 'info'
-      });
+    const productId = PRODUCT_IDS[plan];
+    const platform  = Capacitor.getPlatform() === 'ios'
+      ? cdv.Platform.APPLE_APPSTORE
+      : cdv.Platform.GOOGLE_PLAY;
+
+    const product = cdv.store.get(productId, platform);
+    const offer   = product?.offers?.[0];
+    if (!offer) {
+      console.warn('[PurchaseService] offer not found for', productId);
       return false;
     }
-    try {
-      const { result } = await RevenueCatUI.presentPaywall();
-      const purchased = result === PAYWALL_RESULT.PURCHASED || result === PAYWALL_RESULT.RESTORED;
-      if (purchased) await this.syncProFromRevenueCat(uid);
-      return purchased;
-    } catch (e) {
-      console.error('[PurchaseService] presentPaywall failed', e);
-      return false;
-    }
-  }
 
-  /**
-   * Present the paywall ONLY if the user does not have the JavaIQ Pro entitlement.
-   * Use this when gating premium content to avoid showing the paywall to existing Pro users.
-   */
-  async presentPaywallIfNeeded(uid: string): Promise<boolean> {
-    if (!this.isNative || !this.rcInitialized) return false;
-    try {
-      const { result } = await RevenueCatUI.presentPaywallIfNeeded({
-        requiredEntitlementIdentifier: PRO_ENTITLEMENT_ID
-      });
-      const purchased = result === PAYWALL_RESULT.PURCHASED || result === PAYWALL_RESULT.RESTORED;
-      if (purchased) await this.syncProFromRevenueCat(uid);
-      return purchased;
-    } catch (e) {
-      console.error('[PurchaseService] presentPaywallIfNeeded failed', e);
-      return false;
-    }
-  }
-
-  // ── Customer Center ───────────────────────────────────────────────────────
-
-  /**
-   * Open the native RevenueCat Customer Center.
-   * Lets subscribers manage, cancel, or restore their subscription without contacting support.
-   */
-  async openCustomerCenter(): Promise<void> {
-    if (!this.isNative || !this.rcInitialized) {
-      await this.alertService.showAlert({
-        title: '📱 Not Available',
-        message: 'Subscription management is only available on the Android and iOS apps.',
-        confirmText: 'OK',
-        showCancel: false,
-        type: 'info'
-      });
-      return;
-    }
-    try {
-      await RevenueCatUI.presentCustomerCenter();
-    } catch (e) {
-      console.error('[PurchaseService] Customer Center failed', e);
-    }
-  }
-
-  // ── Restore ───────────────────────────────────────────────────────────────
-
-  /**
-   * Restore previous purchases (required by App Store / Play Store guidelines).
-   */
-  async restorePurchases(uid: string): Promise<boolean> {
-    if (!this.isNative || !this.rcInitialized) return false;
     this.purchasing.set(true);
     try {
-      const { customerInfo } = await Purchases.restorePurchases();
-      const isActive = !!customerInfo.entitlements.active[PRO_ENTITLEMENT_ID];
-      this.isPro.set(isActive);
-      if (isActive) {
-        await this.saveProToFirestore(uid);
+      const result = await cdv.store.order(offer);
+      if (result.isError) {
+        if (result.code !== 6777010) { // 6777010 = user cancelled
+          await this.alertService.showAlert({
+            title: 'Purchase Failed',
+            message: result.message ?? 'Something went wrong. Please try again.',
+            confirmText: 'OK', showCancel: false, type: 'error',
+          });
+        }
+        return false;
+      }
+      // isPro signal is set reactively inside the verified() handler
+      return true;
+    } catch (e: any) {
+      if (e?.code !== 6777010) {
+        await this.alertService.showAlert({
+          title: 'Purchase Failed',
+          message: 'Something went wrong. Please try again.',
+          confirmText: 'OK', showCancel: false, type: 'error',
+        });
+      }
+      return false;
+    } finally {
+      this.purchasing.set(false);
+    }
+  }
+
+  /**
+   * Present the full paywall modal.
+   * Use from soft-paywall triggers (level milestone, ad gate, etc.).
+   */
+  async presentPaywall(uid: string): Promise<boolean> {
+    if (!this.isNative) {
+      this.showWebAlert();
+      return false;
+    }
+
+    // Lazy-import to keep the initial chunk small
+    const { PaywallModalComponent } = await import('../shared/paywall-modal.component');
+    const modal = await this.modalCtrl.create({
+      component: PaywallModalComponent,
+      cssClass: 'paywall-modal',
+      breakpoints: [0, 1],
+      initialBreakpoint: 1,
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss<{ purchased: boolean }>();
+    return data?.purchased ?? false;
+  }
+
+  /**
+   * Present paywall only if the user does not already have Pro access.
+   */
+  async presentPaywallIfNeeded(uid: string): Promise<boolean> {
+    if (this.isProOrTrial()) return false;
+    return this.presentPaywall(uid);
+  }
+
+  // ── Restore ────────────────────────────────────────────────────────────────
+
+  async restorePurchases(uid: string): Promise<boolean> {
+    if (!this.isNative || !this.storeReady) return false;
+
+    this.purchasing.set(true);
+    try {
+      const cdv: typeof CdvPurchase | undefined = (window as any)['CdvPurchase'];
+      if (!cdv?.store) return false;
+
+      // restore() triggers the platform's restore flow; verified() handler fires on success
+      cdv.store.restore();
+
+      // Wait briefly for the verified handler to fire
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      if (this.isPro()) {
         await this.alertService.showAlert({
           title: '✅ Pro Restored',
           message: 'Your Pro access has been restored!',
-          confirmText: 'Great!',
-          showCancel: false,
-          type: 'success'
+          confirmText: 'Great!', showCancel: false, type: 'success',
         });
+        return true;
       } else {
         await this.alertService.showAlert({
           title: 'No Purchase Found',
           message: 'No previous Pro purchase was found for this account.',
-          confirmText: 'OK',
-          showCancel: false,
-          type: 'info'
+          confirmText: 'OK', showCancel: false, type: 'info',
         });
+        return false;
       }
-      return isActive;
     } catch {
       await this.alertService.showAlert({
         title: 'Restore Failed',
         message: 'Could not restore purchases. Please try again.',
-        confirmText: 'OK',
-        showCancel: false,
-        type: 'error'
+        confirmText: 'OK', showCancel: false, type: 'error',
       });
       return false;
     } finally {
@@ -282,17 +392,51 @@ export class PurchaseService {
     }
   }
 
-  // ── Sign Out ──────────────────────────────────────────────────────────────
+  // ── Subscription Management ────────────────────────────────────────────────
 
-  /** Reset RevenueCat user on sign-out. */
+  /**
+   * Open the platform's native subscription management screen.
+   * Android: Google Play subscriptions page.
+   * iOS: Apple Settings → Subscriptions.
+   */
+  async openCustomerCenter(): Promise<void> {
+    if (!this.isNative) {
+      this.showWebAlert();
+      return;
+    }
+    const url = Capacitor.getPlatform() === 'ios'
+      ? 'https://apps.apple.com/account/subscriptions'
+      : 'https://play.google.com/store/account/subscriptions?sku=javaiq_pro_monthly&package=in.sangathi.javaiq';
+    window.open(url, '_system');
+  }
+
+  // ── Sign Out ───────────────────────────────────────────────────────────────
+
   async resetUser(): Promise<void> {
     this.isPro.set(false);
     this.trialEndsDate.set(null);
-    if (!this.rcInitialized) return;
-    try { await Purchases.logOut(); } catch { /* ignore */ }
+    this.currentUid = null;
+    this.products.set([]);
   }
 
-  // ── Firestore ─────────────────────────────────────────────────────────────
+  // ── Backward compat ────────────────────────────────────────────────────────
+
+  /** @deprecated Use presentPaywall(uid) */
+  async purchasePro(uid: string): Promise<boolean> {
+    return this.presentPaywall(uid);
+  }
+
+  // ── Private helpers ────────────────────────────────────────────────────────
+
+  private reflectVerifiedPurchases(store: CdvStore): void {
+    const hasActive = store.verifiedPurchases.some(vp => {
+      const hasProId = vp.products.some(p => Object.values(PRODUCT_IDS).includes(p.id as any));
+      return hasProId && !vp.isExpired();
+    });
+    if (hasActive) {
+      this.ngZone.run(() => this.isPro.set(true));
+    }
+  }
 
   private async saveProToFirestore(uid: string): Promise<void> {
     try {
@@ -300,13 +444,11 @@ export class PurchaseService {
     } catch { /* offline — will sync on next launch */ }
   }
 
-  // ── Backward compat ───────────────────────────────────────────────────────
-
-  /**
-   * @deprecated Use presentPaywall(uid) instead.
-   * Kept for callers that used the old purchasePro API.
-   */
-  async purchasePro(uid: string): Promise<boolean> {
-    return this.presentPaywall(uid);
+  private async showWebAlert(): Promise<void> {
+    await this.alertService.showAlert({
+      title: 'Mobile App Only',
+      message: 'In-app purchases are available on the Android and iOS apps.',
+      confirmText: 'OK', showCancel: false, type: 'info',
+    });
   }
 }
