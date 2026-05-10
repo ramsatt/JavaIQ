@@ -497,14 +497,17 @@ import { Capacitor } from '@capacitor/core';
 
     /* Nav Item States */
     .nav-item.selected {
-      --color: #e2e8f0;
-      --background: rgba(139,92,246,0.1);
+      --color: #d1fae5;
+      --background: rgba(64,145,108,0.15);
+    }
+    .nav-item.selected ion-label {
+      font-weight: 800 !important;
     }
     .nav-item.selected .icon-box {
-      background: rgba(139,92,246,0.2);
-      border-color: rgba(139,92,246,0.4);
+      background: rgba(64,145,108,0.22);
+      border-color: rgba(64,145,108,0.45);
     }
-    .nav-item.selected ion-icon { color: #c4b5fd; }
+    .nav-item.selected ion-icon { color: #52b788; }
 
     .active-indicator {
       display: none;
