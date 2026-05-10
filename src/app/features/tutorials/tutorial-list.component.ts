@@ -39,6 +39,7 @@ interface TutorialCourse {
 @Component({
   selector: 'app-tutorial-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { 'class': 'ion-page' },
   imports: [RouterLink, CommonModule, IonContent, IonRefresher, IonRefresherContent, AppHeaderComponent, IonHeader],
   template: `
     <ion-header class="ion-no-border">

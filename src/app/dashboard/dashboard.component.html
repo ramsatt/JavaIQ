@@ -7,7 +7,7 @@
 
 <!-- ────────── Scrollable body ────────── -->
 <ion-content>
-  <main class="dash-main">
+  <div class="dash-main" role="main" aria-label="Dashboard">
 
     <!-- ────────── Hero ────────── -->
     <section class="hero">
@@ -23,9 +23,10 @@
       <!-- Level / XP strip (XP shown exactly once) -->
       <div class="level-strip"
            role="progressbar"
-           [attr.aria-valuenow]="gameService.xp()"
+           [attr.aria-valuenow]="gameService.levelProgress()"
            aria-valuemin="0"
-           aria-label="XP progress toward next level">
+           aria-valuemax="100"
+           [attr.aria-label]="'Level ' + gameService.level() + ', ' + gameService.xpToNextLevel() + ' XP to next level'">
         <span class="level-strip__label">Lv {{ gameService.level() }}</span>
         <div class="level-strip__track">
           <div class="level-strip__fill" [style.width.%]="gameService.levelProgress()"></div>
@@ -49,14 +50,14 @@
             <span class="kpi__lbl">Progress</span>
           </div>
         </button>
-        <button class="kpi" (click)="goToAchievements()" [attr.aria-label]="unlockedAchievements() + ' achievements unlocked'">
+        <button class="kpi" (click)="goToAchievements()" [attr.aria-label]="unlockedAchievements() + ' of ' + achService.achievements().length + ' achievements unlocked'">
           <i class="bi bi-trophy-fill kpi__icon kpi--ach"></i>
           <div class="kpi__body">
-            <span class="kpi__num">{{ unlockedAchievements() }}<span class="kpi__of">/{{ achService.achievements().length }}</span></span>
+            <span class="kpi__num">{{ unlockedAchievements() }}<span class="kpi__of">&thinsp;/&thinsp;{{ achService.achievements().length }}</span></span>
             <span class="kpi__lbl">Badges</span>
           </div>
         </button>
-        <button class="kpi" [attr.aria-label]="'Level ' + gameService.level() + ', ' + gameService.xp() + ' XP'">
+        <button class="kpi" [attr.aria-label]="'Level ' + gameService.level() + ', ' + gameService.xp() + ' XP total'">
           <i class="bi bi-star-fill kpi__icon kpi--xp"></i>
           <div class="kpi__body">
             <span class="kpi__num">{{ gameService.xp() | number:'1.0-0' }}</span>
@@ -69,16 +70,17 @@
     <!-- ────────── Today's Focus ────────── -->
     @if (todayFocusCard(); as focus) {
     <section class="tf-section">
-      <div class="tf-card" [style.--tf-color]="focus.color" [style.--tf-bg]="focus.bg"
-        (click)="focusAction(focus.action)">
+      <button class="tf-card" [style.--tf-color]="focus.color" [style.--tf-bg]="focus.bg"
+        (click)="focusAction(focus.action)"
+        [attr.aria-label]="'Today\'s focus: ' + focus.label">
         <div class="tf-icon"><i [class]="'bi ' + focus.icon"></i></div>
         <div class="tf-text">
           <span class="tf-tag">TODAY'S FOCUS</span>
           <span class="tf-label">{{ focus.label }}</span>
           <span class="tf-desc">{{ focus.desc }}</span>
         </div>
-        <i class="bi bi-chevron-right tf-arrow"></i>
-      </div>
+        <span class="tf-cta">Start&nbsp;→</span>
+      </button>
     </section>
     } @else {
     <section class="tf-section">
@@ -148,7 +150,7 @@
           <!-- Timeline dot -->
           <div class="tm-dot">
             @if (isLocked(cat.name)) {
-            <span class="dot dot-locked">🔒</span>
+            <span class="dot dot-locked"><i class="bi bi-lock-fill" style="font-size:0.6rem"></i></span>
             } @else if (getCategoryStars(cat.name) === 3) {
             <span class="dot dot-done">✓</span>
             } @else {
@@ -169,7 +171,7 @@
                 <span class="mc-meta">{{ getQuestionCount(cat.name) }} Topics</span>
               </div>
               @if (isLocked(cat.name)) {
-              <span class="mc-locked-chip">LOCKED</span>
+              <span class="mc-locked-chip"><i class="bi bi-lock-fill" style="font-size:0.6rem;margin-right:3px"></i>LOCKED</span>
               } @else {
               <span class="mc-arrow">›</span>
               }
@@ -181,7 +183,7 @@
                 <span class="mc-prof-label">PROFICIENCY</span>
                 <div class="mc-stars">
                   @for (s of [1,2,3]; track s) {
-                  <span [style.color]="getCategoryStars(cat.name) >= s ? '#f59e0b' : '#cbd5e1'">★</span>
+                  <span class="mc-star" [class.mc-star--filled]="getCategoryStars(cat.name) >= s">★</span>
                   }
                 </div>
               </div>
@@ -205,8 +207,8 @@
       </div>
 
       <button class="view-all-btn" (click)="showAllModules.set(!showAllModules())">
-        {{ showAllModules() ? 'Show less' : 'View all ' + categories.length + ' modules' }}
         <i class="bi" [class.bi-chevron-down]="!showAllModules()" [class.bi-chevron-up]="showAllModules()"></i>
+        {{ showAllModules() ? 'Show less' : 'View all ' + categories.length + ' modules' }}
       </button>
     </section>
 
@@ -219,7 +221,7 @@
 
       <!-- Achievements shortcut -->
       <button class="ach-row-btn" (click)="goToAchievements()">
-        <span class="ach-medal">🏅</span>
+        <i class="bi bi-patch-check-fill ach-medal"></i>
         <span class="ach-text">Achievements</span>
         <span class="ach-chip">{{ unlockedAchievements() }} / {{ achService.achievements().length }}</span>
         <span class="ach-caret">›</span>
@@ -236,5 +238,5 @@
 
     </section>
 
-  </main>
+  </div>
 </ion-content>

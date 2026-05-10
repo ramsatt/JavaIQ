@@ -141,7 +141,7 @@ import { GamificationService } from '../gamification.service';
 
     :host-context(html.dark) .qotd-question { color: #e4efe7; }
 
-    /* Premium answer button */
+    /* High-contrast orange answer button — clearly primary CTA */
     .btn-answer {
       width: 100%;
       padding: 13px;
@@ -150,38 +150,38 @@ import { GamificationService } from '../gamification.service';
       cursor: pointer;
       font-size: 0.86rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #0c1810 0%, #1B4332 50%, #2D6A4F 100%);
-      color: #d4a853;
+      background: linear-gradient(135deg, #C0641A 0%, #E07A1F 60%, #F5A24A 100%);
+      color: #ffffff;
       box-shadow:
-        0 4px 18px rgba(27,67,50,0.35),
-        inset 0 1px 0 rgba(255,255,255,0.07);
+        0 4px 18px rgba(224,122,31,0.40),
+        inset 0 1px 0 rgba(255,255,255,0.15);
       transition: all 0.22s ease;
       letter-spacing: 0.01em;
     }
 
     .btn-answer:hover {
+      background: linear-gradient(135deg, #D4711F 0%, #F08A2F 60%, #FFB560 100%);
       transform: translateY(-2px);
       box-shadow:
-        0 8px 24px rgba(27,67,50,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.10);
+        0 8px 24px rgba(224,122,31,0.50),
+        inset 0 1px 0 rgba(255,255,255,0.18);
     }
 
     .btn-answer:active { transform: translateY(0); }
 
     :host-context(html.dark) .btn-answer {
-      background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 50%, #40916C 100%);
+      background: linear-gradient(135deg, #C0641A 0%, #E07A1F 60%, #F5A24A 100%);
       color: #ffffff;
-      border: 1px solid rgba(116,198,157,0.35);
       box-shadow:
-        0 4px 18px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(116,198,157,0.12);
+        0 4px 18px rgba(224,122,31,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.10);
     }
 
     :host-context(html.dark) .btn-answer:hover {
-      background: linear-gradient(135deg, #2D6A4F 0%, #40916C 50%, #52b788 100%);
+      background: linear-gradient(135deg, #D4711F 0%, #F08A2F 60%, #FFB560 100%);
       box-shadow:
-        0 8px 24px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(116,198,157,0.18);
+        0 8px 24px rgba(224,122,31,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.12);
     }
 
     .qotd-answer-reveal {

@@ -14,7 +14,7 @@ import { PurchaseService } from '../services/purchase.service';
   imports: [CommonModule, IonMenuButton, SearchModalComponent],
   template: `
     
-      <header class="dash-header">
+      <header class="dash-header" aria-label="JavaIQ">
       <div class="header-left">
         <ion-menu-button class="menu-btn" color="light"></ion-menu-button>
         <div class="wordmark">
@@ -26,7 +26,9 @@ import { PurchaseService } from '../services/purchase.service';
       </div>
 
       <div class="header-right">
-        <button class="icon-btn search-btn" (click)="openSearch()" title="Search" aria-label="Search">🔍</button>
+        <button class="icon-btn search-btn" (click)="openSearch()" title="Search" aria-label="Search">
+          <i class="bi bi-search" style="font-size:0.95rem;color:#fff;"></i>
+        </button>
 
         <div class="streak-badge" [class.streak-on]="gameService.streak() > 0">
           🔥 <span>{{ gameService.streak() }}</span>

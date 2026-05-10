@@ -190,7 +190,7 @@ interface StreakMilestone {
     .xp-label {
       font-size: 0.68rem;
       font-weight: 600;
-      color: rgba(255,255,255,0.45);
+      color: rgba(255,255,255,0.72);
     }
 
     /* Milestone */
