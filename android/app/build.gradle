@@ -42,7 +42,7 @@ dependencies {
     implementation project(':capacitor-cordova-android-plugins')
     // Required to compile the BannerExecutor.java override that patches the
     // @capacitor-community/admob banner NPE (ViewGroup null on init).
-    implementation "com.google.android.gms:play-services-ads:$playServicesAdsVersion"
+    implementation "com.google.android.gms:play-services-ads:24.7.+"
 }
 
 apply from: 'capacitor.build.gradle'
