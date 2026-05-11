@@ -48,6 +48,10 @@ export class AdMobService {
   private rewardReady = false;
   private rewardLoading = false;
 
+  // Banner state — prevents double-show and tracks first-show delay
+  private bannerVisible = false;
+  private bannerFirstShown = false;
+
   // ─── Frequency cap state ─────────────────────────────────────────────────
   private lastInterstitialTime = 0;
   private navigationCount = 0;
@@ -116,7 +120,17 @@ export class AdMobService {
   // ── Banner ────────────────────────────────────────────────────────────
   async showBanner() {
     if (!this.isNative || this.purchaseService.isProOrTrial()) return;
+    // Already on screen — nothing to do
+    if (this.bannerVisible) return;
     try {
+      // On the very first show, defer by 1 s so the WebView ViewGroup layout
+      // is fully initialised before the native banner tries to addView().
+      // Subsequent shows (after hideBanner) are immediate.
+      if (!this.bannerFirstShown) {
+        await new Promise<void>(resolve => setTimeout(resolve, 1000));
+        this.bannerFirstShown = true;
+      }
+
       // When banner renders, get its actual height and expose it as a CSS variable.
       // All fixed-bottom UI (nav-bar, buttons) use var(--admob-banner-height)
       // to shift themselves above the ad.
@@ -132,6 +146,8 @@ export class AdMobService {
         margin: 0,
         isTesting: environment.adMobTesting
       } as BannerAdOptions);
+
+      this.bannerVisible = true;
     } catch (e) {
       console.error('[AdMob] Banner failed', e);
     }
@@ -141,6 +157,7 @@ export class AdMobService {
     if (!this.isNative) return;
     try {
       await AdMob.hideBanner();
+      this.bannerVisible = false;
       document.documentElement.style.setProperty('--admob-banner-height', '0px');
     } catch { }
   }
