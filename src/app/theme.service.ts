@@ -1,26 +1,46 @@
 import { Injectable, effect, signal } from '@angular/core';
 
+export type ThemePreference = 'system' | 'light' | 'dark';
+
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly THEME_KEY = 'app-theme';
-  theme = signal<'light' | 'dark'>(this.getInitialTheme());
+
+  /** Stored preference — drives the segmented control in Settings */
+  preference = signal<ThemePreference>(this.getInitialPreference());
+
+  /** Resolved applied theme ('system' → actual OS value) */
+  theme = signal<'light' | 'dark'>(this.resolve(this.getInitialPreference()));
 
   constructor() {
     effect(() => this.applyTheme(this.theme()));
   }
 
-  toggle() {
-    this.theme.update(t => (t === 'light' ? 'dark' : 'light'));
+  setPreference(pref: ThemePreference): void {
+    this.preference.set(pref);
+    this.theme.set(this.resolve(pref));
+    localStorage.setItem(this.THEME_KEY, pref);
   }
 
-  private getInitialTheme(): 'light' | 'dark' {
+  /** Legacy binary toggle — kept for backwards compat */
+  toggle(): void {
+    this.setPreference(this.theme() === 'light' ? 'dark' : 'light');
+  }
+
+  private getInitialPreference(): ThemePreference {
     const saved = localStorage.getItem(this.THEME_KEY);
-    if (saved === 'light' || saved === 'dark') return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (saved === 'system' || saved === 'light' || saved === 'dark') return saved;
+    return 'system';
   }
 
-  private applyTheme(theme: 'light' | 'dark') {
+  private resolve(pref: ThemePreference): 'light' | 'dark' {
+    if (pref === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return pref;
+  }
+
+  private applyTheme(theme: 'light' | 'dark'): void {
     document.documentElement.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem(this.THEME_KEY, theme);
   }
 }
