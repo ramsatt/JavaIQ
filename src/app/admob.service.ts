@@ -48,9 +48,13 @@ export class AdMobService {
   private rewardReady = false;
   private rewardLoading = false;
 
-  // Banner state — prevents double-show and tracks first-show delay
+  // Banner state — prevents double-show
   private bannerVisible = false;
-  private bannerFirstShown = false;
+
+  // Resolves once AdMob.initialize() has completed on the native side.
+  // showBanner() awaits this so it never calls addView() before the
+  // Android ViewGroup is attached.
+  private initPromise: Promise<void> = Promise.resolve();
 
   // ─── Frequency cap state ─────────────────────────────────────────────────
   private lastInterstitialTime = 0;
@@ -58,12 +62,14 @@ export class AdMobService {
 
   constructor() {
     if (this.isNative) {
-      this.initialize();
+      this.initPromise = this.initialize();
     }
   }
 
   // ── Frequency cap guard ─────────────────────────────────────────────────
-  canShowInterstitial(): boolean {    if (this.purchaseService.isProOrTrial()) return false;    this.navigationCount++;
+  canShowInterstitial(): boolean {
+    if (this.purchaseService.isProOrTrial()) return false;
+    this.navigationCount++;
     if (this.navigationCount <= INTERSTITIAL_MIN_NAVIGATIONS) return false;
     const now = Date.now();
     if (now - this.lastInterstitialTime < INTERSTITIAL_COOLDOWN_MS) return false;
@@ -71,12 +77,14 @@ export class AdMobService {
   }
 
   // ── Initialization ──────────────────────────────────────────────────────
-  async initialize() {    if (this.purchaseService.isProOrTrial()) return;    try {
+  async initialize(): Promise<void> {
+    if (this.purchaseService.isProOrTrial()) return;
+    try {
       await AdMob.initialize({
         testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'],
         initializeForTesting: environment.adMobTesting,
       });
-      // Preload both ad types in background
+      // Preload both ad types in background (don't block init resolution)
       this.preloadInterstitial();
       this.preloadRewardAd();
     } catch (e) {
@@ -123,17 +131,13 @@ export class AdMobService {
     // Already on screen — nothing to do
     if (this.bannerVisible) return;
     try {
-      // On the very first show, defer by 1 s so the WebView ViewGroup layout
-      // is fully initialised before the native banner tries to addView().
-      // Subsequent shows (after hideBanner) are immediate.
-      if (!this.bannerFirstShown) {
-        await new Promise<void>(resolve => setTimeout(resolve, 1000));
-        this.bannerFirstShown = true;
-      }
+      // Wait for AdMob.initialize() to complete on the native side before
+      // calling addView(). This prevents the NullPointerException that occurs
+      // when the Android ViewGroup isn't attached yet.
+      await this.initPromise;
 
-      // When banner renders, get its actual height and expose it as a CSS variable.
-      // All fixed-bottom UI (nav-bar, buttons) use var(--admob-banner-height)
-      // to shift themselves above the ad.
+      // When banner renders, expose its height as a CSS variable so
+      // fixed-bottom UI (nav-bar, buttons) can shift above the ad.
       await AdMob.addListener(BannerAdPluginEvents.SizeChanged, (info) => {
         const h = (info as { height?: number }).height ?? 60;
         document.documentElement.style.setProperty('--admob-banner-height', `${h}px`);
