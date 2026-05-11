@@ -1,0 +1,64 @@
+--- a/node_modules/@capacitor-community/admob/android/src/main/java/com/getcapacitor/community/admob/banner/BannerExecutor.java	2026-05-11 21:01:54
++++ b/node_modules/@capacitor-community/admob/android/src/main/java/com/getcapacitor/community/admob/banner/BannerExecutor.java	2026-05-11 21:01:09
+@@ -44,7 +44,23 @@
+     }
+ 
+     public void initialize() {
+-        mViewGroup = (ViewGroup) ((ViewGroup) activitySupplier.get().findViewById(android.R.id.content)).getChildAt(0);
++        // getChildAt(0) can return null if the WebView hasn't been attached
++        // to the content FrameLayout yet. Guard here and re-fetch lazily in
++        // createNewAdView() if still null at show time.
++        ViewGroup content = (ViewGroup) activitySupplier.get().findViewById(android.R.id.content);
++        if (content != null && content.getChildCount() > 0) {
++            mViewGroup = (ViewGroup) content.getChildAt(0);
++        }
++    }
++
++    /** Lazily resolves mViewGroup in case it was null during initialize(). */
++    private void ensureViewGroup() {
++        if (mViewGroup == null) {
++            ViewGroup content = (ViewGroup) activitySupplier.get().findViewById(android.R.id.content);
++            if (content != null && content.getChildCount() > 0) {
++                mViewGroup = (ViewGroup) content.getChildAt(0);
++            }
++        }
+     }
+ 
+     public void showBanner(final PluginCall call) {
+@@ -204,7 +220,7 @@
+                 activitySupplier
+                     .get()
+                     .runOnUiThread(() -> {
+-                        if (mAdView != null) {
++                        if (mAdView != null && mViewGroup != null) {
+                             mViewGroup.removeView(mAdViewLayout);
+                             mAdViewLayout.removeView(mAdView);
+                             mAdView.destroy();
+@@ -261,7 +277,9 @@
+                         @Override
+                         public void onAdFailedToLoad(@NonNull LoadAdError adError) {
+                             if (mAdView != null) {
+-                                mViewGroup.removeView(mAdViewLayout);
++                                if (mViewGroup != null) {
++                                    mViewGroup.removeView(mAdViewLayout);
++                                }
+                                 mAdViewLayout.removeView(mAdView);
+                                 mAdView.destroy();
+                                 mAdView = null;
+@@ -296,8 +314,14 @@
+                     }
+                 );
+ 
+-                // Add AdViewLayout top of the WebView
+-                mViewGroup.addView(mAdViewLayout);
++                // Add AdViewLayout top of the WebView — re-fetch ViewGroup if
++                // it was null during initialize() (race with Activity layout).
++                ensureViewGroup();
++                if (mViewGroup != null) {
++                    mViewGroup.addView(mAdViewLayout);
++                } else {
++                    Log.w(logTag, "BannerExecutor: mViewGroup still null, banner not added to hierarchy");
++                }
+             });
+     }
+ }
