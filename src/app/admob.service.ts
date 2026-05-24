@@ -2,62 +2,61 @@ import { Injectable, inject, signal } from '@angular/core';
 import {
   AdMob, BannerAdSize, BannerAdPosition, RewardAdOptions,
   BannerAdOptions, RewardAdPluginEvents, AdOptions,
-  AdMobRewardItem, InterstitialAdPluginEvents, BannerAdPluginEvents
+  AdMobRewardItem, InterstitialAdPluginEvents, BannerAdPluginEvents,
+  RewardInterstitialAdPluginEvents, RewardInterstitialAdOptions,
 } from '@capacitor-community/admob';
 import { Capacitor } from '@capacitor/core';
 import { AlertService } from './alert.service';
 import { environment } from '../environments/environment';
 import { PurchaseService } from './services/purchase.service';
+import { NativeAdPlugin } from './plugins/native-ad.plugin';
 
-// ─── Ad Unit IDs ────────────────────────────────────────────────────────────
-const AD_IDS = {
-  banner: 'ca-app-pub-8970665297590705/6472553354',
-  interstitial: 'ca-app-pub-8970665297590705/1779267104',
-  reward: 'ca-app-pub-8970665297590705/8219096903',
+const PROD_IDS = {
+  banner:             'ca-app-pub-8970665297590705/6472553354',
+  interstitial:       'ca-app-pub-8970665297590705/3343517666',
+  reward:             'ca-app-pub-8970665297590705/8219096903',
+  rewardInterstitial: 'ca-app-pub-8970665297590705/7665906054',
+  appOpen:            'ca-app-pub-8970665297590705/7691168238',
 };
 
-// Test IDs (used when isTesting = true)
 const TEST_IDS = {
-  banner: 'ca-app-pub-3940256099942544/6300978111',
-  interstitial: 'ca-app-pub-3940256099942544/1033173712',
-  reward: 'ca-app-pub-3940256099942544/5224354917',
+  banner:             'ca-app-pub-3940256099942544/6300978111',
+  interstitial:       'ca-app-pub-3940256099942544/1033173712',
+  reward:             'ca-app-pub-3940256099942544/5224354917',
+  rewardInterstitial: 'ca-app-pub-3940256099942544/6978759866',
+  appOpen:            'ca-app-pub-3940256099942544/9257395921',
 };
 
-// ─── Frequency Cap ──────────────────────────────────────────────────────────
-const INTERSTITIAL_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
-const INTERSTITIAL_MIN_NAVIGATIONS = 2;          // skip first 2 nav actions
+const AD_IDS = environment.adMobTesting ? TEST_IDS : PROD_IDS;
+
+const INTERSTITIAL_COOLDOWN_MS = 5 * 60 * 1000;
+const INTERSTITIAL_MIN_NAVIGATIONS = 2;
+const APP_OPEN_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
 @Injectable({ providedIn: 'root' })
 export class AdMobService {
   private alertService = inject(AlertService);
   private purchaseService = inject(PurchaseService);
 
-  /** Signal tracking if a reward ad was successfully earned this session */
   rewardEarned = signal(false);
 
-  /** Whether an ad is currently visible (blocks double-shows) */
   private adShowing = signal(false);
-
   private readonly isNative = Capacitor.getPlatform() !== 'web';
 
-  // Interstitial preload state
+  // Preload state
   private interstitialReady = false;
   private interstitialLoading = false;
-
-  // Reward ad preload state
   private rewardReady = false;
   private rewardLoading = false;
-
-  // Banner state — prevents double-show
+  private rewardInterstitialReady = false;
+  private rewardInterstitialLoading = false;
   private bannerVisible = false;
 
-  // Resolves once AdMob.initialize() has completed on the native side.
-  // showBanner() awaits this so it never calls addView() before the
-  // Android ViewGroup is attached.
   private initPromise: Promise<void> = Promise.resolve();
 
-  // ─── Frequency cap state ─────────────────────────────────────────────────
+  // Frequency cap state
   private lastInterstitialTime = 0;
+  private lastAppOpenTime = 0;
   private navigationCount = 0;
 
   constructor() {
@@ -66,7 +65,7 @@ export class AdMobService {
     }
   }
 
-  // ── Frequency cap guard ─────────────────────────────────────────────────
+  // ── Frequency cap ───────────────────────────────────────────────────────
   canShowInterstitial(): boolean {
     if (this.purchaseService.isProOrTrial()) return false;
     this.navigationCount++;
@@ -84,11 +83,17 @@ export class AdMobService {
         testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'],
         initializeForTesting: environment.adMobTesting,
       });
-      // Preload both ad types in background (don't block init resolution)
+      AdMob.addListener(BannerAdPluginEvents.SizeChanged, (info) => {
+        const h = (info as { height?: number }).height ?? 60;
+        document.documentElement.style.setProperty('--admob-banner-height', `${h}px`);
+      });
+      // Preload all ad types in background
       this.preloadInterstitial();
       this.preloadRewardAd();
+      this.preloadRewardInterstitial();
+      this.preloadAppOpen();
     } catch (e) {
-      // Silent fail — ad init failure should not break the app
+      // Silent fail
     }
   }
 
@@ -97,52 +102,43 @@ export class AdMobService {
     if (this.interstitialLoading || this.interstitialReady || !this.isNative) return;
     this.interstitialLoading = true;
     try {
-      await AdMob.prepareInterstitial({
-        adId: AD_IDS.interstitial,
-        isTesting: environment.adMobTesting
-      });
+      await AdMob.prepareInterstitial({ adId: AD_IDS.interstitial, isTesting: environment.adMobTesting });
       this.interstitialReady = true;
-    } catch (e) {
-      // Silent fail
-    } finally {
-      this.interstitialLoading = false;
-    }
+    } catch { } finally { this.interstitialLoading = false; }
   }
 
   private async preloadRewardAd() {
     if (this.rewardLoading || this.rewardReady || !this.isNative) return;
     this.rewardLoading = true;
     try {
-      await AdMob.prepareRewardVideoAd({
-        adId: AD_IDS.reward,
-        isTesting: environment.adMobTesting
-      } as RewardAdOptions);
+      await AdMob.prepareRewardVideoAd({ adId: AD_IDS.reward, isTesting: environment.adMobTesting } as RewardAdOptions);
       this.rewardReady = true;
-    } catch (e) {
-      // Silent fail
-    } finally {
-      this.rewardLoading = false;
-    }
+    } catch { } finally { this.rewardLoading = false; }
   }
 
-  // ── Banner ────────────────────────────────────────────────────────────
+  private async preloadRewardInterstitial() {
+    if (this.rewardInterstitialLoading || this.rewardInterstitialReady || !this.isNative) return;
+    this.rewardInterstitialLoading = true;
+    try {
+      await AdMob.prepareRewardInterstitialAd({ adId: AD_IDS.rewardInterstitial, isTesting: environment.adMobTesting } as RewardInterstitialAdOptions);
+      this.rewardInterstitialReady = true;
+    } catch { } finally { this.rewardInterstitialLoading = false; }
+  }
+
+  private async preloadAppOpen() {
+    if (!this.isNative) return;
+    try {
+      await NativeAdPlugin.loadAppOpen({ adUnitId: AD_IDS.appOpen });
+    } catch { }
+  }
+
+  // ── Banner ──────────────────────────────────────────────────────────────
   async showBanner() {
     if (!this.isNative || this.purchaseService.isProOrTrial()) return;
-    // Already on screen — nothing to do
     if (this.bannerVisible) return;
+    this.bannerVisible = true;
     try {
-      // Wait for AdMob.initialize() to complete on the native side before
-      // calling addView(). This prevents the NullPointerException that occurs
-      // when the Android ViewGroup isn't attached yet.
       await this.initPromise;
-
-      // When banner renders, expose its height as a CSS variable so
-      // fixed-bottom UI (nav-bar, buttons) can shift above the ad.
-      await AdMob.addListener(BannerAdPluginEvents.SizeChanged, (info) => {
-        const h = (info as { height?: number }).height ?? 60;
-        document.documentElement.style.setProperty('--admob-banner-height', `${h}px`);
-      });
-
       await AdMob.showBanner({
         adId: AD_IDS.banner,
         adSize: BannerAdSize.ADAPTIVE_BANNER,
@@ -150,11 +146,7 @@ export class AdMobService {
         margin: 0,
         isTesting: environment.adMobTesting
       } as BannerAdOptions);
-
-      this.bannerVisible = true;
-    } catch (e) {
-      console.error('[AdMob] Banner failed', e);
-    }
+    } catch { this.bannerVisible = false; }
   }
 
   async hideBanner() {
@@ -166,19 +158,14 @@ export class AdMobService {
     } catch { }
   }
 
-  // ── Reward Ad ────────────────────────────────────────────────────────
-  /**
-   * Show a reward ad. On web, shows a confirmation dialog as a stand-in.
-   * @returns Promise<boolean> true if user earned the reward, false if dismissed/failed
-   */
+  // ── Reward Ad ───────────────────────────────────────────────────────────
   async showRewardAd(): Promise<boolean> {
     if (this.adShowing()) return false;
 
-    // Web simulation — show a confirmation to simulate the ad flow
     if (!this.isNative) {
       const agreed = await this.alertService.showAlert({
         title: '🎬 Watch a Short Ad',
-        message: 'Watch a short video ad to unlock this content for free!',
+        message: 'Watch a short video ad to reveal the answer!',
         confirmText: 'Watch Ad ✓',
         cancelText: 'Cancel',
         showCancel: true,
@@ -191,62 +178,65 @@ export class AdMobService {
     return new Promise(async (resolve) => {
       this.adShowing.set(true);
       let rewarded = false;
-
       try {
-        const rewardListener = await AdMob.addListener(
-          RewardAdPluginEvents.Rewarded,
-          (_item: AdMobRewardItem) => {
-            rewarded = true;
-            this.rewardEarned.set(true);
-          }
-        );
-
-        const dismissListener = await AdMob.addListener(
-          RewardAdPluginEvents.Dismissed,
-          () => {
-            rewardListener.remove();
-            dismissListener.remove();
-            this.adShowing.set(false);
-            this.rewardReady = false;
-            // Preload next one in background
-            this.preloadRewardAd();
-            resolve(rewarded);
-          }
-        );
-
-        const failListener = await AdMob.addListener(
-          RewardAdPluginEvents.FailedToLoad,
-          () => {
-            rewardListener.remove();
-            dismissListener.remove();
-            failListener.remove();
-            this.adShowing.set(false);
-            this.rewardReady = false;
-            resolve(false);
-          }
-        );
-
-        // If preloaded, show immediately; otherwise prepare+show
+        const rewardListener = await AdMob.addListener(RewardAdPluginEvents.Rewarded, (_item: AdMobRewardItem) => {
+          rewarded = true;
+          this.rewardEarned.set(true);
+        });
+        const dismissListener = await AdMob.addListener(RewardAdPluginEvents.Dismissed, () => {
+          rewardListener.remove();
+          dismissListener.remove();
+          this.adShowing.set(false);
+          this.rewardReady = false;
+          this.preloadRewardAd();
+          resolve(rewarded);
+        });
+        const failListener = await AdMob.addListener(RewardAdPluginEvents.FailedToLoad, () => {
+          rewardListener.remove();
+          dismissListener.remove();
+          failListener.remove();
+          this.adShowing.set(false);
+          this.rewardReady = false;
+          resolve(false);
+        });
         if (!this.rewardReady) {
-          await AdMob.prepareRewardVideoAd({
-            adId: AD_IDS.reward,
-            isTesting: environment.adMobTesting
-          } as RewardAdOptions);
+          await AdMob.prepareRewardVideoAd({ adId: AD_IDS.reward, isTesting: environment.adMobTesting } as RewardAdOptions);
         }
         await AdMob.showRewardVideoAd();
-
-      } catch (e) {
-        this.adShowing.set(false);
-        resolve(false);
-      }
+      } catch { this.adShowing.set(false); resolve(false); }
     });
   }
 
-  // ── Interstitial ─────────────────────────────────────────────────────
-  /**
-   * Show an interstitial ad.
-   * On web, silently skips. Respects 5-minute cooldown and 2-navigation minimum.
-   */
+  // ── Rewarded Interstitial ───────────────────────────────────────────────
+  /** Show a rewarded interstitial. Always grants access (user can skip), but rewards if completed. */
+  async showRewardedInterstitial(): Promise<void> {
+    if (this.adShowing() || !this.isNative || this.purchaseService.isProOrTrial()) return;
+
+    return new Promise(async (resolve) => {
+      this.adShowing.set(true);
+      try {
+        const dismissListener = await AdMob.addListener(RewardInterstitialAdPluginEvents.Dismissed, () => {
+          dismissListener.remove();
+          this.adShowing.set(false);
+          this.rewardInterstitialReady = false;
+          this.preloadRewardInterstitial();
+          resolve();
+        });
+        const failListener = await AdMob.addListener(RewardInterstitialAdPluginEvents.FailedToLoad, () => {
+          failListener.remove();
+          this.adShowing.set(false);
+          this.rewardInterstitialReady = false;
+          resolve();
+        });
+        if (!this.rewardInterstitialReady) {
+          await AdMob.prepareRewardInterstitialAd({ adId: AD_IDS.rewardInterstitial, isTesting: environment.adMobTesting } as RewardInterstitialAdOptions);
+        }
+        await AdMob.showRewardInterstitialAd();
+      } catch { this.adShowing.set(false); resolve(); }
+    });
+  }
+
+  // ── Interstitial ────────────────────────────────────────────────────────
   async showInterstitial(): Promise<void> {
     if (this.adShowing() || !this.isNative) return;
     if (!this.canShowInterstitial()) return;
@@ -254,41 +244,41 @@ export class AdMobService {
     return new Promise(async (resolve) => {
       this.adShowing.set(true);
       try {
-        // Set up dismiss listener first
-        const dismissListener = await AdMob.addListener(
-          InterstitialAdPluginEvents.Dismissed,
-          () => {
-            dismissListener.remove();
-            this.adShowing.set(false);
-            this.interstitialReady = false;
-            this.lastInterstitialTime = Date.now();
-            this.preloadInterstitial();
-            resolve();
-          }
-        );
-
-        const failListener = await AdMob.addListener(
-          InterstitialAdPluginEvents.FailedToLoad,
-          () => {
-            failListener.remove();
-            this.adShowing.set(false);
-            this.interstitialReady = false;
-            resolve();
-          }
-        );
-
+        const dismissListener = await AdMob.addListener(InterstitialAdPluginEvents.Dismissed, () => {
+          dismissListener.remove();
+          this.adShowing.set(false);
+          this.interstitialReady = false;
+          this.lastInterstitialTime = Date.now();
+          this.preloadInterstitial();
+          resolve();
+        });
+        const failListener = await AdMob.addListener(InterstitialAdPluginEvents.FailedToLoad, () => {
+          failListener.remove();
+          this.adShowing.set(false);
+          this.interstitialReady = false;
+          resolve();
+        });
         if (!this.interstitialReady) {
-          await AdMob.prepareInterstitial({
-            adId: AD_IDS.interstitial,
-            isTesting: environment.adMobTesting
-          });
+          await AdMob.prepareInterstitial({ adId: AD_IDS.interstitial, isTesting: environment.adMobTesting });
         }
         await AdMob.showInterstitial();
-
-      } catch (e) {
-        this.adShowing.set(false);
-        resolve();
-      }
+      } catch { this.adShowing.set(false); resolve(); }
     });
+  }
+
+  // ── App Open ────────────────────────────────────────────────────────────
+  /** Show app open ad on resume. Respects 4-hour cooldown and skips for Pro users. */
+  async showAppOpen(): Promise<void> {
+    if (!this.isNative || this.purchaseService.isProOrTrial()) return;
+    if (this.adShowing()) return;
+    const now = Date.now();
+    if (now - this.lastAppOpenTime < APP_OPEN_COOLDOWN_MS) return;
+
+    try {
+      await NativeAdPlugin.showAppOpen({});
+      this.lastAppOpenTime = now;
+      // Preload next one immediately after showing
+      setTimeout(() => this.preloadAppOpen(), 1000);
+    } catch { }
   }
 }

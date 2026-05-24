@@ -660,11 +660,7 @@ export class IqDetailComponent {
 
         // Check if previously revealed or already unlocked
         if (!this.dataService.revealedQuestionIds().has(id) && !this.adGate.isItemUnlocked(itemId)) {
-          const allowed = await this.adGate.unlockItemWithAd(itemId, 'this interview question');
-          if (!allowed) {
-            this.router.navigate(['/interview-questions', slug]);
-            return;
-          }
+          await this.adGate.unlockItemWithRewardedInterstitial(itemId);
         }
       }
 
@@ -706,8 +702,7 @@ export class IqDetailComponent {
     // Check lock just in case they haven't visited it (e.g. direct link routing)
     const itemId = `iq::${prevQ.id}`;
     if (!this.dataService.revealedQuestionIds().has(prevQ.id) && !this.adGate.isItemUnlocked(itemId)) {
-      const allowed = await this.adGate.unlockItemWithAd(itemId, 'this interview question');
-      if (!allowed) return;
+      await this.adGate.unlockItemWithRewardedInterstitial(itemId);
     }
 
     this.navigateToQuestion(prevQ.id);
@@ -720,8 +715,7 @@ export class IqDetailComponent {
     // Check lock before navigating to avoid flickering the UI back
     const itemId = `iq::${nextQ.id}`;
     if (!this.dataService.revealedQuestionIds().has(nextQ.id) && !this.adGate.isItemUnlocked(itemId)) {
-      const allowed = await this.adGate.unlockItemWithAd(itemId, 'this interview question');
-      if (!allowed) return;
+      await this.adGate.unlockItemWithRewardedInterstitial(itemId);
     }
 
     this.adGate.onContentCompleted(); // interstitial after completing a question

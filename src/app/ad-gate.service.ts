@@ -12,8 +12,8 @@ import { AuthService } from './auth.service';
  *
  * 1. PER-ITEM PERMANENT LOCK:
  *    Every "premium" item (tutorial topic, interview question, experience, etc.)
- *    is locked by default. The user watches one reward ad to permanently unlock
- *    a specific item. Unlocked state is persisted in localStorage.
+ *    is locked by default. An interstitial ad is shown to unlock a specific item
+ *    for the session. Visited state is persisted in localStorage.
  *
  * 2. INTERSTITIAL ON COMPLETE:
  *    After the user completes something (marks topic done, finishes quiz),
@@ -91,12 +91,12 @@ export class AdGateService {
     }
 
     /**
-     * Attempt to unlock an item by watching a reward ad.
-     * On web the ad is simulated with a confirmation dialog.
+     * Unlock an item by showing an interstitial ad.
+     * Content is always granted after the ad is shown (or skipped by frequency cap).
      *
-     * @returns Promise<boolean>  true → item was unlocked; false → user cancelled
+     * @returns Promise<boolean>  always true once past the free-unlock quota
      */
-    async unlockItemWithAd(itemId: string, itemTitle = 'this content'): Promise<boolean> {
+    async unlockItemWithAd(itemId: string, _itemTitle = ''): Promise<boolean> {
         // Pro/trial users get instant access — no ad required
         if (this.purchaseService.isProOrTrial()) {
             this.persistUnlock(itemId);
@@ -122,41 +122,50 @@ export class AdGateService {
             return true;
         }
 
-        const isReturnVisit = this.visitedItems.has(itemId);
-
-        if (isReturnVisit) {
-            // Return visitor: show a non-blocking interstitial, then grant access
-            await this.admob.showInterstitial();
-            this.persistUnlock(itemId);
-            return true;
-        }
-
-        // First visit: require a reward ad to earn access
-        const earned = await this.admob.showRewardAd();
-
-        if (earned) {
-            this.markVisited(itemId);
-            this.persistUnlock(itemId);
-            // Soft paywall: show upgrade prompt on the 4th free unlock of the day
-            if (!this.purchaseService.isProOrTrial()) {
-                const count = this.incrementDailyUnlockCount();
-                if (count >= 4) {
-                    const uid = this.authService.user()?.uid;
-                    if (uid) this.purchaseService.presentPaywallIfNeeded(uid).catch(() => {});
-                }
+        // First or return visit: show interstitial then grant access
+        await this.admob.showInterstitial();
+        this.markVisited(itemId);
+        this.persistUnlock(itemId);
+        // Soft paywall: show upgrade prompt on the 4th free unlock of the day
+        if (!this.purchaseService.isProOrTrial()) {
+            const count = this.incrementDailyUnlockCount();
+            if (count >= 4) {
+                const uid = this.authService.user()?.uid;
+                if (uid) this.purchaseService.presentPaywallIfNeeded(uid).catch(() => {});
             }
+        }
+        return true;
+    }
+
+    /**
+     * Unlock an item using a rewarded interstitial (for interview/coding questions).
+     * User can skip the ad early — access is always granted.
+     */
+    async unlockItemWithRewardedInterstitial(itemId: string): Promise<boolean> {
+        if (this.purchaseService.isProOrTrial()) {
+            this.persistUnlock(itemId);
+            return true;
+        }
+        if (this.isItemUnlocked(itemId)) return true;
+
+        const uid = this.authService.user()?.uid ?? 'anon';
+        const freeUsed = parseInt(
+            localStorage.getItem(`${this.STORAGE_KEY_FREE_UNLOCKS}_${uid}`) ?? '0', 10
+        );
+        if (freeUsed < this.FREE_UNLOCK_LIMIT) {
+            localStorage.setItem(
+                `${this.STORAGE_KEY_FREE_UNLOCKS}_${uid}`,
+                String(freeUsed + 1)
+            );
+            this.persistUnlock(itemId);
+            this.markVisited(itemId);
             return true;
         }
 
-        // User dismissed without earning
-        await this.alertService.showAlert({
-            title: '🔒 Watch Ad to Unlock',
-            message: `Watch the short video ad to unlock "${itemTitle}" for this session. This helps keep JavaIQ free!`,
-            confirmText: 'OK',
-            showCancel: false,
-            type: 'warning'
-        });
-        return false;
+        await this.admob.showRewardedInterstitial();
+        this.markVisited(itemId);
+        this.persistUnlock(itemId);
+        return true;
     }
 
     /** Unlock an item for the current session only (in-memory, not persisted) */
@@ -166,7 +175,7 @@ export class AdGateService {
         this.unlockedItems.set(current);
     }
 
-    /** Mark item as previously visited so future sessions show an interstitial instead of reward ad */
+    /** Mark item as previously visited (persisted across sessions) */
     private markVisited(itemId: string) {
         this.visitedItems.add(itemId);
         localStorage.setItem(this.STORAGE_KEY_VISITED, JSON.stringify([...this.visitedItems]));

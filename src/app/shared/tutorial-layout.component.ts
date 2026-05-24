@@ -1,8 +1,10 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { InlineAdComponent } from './inline-ad.component';
 
 @Component({
   selector: 'app-tutorial-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [InlineAdComponent],
   template: `
     <div class="tutorial-page">
       <!-- Premium Hero Header -->
@@ -17,7 +19,9 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 
       <!-- Content Slot -->
       <main class="content">
+        <app-inline-ad label="top" />
         <ng-content />
+        <app-inline-ad label="bottom" />
       </main>
 
     </div>

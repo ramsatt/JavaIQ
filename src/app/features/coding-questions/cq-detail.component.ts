@@ -508,8 +508,7 @@ export class CqDetailComponent {
       const itemId = `cq::${id}`;
       // Lock check before expanding
       if (!this.adGate.isItemUnlocked(itemId)) {
-        const allowed = await this.adGate.unlockItemWithAd(itemId, 'this coding problem');
-        if (!allowed) return;
+        await this.adGate.unlockItemWithRewardedInterstitial(itemId);
       }
       this.expandedId.set(id); // Expand the clicked one
       this.adGate.onContentCompleted(); // Also a good place to increment interstitial chances

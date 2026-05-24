@@ -440,7 +440,7 @@ import { Capacitor } from '@capacitor/core';
     /* Navigation items */
     .menu-content {
       --background: #0b1120;
-      --padding-bottom: var(--admob-banner-height, 0px);
+      --padding-bottom: 0px;
     }
     .menu-nav { padding: 16px 16px 8px; }
     .nav-label {
@@ -544,7 +544,7 @@ import { Capacitor } from '@capacitor/core';
 
     /* Footer Branding */
     .menu-footer {
-      padding: 14px 20px calc(14px + var(--admob-banner-height, 0px));
+      padding: 14px 20px 14px;
       background: #0b1120;
       display: flex;
       flex-direction: column;
@@ -714,7 +714,7 @@ import { Capacitor } from '@capacitor/core';
     /* ── Bottom Navigation Bar ── */
     .bottom-nav {
       position: fixed;
-      bottom: var(--admob-banner-height, 0px);
+      bottom: 0;
       left: 0;
       right: 0;
       z-index: 200;
@@ -907,11 +907,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         document.querySelectorAll('ion-content').forEach((el: any) => el.scrollToTop(0));
       }, 50);
       const url = (e as NavigationEnd).urlAfterRedirects;
-      if (url.startsWith('/onboarding') || this.purchaseService.isProOrTrial()) {
-        this.adMobService.hideBanner();
-      } else {
-        this.adMobService.showBanner();
-      }
     });
 
     // Sync html.has-bnav class so global CSS padding can activate
@@ -923,12 +918,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       }
     });
 
-    // Immediately hide the ad banner the moment a user becomes Pro or starts a trial
-    effect(() => {
-      if (this.purchaseService.isProOrTrial()) {
-        this.adMobService.hideBanner();
-      }
-    });
   }
 
   private checkFirstLaunch() {
@@ -952,6 +941,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     // Lazy import to keep specifier hidden from Vite static analysis
     const dynamicImport = new Function('specifier', 'return import(specifier)');
     dynamicImport('@capacitor/app').then(({ App }: any) => {
+      App.addListener('appStateChange', ({ isActive }: { isActive: boolean }) => {
+        if (isActive) this.adMobService.showAppOpen();
+      });
       App.addListener('appUrlOpen', (event: { url: string }) => {
         try {
           const url = new URL(event.url);

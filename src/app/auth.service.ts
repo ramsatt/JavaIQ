@@ -57,17 +57,21 @@ export class AuthService {
     }
 
     // Listen for subsequent auth state changes
-    FirebaseAuthentication.addListener('authStateChange', (change) => {
-      if (change.user) {
-        this.user.set(this.toAppUser(change.user));
-        this.purchaseService.identifyUser(change.user.uid);
-        this.purchaseService.loadProStatus(change.user.uid);
-        this.checkProfileSetup(change.user);
-      } else {
-        this.user.set(null);
-        this.purchaseService.resetUser();
-      }
-    });
+    try {
+      await FirebaseAuthentication.addListener('authStateChange', (change) => {
+        if (change.user) {
+          this.user.set(this.toAppUser(change.user));
+          this.purchaseService.identifyUser(change.user.uid);
+          this.purchaseService.loadProStatus(change.user.uid);
+          this.checkProfileSetup(change.user);
+        } else {
+          this.user.set(null);
+          this.purchaseService.resetUser();
+        }
+      });
+    } catch {
+      // Plugin unavailable or Firebase not ready — auth state won't update reactively
+    }
   }
 
   async loginWithGoogle() {

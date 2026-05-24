@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle } from '@ionic/angular/standalone';
 import { DataService } from '../../data.service';
 import { AdGateService } from '../../ad-gate.service';
+import { NativeAdService } from '../../services/native-ad.service';
 import { NotificationService } from '../../services/notification.service';
 import { COURSE_TOPICS } from '../../data/course-topics.const';
 
@@ -193,7 +194,7 @@ const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [scrollY]="true" [scrollEvents]="true" style="height: 100%;">
+    <ion-content [scrollY]="true" [scrollEvents]="true" style="height: 100%;" (ionScroll)="onScroll($event)">
       @if (loading()) {
         <div class="loading">
           <div class="spinner"></div>
@@ -269,7 +270,7 @@ const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
         </div>
       }
 
-      <div style="height: calc(env(safe-area-inset-bottom, 0px) + var(--ion-tab-bar-height, 56px) + var(--admob-banner-height, 0px) + 80px); display: block;"></div>
+      <div style="height: calc(env(safe-area-inset-bottom, 0px) + var(--ion-tab-bar-height, 56px) + 80px); display: block;"></div>
     </ion-content>
   `,
   styles: `
@@ -351,12 +352,7 @@ const TOPIC_ORDER: Record<string, string[]> = Object.fromEntries(
     /* ── Nav Bar (fixed above tab bar + banner ad + safe-area) ── */
     .nav-bar {
       position: fixed;
-      /* Stack: safe-area + tab bar (56px) + optional admob banner */
-      bottom: calc(
-        env(safe-area-inset-bottom, 0px) +
-        var(--ion-tab-bar-height, 56px) +
-        var(--admob-banner-height, 0px)
-      );
+      bottom: calc(env(safe-area-inset-bottom, 0px) + var(--ion-tab-bar-height, 56px));
       left: 0;
       right: 0;
       z-index: 200;
@@ -545,6 +541,7 @@ export class TopicRouterComponent implements OnInit {
   private vcr = inject(ViewContainerRef);
   private dataService = inject(DataService);
   private adGate = inject(AdGateService);
+  private nativeAdService = inject(NativeAdService);
   private notifSvc = inject(NotificationService);
 
   courseSlug = signal('');
@@ -582,6 +579,10 @@ export class TopicRouterComponent implements OnInit {
     return this.dataService.getCourseProgress(this.courseSlug(), this.totalTopics());
   });
 
+  onScroll(event: CustomEvent): void {
+    this.nativeAdService.reportScroll((event.detail as { scrollTop: number }).scrollTop);
+  }
+
   async markComplete() {
     const topicId = `${this.courseSlug()}::${this.topicSlug()}`;
     await this.dataService.markTopicComplete(topicId);
@@ -615,16 +616,8 @@ export class TopicRouterComponent implements OnInit {
         return;
       }
 
-      // ── Ad Gate: per-topic permanent unlock ──
-      const topicId = `${slug}::${topic}`;
-      if (!this.dataService.isTopicComplete(topicId) && !this.adGate.isItemUnlocked(topicId)) {
-        const allowed = await this.adGate.unlockItemWithAd(topicId, 'this topic');
-        if (!allowed) {
-          // User denied the ad, send them back to the course syllabus
-          this.router.navigate(['/tutorials', slug]);
-          return;
-        }
-      }
+      // Destroy native ad views from the previous topic before loading new content
+      this.nativeAdService.destroyAll();
 
       this.loading.set(true);
       this.notFound.set(false);

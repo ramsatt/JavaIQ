@@ -764,10 +764,9 @@ export class TutorialDetailComponent {
   async openTopic(topic: Topic) {
     const topicId = `${this.slug()}::${topic.slug}`;
 
-    // If neither complete nor previously unlocked, gated with reward ad
+    // Show interstitial on first open; already-unlocked topics pass through
     if (!this.isComplete(this.slug(), topic.slug) && !this.adGate.isItemUnlocked(topicId)) {
-      const allowed = await this.adGate.unlockItemWithAd(topicId, topic.title);
-      if (!allowed) return;
+      await this.adGate.unlockItemWithAd(topicId, topic.title);
     }
 
     // Success -> Navigate

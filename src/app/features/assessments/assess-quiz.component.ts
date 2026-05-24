@@ -4,6 +4,8 @@ import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton } from '@i
 import { AssessService } from './assess.service';
 import { getAssessment, AssessmentData } from './assess-data';
 import { ASSESSMENTS } from './assess-data';
+import { AdMobService } from '../../admob.service';
+import { PurchaseService } from '../../services/purchase.service';
 
 // Metadata from the list for icon/colour/difficulty
 const META: Record<string, { faIcon: string; iconColor: string; iconBg: string; accentColor: string; difficulty: string }> = {
@@ -112,6 +114,19 @@ const META: Record<string, { faIcon: string; iconColor: string; iconBg: string; 
                 </button>
               }
             </div>
+
+            <!-- Reveal Answer (reward ad) -->
+            @if (!purchaseService.isProOrTrial() && !answerRevealed()) {
+              <button class="btn-reveal" (click)="revealAnswer()">
+                <i class="fa-solid fa-lightbulb"></i> Reveal Answer
+              </button>
+            }
+            @if (answerRevealed()) {
+              <div class="reveal-hint">
+                <i class="fa-solid fa-circle-check reveal-icon"></i>
+                Correct answer: <strong>{{ letters[currentQ()?.ans ?? 0] }}</strong>
+              </div>
+            }
 
             <!-- Navigation -->
             <div class="nav-row">
@@ -461,6 +476,40 @@ const META: Record<string, { faIcon: string; iconColor: string; iconBg: string; 
     .q-dot-answered { background: rgba(139,92,246,0.5); border-color: rgba(139,92,246,0.6); }
     .q-dot-current  { background: #8b5cf6; border-color: #8b5cf6; transform: scale(1.3); }
 
+    /* Reveal Answer */
+    .btn-reveal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 16px;
+      margin: 12px 0 4px;
+      background: rgba(234,179,8,0.1);
+      border: 1px solid rgba(234,179,8,0.3);
+      border-radius: 10px;
+      color: #eab308;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-reveal:hover { background: rgba(234,179,8,0.18); }
+    .reveal-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      margin: 12px 0 4px;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.25);
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: #6ee7b7;
+    }
+    .reveal-icon { color: #10b981; }
+
     /* Answered info */
     .answered-info {
       text-align: center;
@@ -516,6 +565,8 @@ export class AssessQuizComponent implements OnDestroy {
   private route  = inject(ActivatedRoute);
   private router = inject(Router);
   private svc    = inject(AssessService);
+  private admob  = inject(AdMobService);
+  readonly purchaseService = inject(PurchaseService);
 
   readonly letters = ['A', 'B', 'C', 'D'];
 
@@ -523,6 +574,7 @@ export class AssessQuizComponent implements OnDestroy {
   phase   = signal<'start' | 'quiz'>('start');
   currentIdx = signal(0);
   timeLeft   = signal(0);
+  answerRevealed = signal(false);
   meta: (typeof META)[string] | undefined;
 
   private timerInterval: ReturnType<typeof setInterval> | null = null;
@@ -565,12 +617,25 @@ export class AssessQuizComponent implements OnDestroy {
     this.svc.setAnswer(this.currentIdx(), optIdx);
   }
 
-  prev(): void { if (this.currentIdx() > 0) this.currentIdx.update(i => i - 1); }
+  prev(): void {
+    if (this.currentIdx() > 0) {
+      this.currentIdx.update(i => i - 1);
+      this.answerRevealed.set(false);
+    }
+  }
   next(): void {
     const max = (this.quiz()?.questions.length ?? 1) - 1;
-    if (this.currentIdx() < max) this.currentIdx.update(i => i + 1);
+    if (this.currentIdx() < max) {
+      this.currentIdx.update(i => i + 1);
+      this.answerRevealed.set(false);
+    }
   }
-  goTo(idx: number): void { this.currentIdx.set(idx); }
+  goTo(idx: number): void { this.currentIdx.set(idx); this.answerRevealed.set(false); }
+
+  async revealAnswer(): Promise<void> {
+    const earned = await this.admob.showRewardAd();
+    if (earned) this.answerRevealed.set(true);
+  }
 
   submit(): void {
     this.stopTimer();
