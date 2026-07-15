@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Template Method" subtitle="Define algorithm skeleton. Hook methods, abstract steps, and framework usage in Spring and JPA." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #b45309, #fbbf24)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-amber" /> Template Method</h2>
+        <img src="/assets/images/topics/dp-template.png" alt="Template Method Pattern Visualized" class="topic-hero-image" />
         <div class="prose"><p>The <strong>Template Method</strong> defines the skeleton of an algorithm in a base class, letting subclasses override specific steps.</p><app-code-block [code]="codeIntro" /></div>
       </section>
       <section class="section">

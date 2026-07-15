@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Decorator" subtitle="Extend behavior dynamically. Wrapping objects, I/O streams, and Spring interceptors." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #6d28d9, #c084fc)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-violet" /> Decorator</h2>
+        <img src="/assets/images/topics/dp-decorator.png" alt="Decorator Pattern Visualized" class="topic-hero-image" />
         <div class="prose"><p>The <strong>Decorator</strong> wraps an object to add new behavior without modifying the original class. Decorators are composable.</p><app-code-block [code]="codeIntro" /></div>
       </section>
       <section class="section">

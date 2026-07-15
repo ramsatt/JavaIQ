@@ -11,6 +11,9 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Bridge" subtitle="Decouple abstraction from implementation so both can vary independently. Prefer composition over inheritance to avoid class explosion." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #4338ca, #818cf8)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-indigo" /> What is Bridge?</h2>
+        <div class="topic-hero-container">
+          <img src="/assets/images/topics/dp-bridge.png" alt="Bridge Pattern Visualized" class="topic-hero-image" />
+        </div>
         <div class="prose">
           <p>The <strong>Bridge</strong> pattern splits a large class (or closely related classes) into two separate hierarchies — <em>abstraction</em> and <em>implementation</em> — that can be developed independently.</p>
           <p>Problem it solves: without Bridge, adding N shapes × M rendering APIs = N×M subclasses. With Bridge, you get N + M classes.</p>
@@ -29,7 +32,10 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     </app-tutorial-layout>
   `,
   styles: `
-    .section { margin-bottom: 48px; } .section-heading { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 0 0 20px; padding-bottom: 14px; border-bottom: 1px solid #e2e8f0; } .icon-indigo { color: #4f46e5; } .icon-purple { color: #7c3aed; }
+    .section { margin-bottom: 48px; }
+    .topic-hero-container { text-align: center; margin: 24px 0; }
+    .topic-hero-image { width: 100%; max-width: 650px; height: auto; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1px solid #e2e8f0; }
+    .section-heading { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 0 0 20px; padding-bottom: 14px; border-bottom: 1px solid #e2e8f0; } .icon-indigo { color: #4f46e5; } .icon-purple { color: #7c3aed; }
     .prose { font-size: 0.88rem; color: #334155; line-height: 1.75; } .prose p { margin: 0 0 14px; }
     .op-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; } .op-card { background: #fff; padding: 22px 20px; border-radius: 14px; border: 1px solid #e2e8f0; } .op-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0 0 8px; }
   `

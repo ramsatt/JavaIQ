@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Memento" subtitle="Capture and restore an object's internal state without violating encapsulation. The foundation of undo/redo and snapshotting." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #4338ca, #818cf8)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-indigo" /> What is Memento?</h2>
+        <img src="/assets/images/topics/dp-memento.png" alt="Memento Pattern Visualized" class="topic-hero-image" />
         <div class="prose">
           <p>The <strong>Memento</strong> pattern saves a snapshot of an object's state so it can be restored later — without exposing private internals to the outside world.</p>
           <p>Three roles: <em>Originator</em> (object whose state is saved), <em>Memento</em> (the snapshot), <em>Caretaker</em> (holds snapshots, doesn't read them).</p>

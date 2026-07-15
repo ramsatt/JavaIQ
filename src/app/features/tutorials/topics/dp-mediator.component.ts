@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Mediator" subtitle="Reduce chaotic dependencies between objects. Route communication through a central mediator instead of direct peer-to-peer coupling." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #4338ca, #818cf8)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-indigo" /> What is Mediator?</h2>
+        <img src="/assets/images/topics/dp-mediator.png" alt="Mediator Pattern Visualized" class="topic-hero-image" />
         <div class="prose">
           <p>The <strong>Mediator</strong> pattern defines an object that encapsulates how a set of objects interact. Instead of objects referencing each other directly (N×N dependencies), each object knows only the mediator (N×1).</p>
           <p>Classic use cases: chat room (users ↔ chatroom), air traffic control (planes ↔ tower), UI form validation, Spring's <code>ApplicationEventPublisher</code>.</p>

@@ -16,6 +16,9 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
 
       <section class="section">
         <h2 class="section-heading"><app-icon name="cpu" [size]="28" css="icon-indigo" /> JVM Memory Areas Overview</h2>
+        <div class="topic-hero-container">
+          <img src="/assets/images/topics/java-memory-model.png" alt="Java Memory Model Diagram" class="topic-hero-image" />
+        </div>
         <div class="prose">
           <p>The JVM divides memory into several distinct regions, each with a specific role. Understanding these areas is essential for diagnosing <code>OutOfMemoryError</code>, tuning GC, and writing memory-efficient applications.</p>
           <ul>
@@ -91,6 +94,8 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
   `,
   styles: `
     .section { margin-bottom: 48px; }
+    .topic-hero-container { text-align: center; margin: 24px 0; }
+    .topic-hero-image { width: 100%; max-width: 650px; height: auto; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1px solid #D6DDD2; }
     .section-heading { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; color: #1B1B1B; margin: 0 0 20px; padding-bottom: 14px; border-bottom: 1px solid #D6DDD2; }
     .icon-indigo { color: #4f46e5; }
     .prose { font-size: 0.9rem; color: #52665A; line-height: 1.75; }

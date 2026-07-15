@@ -20,6 +20,9 @@ const AD_HEIGHT_PX = 110; // must match NativeAdService.NATIVE_AD_HEIGHT_CSS
     }
   `,
   styles: `
+    :host {
+      display: contents;
+    }
     .native-ad-placeholder {
       width: 100%;
       background: transparent;

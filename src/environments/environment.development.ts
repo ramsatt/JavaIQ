@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  adMobTesting: true,
+  adMobTesting: false,
   appVersion: '1.7.0',
   /** Product IDs as configured in Google Play Console & App Store Connect */
   iap: {

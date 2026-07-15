@@ -21,6 +21,9 @@ import { TopicNavComponent } from '../../../shared/topic-nav.component';
         <h2 class="section-heading">
           <app-icon name="book-open" [size]="28" css="icon-rose" /> What is Exception Handling?
         </h2>
+        <div class="topic-hero-container">
+          <img src="/assets/images/topics/exceptions.png" alt="Exception Handling Diagram" class="topic-hero-image" />
+        </div>
         <div class="prose">
           <p>
             An <strong>exception</strong> is an event that disrupts the normal flow of a program. Java's exception handling mechanism uses <code>try</code>, <code>catch</code>, <code>finally</code>, <code>throw</code>, and <code>throws</code> to handle errors gracefully.
@@ -202,6 +205,8 @@ import { TopicNavComponent } from '../../../shared/topic-nav.component';
   `,
   styles: `
     .section { margin-bottom: 48px; }
+    .topic-hero-container { text-align: center; margin: 24px 0; }
+    .topic-hero-image { width: 100%; max-width: 650px; height: auto; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1px solid #e2e8f0; }
     .section-heading { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 0 0 20px; padding-bottom: 14px; border-bottom: 1px solid #e2e8f0; }
     .icon-rose { color: #e11d48; }
     .icon-indigo { color: #4f46e5; }

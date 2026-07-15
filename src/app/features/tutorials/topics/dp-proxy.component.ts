@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Proxy" subtitle="Control object access. Virtual proxy, protection proxy, dynamic proxy, and Spring AOP." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #374151, #9ca3af)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-gray" /> Proxy</h2>
+        <img src="/assets/images/topics/dp-proxy.png" alt="Proxy Pattern Visualized" class="topic-hero-image" />
         <div class="prose"><p>The <strong>Proxy</strong> pattern provides a surrogate to control access to an object. Used for caching, logging, security, and lazy loading.</p><app-code-block [code]="codeIntro" /></div>
       </section>
       <section class="section">

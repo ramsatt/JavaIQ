@@ -6,7 +6,7 @@
 </ion-header>
 
 <!-- ────────── Scrollable body ────────── -->
-<ion-content>
+<ion-content [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <div class="dash-main" role="main" aria-label="Dashboard">
 
     <!-- ────────── Hero ────────── -->
@@ -132,6 +132,9 @@
       </div>
     </section>
 
+    <!-- ────────── In-Feed Ad ────────── -->
+    <app-inline-ad label="dashboard-feed-ad" />
+
     <!-- ────────── Learning Path ────────── -->
     <section class="learning-section">
       <div class="section-head">
@@ -198,6 +201,9 @@
             <div class="mc-locked">
               <i class="bi bi-lock-fill mc-lock-icon"></i>
               Complete <strong>{{ categories[i - 1]?.name }}</strong> to unlock
+              <button class="mc-preview-btn" (click)="$event.stopPropagation(); previewWithAd(cat)">
+                🎬 Watch Ad to Preview
+              </button>
             </div>
             }
           </div>
@@ -232,6 +238,9 @@
         <div class="col-half"><app-streak-card /></div>
         <div class="col-half"><app-daily-goal-card /></div>
       </div>
+
+      <!-- Native Ad -->
+      <app-inline-ad label="Dashboard Native Ad"></app-inline-ad>
 
       <!-- Question of the Day -->
       <app-qotd-card />

@@ -10,6 +10,7 @@ import { WrongAnswerService } from '../../services/wrong-answer.service';
 import { DailyChallengeService } from '../../daily-challenge.service';
 import { AchievementService } from '../../services/achievement.service';
 import { AppHeaderComponent } from '../../shared/app-header.component';
+import { InlineAdComponent } from '../../shared/inline-ad.component';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -40,7 +41,7 @@ function tierColor(pct: number): string {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'class': 'ion-page' },
   standalone: true,
-  imports: [CommonModule, IonContent, AppHeaderComponent, IonHeader],
+  imports: [CommonModule, IonContent, AppHeaderComponent, IonHeader, InlineAdComponent],
   template: `
     <ion-header class="ion-no-border">
       <app-header></app-header>
@@ -178,6 +179,9 @@ function tierColor(pct: number): string {
             }
           </div>
         </div>
+
+        <!-- ── Progress Native Ad ── -->
+        <app-inline-ad label="Progress Native Ad"></app-inline-ad>
 
         <!-- ── Category Mastery ── -->
         <div class="pr-section">

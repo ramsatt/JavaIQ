@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/cor
 import { SlicePipe } from '@angular/common';
 import { DailyEngagementService } from '../services/daily-engagement.service';
 import { GamificationService } from '../gamification.service';
+import { AdMobService } from '../admob.service';
 
 @Component({
   selector: 'app-qotd-card',
@@ -26,9 +27,14 @@ import { GamificationService } from '../gamification.service';
         <p class="qotd-question">{{ q.question }}</p>
 
         @if (!daily.isQotdAnsweredToday()) {
-          <button class="btn-answer" (click)="answer()">
-            💡 Reveal Answer &amp; Earn 15 XP
-          </button>
+          <div class="qotd-actions">
+            <button class="btn-answer" (click)="answer()">
+              💡 Reveal Answer &amp; Earn 15 XP
+            </button>
+            <button class="btn-answer btn-answer-ad" (click)="answerWithAd()">
+              🎬 Watch Ad for 2x XP (30 XP)
+            </button>
+          </div>
         } @else {
           <div class="qotd-answer-reveal">
             <div class="answer-label">Answer:</div>
@@ -141,6 +147,12 @@ import { GamificationService } from '../gamification.service';
 
     :host-context(html.dark) .qotd-question { color: #e4efe7; }
 
+    .qotd-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
     /* High-contrast orange answer button — clearly primary CTA */
     .btn-answer {
       width: 100%;
@@ -182,6 +194,18 @@ import { GamificationService } from '../gamification.service';
       box-shadow:
         0 8px 24px rgba(224,122,31,0.45),
         inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+
+    .btn-answer-ad {
+      background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+      box-shadow: 0 4px 18px rgba(139,92,246,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+    .btn-answer-ad:hover {
+      background: linear-gradient(135deg, #9333ea 0%, #c084fc 100%);
+      box-shadow: 0 8px 24px rgba(139,92,246,0.5), inset 0 1px 0 rgba(255,255,255,0.18);
+    }
+    :host-context(html.dark) .btn-answer-ad {
+      box-shadow: 0 4px 18px rgba(139,92,246,0.35), inset 0 1px 0 rgba(255,255,255,0.10);
     }
 
     .qotd-answer-reveal {
@@ -228,6 +252,7 @@ import { GamificationService } from '../gamification.service';
 export class QotdCardComponent {
   daily = inject(DailyEngagementService);
   private game = inject(GamificationService);
+  private admob = inject(AdMobService);
 
   private answered = signal(false);
 
@@ -236,5 +261,18 @@ export class QotdCardComponent {
     this.daily.markQotdAnswered();
     this.game.addXp(15);
     this.answered.set(true);
+  }
+
+  async answerWithAd(): Promise<void> {
+    if (this.daily.isQotdAnsweredToday()) return;
+    const watched = await this.admob.showRewardAd();
+    if (watched) {
+      this.daily.markQotdAnswered();
+      this.game.addXp(30);
+      this.answered.set(true);
+    } else {
+      // Fallback if ad fails or skipped
+      this.answer();
+    }
   }
 }

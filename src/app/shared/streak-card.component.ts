@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, computed, signal, effect } from '@angular/core';
 import { GamificationService } from '../gamification.service';
 import { ShareService } from '../services/share.service';
+import { AdMobService } from '../admob.service';
 
 interface StreakMilestone {
   days: number;
@@ -39,6 +40,11 @@ interface StreakMilestone {
             }
             @if (game.streakFrozenToday()) {
               <span class="freeze-saved-badge">Streak Saved!</span>
+            }
+            @if (game.streakFreezes() < 3) {
+              <button class="earn-freeze-btn" (click)="earnFreezeWithAd()" aria-label="Earn streak freeze">
+                <span class="earn-icon">🎬</span>+<span class="earn-icon" style="margin-left: 2px">❄</span>
+              </button>
             }
           </div>
         </div>
@@ -316,11 +322,27 @@ interface StreakMilestone {
       white-space: nowrap;
       margin-left: 2px;
     }
+    .earn-freeze-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 2px 6px;
+      color: #fff;
+      font-size: 0.65rem;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-left: 4px;
+      transition: all 0.2s;
+    }
+    .earn-freeze-btn:hover { background: rgba(255, 255, 255, 0.2); }
+    .earn-icon { font-size: 0.6rem; }
   `]
 })
 export class StreakCardComponent {
   game = inject(GamificationService);
   private shareSvc = inject(ShareService);
+  private admob = inject(AdMobService);
 
   showShareBanner = signal<boolean>(false);
 
@@ -340,6 +362,14 @@ export class StreakCardComponent {
   dismissBanner() {
     this.showShareBanner.set(false);
     this.game.streakMilestoneJustHit.set(0);
+  }
+
+  async earnFreezeWithAd() {
+    if (this.game.streakFreezes() >= 3) return;
+    const watched = await this.admob.showRewardAd();
+    if (watched) {
+      this.game.streakFreezes.update(f => f + 1);
+    }
   }
 
   private readonly MAX_FREEZE_DISPLAY = 3;

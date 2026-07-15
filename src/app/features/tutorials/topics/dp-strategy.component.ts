@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Strategy" subtitle="Interchangeable algorithms. Strategy interfaces, functional approach, and runtime switching." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #065f46, #34d399)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-emerald" /> Strategy</h2>
+        <img src="/assets/images/topics/dp-strategy.png" alt="Strategy Pattern Visualized" class="topic-hero-image" />
         <div class="prose"><p>The <strong>Strategy</strong> pattern defines a family of algorithms, encapsulates each, and makes them interchangeable at runtime.</p><app-code-block [code]="codeIntro" /></div>
       </section>
       <section class="section">

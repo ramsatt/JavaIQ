@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Flyweight" subtitle="Share fine-grained objects to reduce memory. Separate intrinsic (shared) state from extrinsic (context) state." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #4338ca, #818cf8)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-indigo" /> What is Flyweight?</h2>
+        <img src="/assets/images/topics/dp-flyweight.png" alt="Flyweight Pattern Visualized" class="topic-hero-image" />
         <div class="prose">
           <p>The <strong>Flyweight</strong> pattern reduces memory usage by sharing common state across many fine-grained objects. Split object state into <em>intrinsic</em> (shared, immutable) and <em>extrinsic</em> (context-specific, passed in).</p>
           <p>Classic use cases: rendering thousands of characters in a text editor, particles in a game engine, tree objects in a forest simulation.</p>

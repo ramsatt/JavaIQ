@@ -13,6 +13,8 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
 import { PurchaseService } from '../../services/purchase.service';
 import { DailyEngagementService } from '../../services/daily-engagement.service';
 import { AuthService } from '../../auth.service';
+import { AdMobService } from '../../admob.service';
+import { AdGateService } from '../../ad-gate.service';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -103,7 +105,12 @@ function grade(pct: number): { letter: string; color: string } {
               <div class="mi-chip-row">
                 @for (n of questionCounts; track n) {
                   <button class="mi-chip" [class.mi-chip-sel]="questionCount() === n"
-                    (click)="questionCount.set(n)">{{ n }}</button>
+                    (click)="selectQuestionCount(n)">
+                    {{ n }}
+                    @if (n > 10 && !unlockedAdvanced() && !isPro()) {
+                      <i class="bi bi-lock-fill" style="margin-left: 4px; font-size: 0.7rem; opacity: 0.7;"></i>
+                    }
+                  </button>
                 }
               </div>
             </div>
@@ -703,6 +710,10 @@ export class MockInterviewComponent implements OnDestroy {
   private purchaseSvc = inject(PurchaseService);
   private engagementSvc = inject(DailyEngagementService);
   private authSvc = inject(AuthService);
+  private admob = inject(AdMobService);
+  private adGate = inject(AdGateService);
+
+  isPro = computed(() => this.purchaseSvc.isProOrTrial());
 
   // Constants exposed to template
   readonly allCategories = ALL_CATEGORIES;
@@ -714,6 +725,7 @@ export class MockInterviewComponent implements OnDestroy {
   selectedCategories = signal<string[]>([]);
   questionCount = signal(10);
   timePerQuestion = signal(60);
+  unlockedAdvanced = signal(false);
 
   // ── Session state ──────────────────────────────────────────────────────────
   session = signal<SessionEntry[]>([]);
@@ -770,6 +782,18 @@ export class MockInterviewComponent implements OnDestroy {
     this.selectedCategories.update(cats =>
       cats.includes(name) ? cats.filter(c => c !== name) : [...cats, name]
     );
+  }
+
+  async selectQuestionCount(n: number) {
+    if (n > 10 && !this.isPro() && !this.unlockedAdvanced()) {
+      const watched = await this.admob.showRewardAd();
+      if (watched) {
+        this.unlockedAdvanced.set(true);
+        this.questionCount.set(n);
+      }
+      return;
+    }
+    this.questionCount.set(n);
   }
 
   async startSession() {
@@ -894,6 +918,7 @@ export class MockInterviewComponent implements OnDestroy {
     this._clearTimer();
     this.gameSvc.addXp(this.earnedXp());
     this.phase.set('result');
+    this.adGate.onContentCompleted();
     this.analytics.track('mock_interview_completed', {
       score_pct: this.scorePct(),
       xp_earned: this.earnedXp(),

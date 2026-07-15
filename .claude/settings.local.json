@@ -8,50 +8,70 @@
       "Bash(awk \"/'spring-boot':/,/'hibernate':/\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/tutorial-detail.component.ts)",
       "Bash(ls /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/tutorials/topics/dp-*.component.ts)",
       "Bash(xargs -I{} basename {} .component.ts)",
-      "Skill(update-config)",
-      "Bash(git commit -m ' *)",
-      "Bash(git checkout *)"
-    ]
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | xargs -I {} npx prettier --write {} 2>/dev/null || true",
-            "statusMessage": "Formatting with Prettier..."
-          },
-          {
-            "type": "command",
-            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | grep -qE '[.](ts|js)$' && cd /Users/sathishkumarramalingam/projects/JavaIQ && npm test -- --run 2>/dev/null || true",
-            "statusMessage": "Running tests...",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r '(now | todate) + \" \" + .tool_input.command' >> ~/.claude/bash-log.txt 2>/dev/null || true"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "osascript -e 'display notification \"Done\" with title \"Claude Code\"' 2>/dev/null || true"
-          }
-        ]
-      }
+      "Bash(ls:*)",
+      "Bash(grep -E \"\\\\.ts$\")",
+      "Bash(wc -l /Users/sathishkumarramalingam/projects/JavaIQ/src/app/data/*.ts)",
+      "Bash(xargs -I {} basename {})",
+      "Bash(grep -rn \"doc\\(this.firestore, \\\\`\\\\|collection\\(this.firestore, '\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app --include=\"*.ts\")",
+      "Bash(npx tsc:*)",
+      "Bash(git commit:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(./gradlew assembleDebug)",
+      "Bash(npm version:*)",
+      "Bash(npx cap:*)",
+      "Bash(grep -v \"^$\")",
+      "Bash(grep \"^    {$\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/data/leetcode-problems.ts)",
+      "Bash(grep \"id: [0-9]\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/data/*.ts)",
+      "Bash(grep \"^  id:\" /Users/sathishkumarramalingam/projects/JavaIQ/src/app/data/*.ts)",
+      "Bash(open -a \"Google Chrome\" http://localhost:4200)",
+      "Bash(open http://localhost:4200)",
+      "Bash(npx playwright:*)",
+      "Bash(node -e \"require\\('@playwright/test'\\)\")",
+      "WebFetch(domain:capacitorjs.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "WebFetch(domain:www.revenuecat.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:capgo.app)",
+      "WebFetch(domain:purchase.cordova.fovea.cc)",
+      "Bash(npm uninstall:*)",
+      "Bash(python3:*)",
+      "Bash(npx ng:*)",
+      "Bash(head -60 /Users/sathishkumarramalingam/projects/JavaIQ/src/app/features/about/*.ts)",
+      "Bash(npx patch-package:*)",
+      "Bash(node:*)",
+      "Bash(patch /tmp/BannerExecutor.test.java -p1 --dry-run)",
+      "Bash(patch /tmp/BannerExecutor.test.java -p1)",
+      "Bash(ng build *)",
+      "Bash(pod install *)",
+      "Bash(xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' CODE_SIGNING_ALLOWED=NO)",
+      "Bash(xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug -destination 'id=00008150-0011042836C0401C')",
+      "WebFetch(domain:developers.google.com)",
+      "Bash(./gradlew :app:compileDebugJavaWithJavac)",
+      "Bash(find ~/.gradle/caches -name \"play-services-ads-*.jar\" 2>/dev/null | grep -v sources | sort -V | tail -5)",
+      "Read(//Users/sathishkumarramalingam/.gradle/caches/**)",
+      "Read(//private/tmp/**)",
+      "Bash(jar tf *)",
+      "Bash(xargs -I{} jar tf {})",
+      "Bash(javap -p extracted/classes.jar com.google.android.gms.ads.appopen.AppOpenAd)",
+      "Bash(javap -classpath extracted/classes.jar com/google/android/gms/ads/appopen/AppOpenAd)",
+      "Bash(jar xf *)",
+      "Bash(javap -p 'com/google/android/gms/ads/appopen/AppOpenAd$AppOpenAdLoadCallback.class')",
+      "Bash(javap -p \"com/google/android/gms/ads/AdLoadCallback.class\")",
+      "Bash(grep -n '^```$' /Users/sathishkumarramalingam/projects/JavaIQ/ANGULAR_APP_ARCHITECTURE_PLAN.md)",
+      "Bash(awk 'NR>=1420' /Users/sathishkumarramalingam/projects/JavaIQ/ANGULAR_APP_ARCHITECTURE_PLAN.md)",
+      "Bash(grep -n '^```$')",
+      "Bash(grep -n '^```')",
+      "Bash(awk 'NR>=1360' /Users/sathishkumarramalingam/projects/JavaIQ/ANGULAR_APP_ARCHITECTURE_PLAN.md)",
+      "Bash(awk 'NR>=1356' /Users/sathishkumarramalingam/projects/JavaIQ/ANGULAR_APP_ARCHITECTURE_PLAN.md)",
+      "Bash(awk -F: '{print NR, $1, \"abs=\"\\($1+1355\\)}')",
+      "Bash(awk 'NR<=1350' /Users/sathishkumarramalingam/projects/JavaIQ/ANGULAR_APP_ARCHITECTURE_PLAN.md)",
+      "Bash(awk -F: '{print NR\": line \"$1\": \"$2}')",
+      "Bash(awk 'NR>=8 && NR<=12' /Users/sathishkumarramalingam/projects/JavaIQ/ANGULAR_APP_ARCHITECTURE_PLAN.md)",
+      "Bash(awk 'NR>=48 && NR<=53' /Users/sathishkumarramalingam/projects/JavaIQ/ANGULAR_APP_ARCHITECTURE_PLAN.md)"
     ]
   }
 }

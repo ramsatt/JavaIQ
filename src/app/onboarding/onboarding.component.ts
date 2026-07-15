@@ -7,6 +7,7 @@ import { AnalyticsService } from '../analytics.service';
 import { PushNotificationService } from '../push-notification.service';
 import { NotificationService } from '../services/notification.service';
 import { AuthService } from '../auth.service';
+import { AdMobService } from '../admob.service';
 
 const GOALS = [
   { key: 'faang',   label: 'Crack FAANG',   emoji: '🎯', desc: 'Google, Meta, Amazon & top firms' },
@@ -213,7 +214,7 @@ type Step = 'slides' | 'goal' | 'level' | 'quiz' | 'result';
                 Take Quick Quiz <i class="fa-solid fa-bolt"></i>
               </button>
               <button class="ob-btn ob-btn-ghost ob-btn-full" (click)="completeWithoutQuiz()">
-                Skip quiz
+                Skip quiz (Watch Ad) <i class="fa-solid fa-video"></i>
               </button>
             </div>
           </div>
@@ -391,6 +392,7 @@ export class OnboardingComponent {
   private notifSvc    = inject(NotificationService);
   private firestore   = inject(Firestore);
   private auth        = inject(AuthService);
+  private admob       = inject(AdMobService);
 
   readonly slides        = SLIDES;
   readonly goals         = GOALS;
@@ -471,7 +473,9 @@ export class OnboardingComponent {
     }
   }
 
-  completeWithoutQuiz() {
+  async completeWithoutQuiz() {
+    // Force ad to skip the diagnostic quiz
+    await this.admob.showRewardAd();
     this.completeOnboarding();
   }
 

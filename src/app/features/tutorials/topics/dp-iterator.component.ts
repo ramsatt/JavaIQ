@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Iterator" subtitle="Provide a way to access elements of a collection sequentially without exposing its underlying structure." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #4338ca, #818cf8)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-indigo" /> What is Iterator?</h2>
+        <img src="/assets/images/topics/dp-iterator.png" alt="Iterator Pattern Visualized" class="topic-hero-image" />
         <div class="prose">
           <p>The <strong>Iterator</strong> pattern provides a standard way to traverse a collection without knowing whether it's a list, tree, graph, or custom data structure. The collection implements <code>Iterable</code>; the iterator implements <code>Iterator</code>.</p>
           <p>Java bakes this pattern into the language — every <code>for-each</code> loop uses it under the hood.</p>

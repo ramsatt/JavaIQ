@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Facade" subtitle="Provide a simplified interface to a complex subsystem. Hide complexity behind a single, easy-to-use entry point." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #4338ca, #818cf8)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-indigo" /> What is Facade?</h2>
+        <img src="/assets/images/topics/dp-facade.png" alt="Facade Pattern Visualized" class="topic-hero-image" />
         <div class="prose">
           <p>The <strong>Facade</strong> pattern provides a unified, simplified interface to a set of interfaces in a subsystem. It doesn't hide subsystem classes — clients can still use them directly — but it offers a convenient high-level interface.</p>
           <p>Common in: Spring's <code>JdbcTemplate</code>, SLF4J logging facade, home theater systems, compiler pipelines.</p>

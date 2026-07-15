@@ -1,10 +1,9 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, ElementRef, ViewContainerRef, ComponentRef, AfterViewInit, OnDestroy, inject } from '@angular/core';
 import { InlineAdComponent } from './inline-ad.component';
 
 @Component({
   selector: 'app-tutorial-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [InlineAdComponent],
   template: `
     <div class="tutorial-page">
       <!-- Premium Hero Header -->
@@ -19,9 +18,7 @@ import { InlineAdComponent } from './inline-ad.component';
 
       <!-- Content Slot -->
       <main class="content">
-        <app-inline-ad label="top" />
         <ng-content />
-        <app-inline-ad label="bottom" />
       </main>
 
     </div>
@@ -106,9 +103,36 @@ import { InlineAdComponent } from './inline-ad.component';
     }
   `
 })
-export class TutorialLayoutComponent {
+export class TutorialLayoutComponent implements AfterViewInit, OnDestroy {
   badge = input('JAVA MASTERCLASS');
   title = input.required<string>();
   subtitle = input('');
   gradient = input('linear-gradient(145deg, #081C15 0%, #1B4332 50%, #2D6A4F 100%)');
+
+  private el = inject(ElementRef);
+  private vcr = inject(ViewContainerRef);
+  private adRefs: ComponentRef<InlineAdComponent>[] = [];
+
+  ngAfterViewInit() {
+    // Delay slightly to ensure ng-content projection and any inner DOM updates have settled
+    setTimeout(() => {
+      const headings = this.el.nativeElement.querySelectorAll('.section-heading');
+      headings.forEach((heading: Element, index: number) => {
+        const adRef = this.vcr.createComponent(InlineAdComponent);
+        adRef.setInput('label', `heading-ad-${index}`);
+        adRef.changeDetectorRef.detectChanges();
+        
+        // Insert the dynamic component's root element right after the heading
+        const adEl = adRef.location.nativeElement;
+        heading.parentNode?.insertBefore(adEl, heading.nextSibling);
+        
+        this.adRefs.push(adRef);
+      });
+    }, 100);
+  }
+
+  ngOnDestroy() {
+    this.adRefs.forEach(ref => ref.destroy());
+    this.adRefs = [];
+  }
 }

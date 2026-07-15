@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Observer" subtitle="Event-driven updates. Publish/subscribe, event listeners, and reactive patterns." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #991b1b, #f87171)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-red" /> Observer</h2>
+        <img src="/assets/images/topics/dp-observer.png" alt="Observer Pattern Visualized" class="topic-hero-image" />
         <div class="prose"><p>The <strong>Observer</strong> pattern defines a one-to-many dependency. When state changes, all dependents are notified automatically.</p><app-code-block [code]="codeIntro" /></div>
       </section>
       <section class="section">

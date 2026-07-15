@@ -907,6 +907,23 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         document.querySelectorAll('ion-content').forEach((el: any) => el.scrollToTop(0));
       }, 50);
       const url = (e as NavigationEnd).urlAfterRedirects;
+      
+      // Banner Ad Logic
+      const bannerAllowedRoutes = [
+        /^\/dashboard(\?.*)?$/,
+        /^\/tutorials(\/[^\/]+)?(\?.*)?$/, // matches /tutorials and /tutorials/core-java but not /tutorials/core-java/topic
+        /^\/progress(\?.*)?$/,
+        /^\/coding-questions(\?.*)?$/,
+        /^\/assessments(\?.*)?$/
+      ];
+
+      const isBannerAllowed = bannerAllowedRoutes.some(regex => regex.test(url));
+      
+      if (isBannerAllowed) {
+        this.adMobService.showBanner();
+      } else {
+        this.adMobService.hideBanner();
+      }
     });
 
     // Sync html.has-bnav class so global CSS padding can activate
@@ -941,8 +958,21 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     // Lazy import to keep specifier hidden from Vite static analysis
     const dynamicImport = new Function('specifier', 'return import(specifier)');
     dynamicImport('@capacitor/app').then(({ App }: any) => {
+      let backgroundStartTime = 0;
       App.addListener('appStateChange', ({ isActive }: { isActive: boolean }) => {
-        if (isActive) this.adMobService.showAppOpen();
+        if (isActive) {
+          const now = Date.now();
+          const backgroundDuration = now - backgroundStartTime;
+          if (backgroundStartTime > 0 && backgroundDuration > 30000) {
+            const url = this.router.url;
+            if (!url.startsWith('/onboarding') && !url.startsWith('/profile-setup')) {
+               this.adMobService.showAppOpen();
+            }
+          }
+          backgroundStartTime = 0;
+        } else {
+          backgroundStartTime = Date.now();
+        }
       });
       App.addListener('appUrlOpen', (event: { url: string }) => {
         try {

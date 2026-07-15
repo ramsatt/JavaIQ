@@ -6,6 +6,7 @@ import { AuthService } from '../../auth.service';
 import { CertificateComponent } from '../../shared/certificate.component';
 import { AchievementService } from '../../services/achievement.service';
 import { RatingService } from '../../services/rating.service';
+import { AdGateService } from '../../ad-gate.service';
 
 @Component({
   selector: 'app-assess-result',
@@ -336,6 +337,7 @@ export class AssessResultComponent {
   private auth      = inject(AuthService);
   private achSvc    = inject(AchievementService);
   private ratingSvc = inject(RatingService);
+  private adGate    = inject(AdGateService);
 
   readonly letters  = ['A', 'B', 'C', 'D'];
   readonly result   = this.svc.result;
@@ -349,6 +351,7 @@ export class AssessResultComponent {
       if (r) {
         this.achSvc.checkAssessmentAchievements(r.score);
         this.ratingSvc.checkAfterAssessment(r.score);
+        this.adGate.onContentCompleted();
       }
     });
   }

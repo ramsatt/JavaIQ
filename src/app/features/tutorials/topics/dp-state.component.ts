@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="State" subtitle="Context-dependent behavior. State machines, transitions, and order lifecycle management." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #166534, #4ade80)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-green" /> State</h2>
+        <img src="/assets/images/topics/dp-state.png" alt="State Pattern Visualized" class="topic-hero-image" />
         <div class="prose"><p>The <strong>State</strong> pattern lets an object alter its behavior when its internal state changes. The object appears to change its class.</p><app-code-block [code]="codeIntro" /></div>
       </section>
       <section class="section">

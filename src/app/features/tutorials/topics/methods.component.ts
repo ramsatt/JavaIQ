@@ -19,6 +19,9 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
         <h2 class="section-heading">
           <app-icon name="book-open" [size]="28" css="icon-indigo" /> Method Anatomy
         </h2>
+        <div class="topic-hero-container">
+          <img src="/assets/images/topics/methods.png" alt="Java Methods Diagram" class="topic-hero-image" />
+        </div>
         <div class="anatomy-diagram">
           @for (part of anatomyParts; track part.label) {
             <div class="anat-part" [class.anat-active]="hoveredPart() === part.label" (mouseenter)="hoveredPart.set(part.label)" (mouseleave)="hoveredPart.set('')">
@@ -176,6 +179,8 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
   `,
   styles: `
     .section { margin-bottom: 48px; }
+    .topic-hero-container { text-align: center; margin: 24px 0; }
+    .topic-hero-image { width: 100%; max-width: 650px; height: auto; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1px solid #e2e8f0; }
     .section-heading {
       display: flex; align-items: center; gap: 12px;
       font-size: 1.4rem; font-weight: 800; color: #1B1B1B;

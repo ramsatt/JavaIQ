@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Factory Method" subtitle="Delegate object creation. Factory method, abstract factory, and Spring's FactoryBean." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #166534, #4ade80)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-green" /> Factory</h2>
+        <img src="/assets/images/topics/dp-factory.png" alt="Factory Pattern Visualized" class="topic-hero-image" />
         <div class="prose"><p>The <strong>Factory Method</strong> pattern delegates object creation to subclasses or factory classes, decoupling clients from concrete implementations.</p><app-code-block [code]="codeIntro" /></div>
       </section>
       <section class="section">

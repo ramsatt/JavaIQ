@@ -36,11 +36,13 @@ interface TutorialCourse {
   estimatedTime: string;
 }
 
+import { InlineAdComponent } from '../../shared/inline-ad.component';
+
 @Component({
   selector: 'app-tutorial-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'class': 'ion-page' },
-  imports: [RouterLink, CommonModule, IonContent, IonRefresher, IonRefresherContent, AppHeaderComponent, IonHeader],
+  imports: [RouterLink, CommonModule, IonContent, IonRefresher, IonRefresherContent, AppHeaderComponent, IonHeader, InlineAdComponent],
   template: `
     <ion-header class="ion-no-border">
       <app-header></app-header>
@@ -117,7 +119,11 @@ interface TutorialCourse {
 
         <!-- ── Course grid ── -->
         <div class="course-list" role="list">
-          @for (c of filteredCourses(); track c.slug) {
+          @for (c of filteredCourses(); track c.slug; let i = $index) {
+            @if (i === 3) {
+              <!-- Native Ad -->
+              <app-inline-ad label="Tutorials Native Ad"></app-inline-ad>
+            }
             <a
               [routerLink]="['/tutorials', c.slug]"
               class="course-card"

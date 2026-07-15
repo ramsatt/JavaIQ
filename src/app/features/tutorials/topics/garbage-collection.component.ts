@@ -16,6 +16,9 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
 
       <section class="section">
         <h2 class="section-heading"><app-icon name="target" [size]="28" css="icon-green" /> GC Roots &amp; Reachability</h2>
+        <div class="topic-hero-container">
+          <img src="/assets/images/topics/garbage-collection.png" alt="Garbage Collection Diagram" class="topic-hero-image" />
+        </div>
         <div class="prose">
           <p>The GC determines which objects are alive by tracing from <strong>GC roots</strong> — a fixed set of starting points that are always considered reachable. Any object reachable from a GC root (directly or transitively) is kept alive. Everything else is eligible for collection.</p>
           <p>GC roots include: active thread stacks (local variables and method parameters), static fields of loaded classes, JNI global references, and monitor objects. Importantly, <strong>circular references alone do not prevent collection</strong> — two objects pointing to each other but unreachable from any GC root form an "island of isolation" and are collected.</p>
@@ -92,6 +95,8 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
   `,
   styles: `
     .section { margin-bottom: 48px; }
+    .topic-hero-container { text-align: center; margin: 24px 0; }
+    .topic-hero-image { width: 100%; max-width: 650px; height: auto; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1px solid #D6DDD2; }
     .section-heading { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; color: #1B1B1B; margin: 0 0 20px; padding-bottom: 14px; border-bottom: 1px solid #D6DDD2; }
     .icon-green { color: #22c55e; }
     .prose { font-size: 0.9rem; color: #52665A; line-height: 1.75; }

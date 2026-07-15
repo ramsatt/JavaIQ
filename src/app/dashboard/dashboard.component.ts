@@ -16,6 +16,9 @@ import { ContinueLearningCardComponent } from '../shared/continue-learning-card.
 import { DailyGoalCardComponent } from '../shared/daily-goal-card.component';
 import { AchievementService } from '../services/achievement.service';
 import { AlertService } from '../alert.service';
+import { InlineAdComponent } from '../shared/inline-ad.component';
+import { NativeAdService } from '../services/native-ad.service';
+import { AdMobService } from '../admob.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,7 +32,8 @@ import { AlertService } from '../alert.service';
     ContinueLearningCardComponent,
     DailyGoalCardComponent,
     AppHeaderComponent,
-    IonHeader
+    IonHeader,
+    InlineAdComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
@@ -45,6 +49,8 @@ export class DashboardComponent implements OnDestroy {
   public studyPlan = inject(StudyPlanService);
   public wrongSvc = inject(WrongAnswerService);
   private alertSvc = inject(AlertService);
+  private nativeAdService = inject(NativeAdService);
+  private admob = inject(AdMobService);
 
   showAllModules = signal(false);
 
@@ -167,6 +173,13 @@ export class DashboardComponent implements OnDestroy {
     this.router.navigate(['/tutorials', category.slug]);
   }
 
+  async previewWithAd(category: { name: string; slug: string }) {
+    const watched = await this.admob.showRewardAd();
+    if (watched) {
+      this.router.navigate(['/tutorials', category.slug]);
+    }
+  }
+
   goToTutorials() { this.router.navigate(['/tutorials']); }
 
   goToLeaderboard() {
@@ -186,5 +199,9 @@ export class DashboardComponent implements OnDestroy {
 
   login() {
     this.authService.loginWithGoogle();
+  }
+
+  onScroll(event: CustomEvent): void {
+    this.nativeAdService.reportScroll((event.detail as { scrollTop: number }).scrollTop);
   }
 }

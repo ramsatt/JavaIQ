@@ -19,6 +19,9 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
         <h2 class="section-heading">
           <app-icon name="cpu" [size]="28" css="icon-blue" /> What Is the JVM?
         </h2>
+        <div class="topic-hero-container">
+          <img src="/assets/images/topics/jvm_architecture.png" alt="JVM Architecture Diagram" class="topic-hero-image" />
+        </div>
         <div class="prose">
           <p>
             The <strong>Java Virtual Machine (JVM)</strong> is an abstract computing machine that provides a runtime
@@ -142,6 +145,8 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
   `,
   styles: `
     .section { margin-bottom: 48px; }
+    .topic-hero-container { text-align: center; margin: 24px 0; }
+    .topic-hero-image { width: 100%; max-width: 650px; height: auto; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1px solid #D6DDD2; }
     .section-heading {
       display: flex; align-items: center; gap: 12px;
       font-size: 1.4rem; font-weight: 800; color: #1B1B1B;

@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonHeader } from '@ionic/angular/standalone';
 import { AppHeaderComponent } from '../../shared/app-header.component';
 import { CODING_CATEGORIES } from '../../data/coding-problems';
+import { InlineAdComponent } from '../../shared/inline-ad.component';
 
 type DiffFilter = 'all' | 'easy' | 'medium' | 'hard';
 type StatusFilter = 'all' | 'solved' | 'unsolved';
@@ -36,7 +37,7 @@ interface FlatProblem {
 @Component({
   selector: 'app-cq-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, AppHeaderComponent, IonHeader],
+  imports: [RouterLink, IonContent, AppHeaderComponent, IonHeader, InlineAdComponent],
   template: `
     <ion-header class="ion-no-border">
       <app-header></app-header>
@@ -192,7 +193,11 @@ interface FlatProblem {
         <!-- ── Grid view ── -->
         @if (viewMode() === 'grid') {
           <div class="cat-grid">
-            @for (cat of filteredCategories(); track cat.key) {
+            @for (cat of filteredCategories(); track cat.key; let i = $index) {
+              @if (i === 2) {
+                <!-- Native Ad -->
+                <app-inline-ad label="Coding Questions Native Ad"></app-inline-ad>
+              }
               <button
                 class="cat-card"
                 (click)="navigateToCat(cat.key, cat.title)"

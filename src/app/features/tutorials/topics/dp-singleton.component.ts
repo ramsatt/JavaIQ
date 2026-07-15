@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Singleton" subtitle="Ensure a class has only one instance. Thread-safe approaches, enum singleton, and best practices." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #4338ca, #818cf8)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-indigo" /> Singleton</h2>
+        <img src="/assets/images/topics/dp-singleton.png" alt="Singleton Pattern Visualized" class="topic-hero-image" />
         <div class="prose"><p>The <strong>Singleton</strong> pattern ensures exactly one instance exists. Used for configuration, logging, connection pools, and caches.</p><app-code-block [code]="codeIntro" /></div>
       </section>
       <section class="section">

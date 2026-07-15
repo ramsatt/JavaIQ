@@ -17,6 +17,9 @@ import { IconComponent } from '../../../shared/icon.component';
       <!-- SECTION 1: Object is the Root -->
       <section class="section">
         <h2 class="section-title">Every Class Extends Object</h2>
+        <div class="topic-hero-container">
+          <img src="/assets/images/topics/object-class.png" alt="Java Object Class Diagram" class="topic-hero-image" />
+        </div>
         <p class="section-desc">
           Every Java class implicitly extends <code>java.lang.Object</code>. This means every object
           inherits eleven methods you can override to integrate seamlessly with the Java ecosystem.
@@ -236,6 +239,9 @@ import { IconComponent } from '../../../shared/icon.component';
     </app-tutorial-layout>
   `,
   styles: [`
+    .section { margin-bottom: 48px; }
+    .topic-hero-container { text-align: center; margin: 24px 0; }
+    .topic-hero-image { width: 100%; max-width: 650px; height: auto; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1px solid #e2e8f0; }
     .section { margin-bottom: 2.5rem; }
     .section-title { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.5rem; }
     .section-desc { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; }

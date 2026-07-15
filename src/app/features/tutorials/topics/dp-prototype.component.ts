@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Prototype" subtitle="Clone existing objects instead of creating new ones from scratch. Avoid costly initialisation by copying a pre-built prototype." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #4338ca, #818cf8)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-indigo" /> What is Prototype?</h2>
+        <img src="/assets/images/topics/dp-prototype.png" alt="Prototype Pattern Visualized" class="topic-hero-image" />
         <div class="prose">
           <p>The <strong>Prototype</strong> pattern creates new objects by copying (cloning) an existing object — the prototype. Useful when object creation is expensive (DB lookup, complex init) and you need many similar instances.</p>
           <p>Key concern: <em>shallow copy</em> vs <em>deep copy</em>. Java's <code>Cloneable</code> does shallow copy by default — nested objects still share references.</p>

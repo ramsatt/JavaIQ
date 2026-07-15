@@ -11,6 +11,7 @@ import { TutorialLayoutComponent } from '../../../shared/tutorial-layout.compone
     <app-tutorial-layout title="Composite" subtitle="Compose objects into tree structures. Treat individual objects and compositions uniformly through a common interface." badge="DESIGN PATTERNS" gradient="linear-gradient(135deg, #4338ca, #818cf8)">
       <section class="section">
         <h2 class="section-heading"><app-icon name="book-open" [size]="28" css="icon-indigo" /> What is Composite?</h2>
+        <img src="/assets/images/topics/dp-composite.png" alt="Composite Pattern Visualized" class="topic-hero-image" />
         <div class="prose">
           <p>The <strong>Composite</strong> pattern lets clients treat individual objects (leaves) and compositions (branches) uniformly. Both implement the same interface, so clients don't need to distinguish between them.</p>
           <p>Classic use cases: file system (files + folders), UI component trees, org charts, XML/HTML DOM, menu structures.</p>

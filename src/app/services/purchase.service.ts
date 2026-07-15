@@ -96,7 +96,7 @@ export class PurchaseService {
   // ── Public signals (keep same API so all consumers need no changes) ──────────
 
   /** True when the user has an active paid subscription */
-  isPro = signal<boolean>(true); // IAP disabled — all users get Pro access
+  isPro = signal<boolean>(false);
 
   /** True while an active 7-day free trial is running (Firestore-tracked) */
   trialEndsDate = signal<Date | null>(null);

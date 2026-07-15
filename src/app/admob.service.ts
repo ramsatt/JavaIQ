@@ -29,7 +29,9 @@ const TEST_IDS = {
 
 const AD_IDS = environment.adMobTesting ? TEST_IDS : PROD_IDS;
 
-const INTERSTITIAL_COOLDOWN_MS = 5 * 60 * 1000;
+const INTERSTITIAL_COOLDOWN_MS = 3 * 60 * 1000; // 3 minutes
+const SESSION_START_COOLDOWN_MS = 60 * 1000; // 60 seconds
+const MAX_INTERSTITIALS_PER_SESSION = 4;
 const INTERSTITIAL_MIN_NAVIGATIONS = 2;
 const APP_OPEN_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
@@ -58,6 +60,8 @@ export class AdMobService {
   private lastInterstitialTime = 0;
   private lastAppOpenTime = 0;
   private navigationCount = 0;
+  private sessionStartTime = Date.now();
+  private interstitialCount = 0;
 
   constructor() {
     if (this.isNative) {
@@ -68,10 +72,20 @@ export class AdMobService {
   // ── Frequency cap ───────────────────────────────────────────────────────
   canShowInterstitial(): boolean {
     if (this.purchaseService.isProOrTrial()) return false;
+    
+    // Check session limits
+    if (this.interstitialCount >= MAX_INTERSTITIALS_PER_SESSION) return false;
+    
+    const now = Date.now();
+    // 60 seconds session start cooldown
+    if (now - this.sessionStartTime < SESSION_START_COOLDOWN_MS) return false;
+
+    // 3 minutes cooldown between interstitials
+    if (now - this.lastInterstitialTime < INTERSTITIAL_COOLDOWN_MS) return false;
+
     this.navigationCount++;
     if (this.navigationCount <= INTERSTITIAL_MIN_NAVIGATIONS) return false;
-    const now = Date.now();
-    if (now - this.lastInterstitialTime < INTERSTITIAL_COOLDOWN_MS) return false;
+
     return true;
   }
 
@@ -80,7 +94,7 @@ export class AdMobService {
     if (this.purchaseService.isProOrTrial()) return;
     try {
       await AdMob.initialize({
-        testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'],
+        ...(environment.adMobTesting ? { testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'] } : {}),
         initializeForTesting: environment.adMobTesting,
       });
       AdMob.addListener(BannerAdPluginEvents.SizeChanged, (info) => {
@@ -249,6 +263,7 @@ export class AdMobService {
           this.adShowing.set(false);
           this.interstitialReady = false;
           this.lastInterstitialTime = Date.now();
+          this.interstitialCount++;
           this.preloadInterstitial();
           resolve();
         });

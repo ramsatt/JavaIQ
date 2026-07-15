@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 import { IonContent, IonRefresher, IonRefresherContent, IonHeader } from '@ionic/angular/standalone';
 import { DataService } from '../../data.service';
 import { AppHeaderComponent } from '../../shared/app-header.component';
+import { InlineAdComponent } from '../../shared/inline-ad.component';
 
 @Component({
   selector: 'app-iq-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IonContent, IonRefresher, IonRefresherContent, AppHeaderComponent, IonHeader],
+  imports: [RouterLink, IonContent, IonRefresher, IonRefresherContent, AppHeaderComponent, IonHeader, InlineAdComponent],
   template: `
     <ion-header class="ion-no-border">
       <app-header></app-header>
@@ -60,7 +61,11 @@ import { AppHeaderComponent } from '../../shared/app-header.component';
 
         <!-- Topic Grid -->
         <div class="topic-grid">
-          @for (cat of categories; track cat.key) {
+          @for (cat of categories; track cat.key; let i = $index) {
+            @if (i === 2) {
+              <!-- Native Ad -->
+              <app-inline-ad label="Interview Questions Native Ad"></app-inline-ad>
+            }
             <a [routerLink]="['/interview-questions', cat.key]" class="topic-card" [style.--accent]="cat.accentColor">
               <div class="topic-accent-line"></div>
               <div class="topic-card-inner">
